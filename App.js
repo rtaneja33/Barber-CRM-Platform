@@ -1,69 +1,93 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import logo from './assets/logo.png';
 import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions'
 import * as Sharing from 'expo-sharing';
+import * as Contacts from 'expo-contacts';
 import uploadToAnonymousFilesAsync from 'anonymous-files';
-
+import { render } from 'react-dom';
 export default function App() {
-  const [selectedImage, setSelectedImage] = React.useState(null);
-  let openImagePickerAsync = async () => {
-    let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-    if (permissionResult.granted == false){
-      alert("Permission to access camera roll is required!");
-      return;
-    }
-    let pickerResult = await ImagePicker.launchImageLibraryAsync();
 
-    if(pickerResult.cancelled === true){
-      return;
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [customers, updateCustomers] = React.useState([]);
+  const [didMount, setDidMount] = React.useState(false);
+  console.log("hello world");
+  loadContacts = async()=>{
+    console.log("in load contacts");
+    const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
+    if(status !== 'granted')
+    {
+      return
     }
-    if(Platform.OS === 'web') {
-      let remoteUri = await uploadToAnonymousFilesAsync(pickerResult.uri);
-      setSelectedImage({ localUri: pickerResult.uri, remoteUri});
-    } else {
-      setSelectedImage({ localUri: pickerResult.uri, remoteUri: null });
-    }
-    console.log(pickerResult);
-  };
+    console.log("granted")
+    const {data} = await Contacts.getContactsAsync({
+      fields:[Contacts.Fields.PhoneNumbers,
+      Contacts.Fields.Emails]
+    });
+    updateCustomers(data);
+    console.log(customers);
+    setIsLoading(false);
+  } 
+  
+  useEffect(() => {
+    setDidMount(true);
+    setIsLoading(true);
+    loadContacts();
+  }, [])
 
-  let openShareDialogAsync = async () => {
-    if(!(await Sharing.isAvailableAsync())) {
-      alert(`The image is available for sharing at: ${selectedImage.remoteUri}`);
-      return;
-    }
-    await Sharing.shareAsync(selectedImage.localUri);
-  };
-
-  if(selectedImage !== null) {
-    return (
-      <View style = {styles.container}>
-        <Image
-          source = {{ uri: selectedImage.localUri }}
-          style = {styles.thumbnail}
-        />
-        <TouchableOpacity onPress={openShareDialogAsync} style={styles.button}>
-          <Text style={styles.buttonText}>Share this photo</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  renderItem = ({item}) =>(
+    <View style={{minHeight:70, padding:5}}>
+      <Text>
+        {item.firstName}{item.lastName}
+      </Text>
+      <Text>
+        {item.phoneNumbers[0].digits}
+      </Text>
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
-      <Image source = {{ uri: "https://i.imgur.com/TkIrScD.png" }} style = {styles.logo }/>
-
-      <Text style={styles.instructions}>
-        To share a photo from your phone with a friend, just press the button below!
-        </Text>
-    
-
-    <TouchableOpacity
-      onPress= {openImagePickerAsync}
-      style ={styles.button}>
-        <Text style={styles.buttonText}>Pick a photo</Text>
-      </TouchableOpacity>
+    <View style={{flex: 1}}>
+      <SafeAreaView style={{backgroundColor: '#2f353c' }} />
+      <TextInput
+        placeholder="Search"
+        placeholderTextColor="#dddddd"
+        style={{
+          backgroundColor: '#2f363c', 
+          height: 50,
+          fontSize:36,
+          padding: 10,
+          color: 'white',
+          borderBottomWidth:0.5,
+          borderBottomColor: '#7d90a0'
+      }}
+      />
+      <View style={{flex:1, backgroundColor: '#2f363c'}}>
+        {isLoading? (
+          <View style={{...StyleSheet.absoluteFill,
+            alignItems: 'center', justifyContent: 'center'}}>
+              <ActivityIndicator size ="large" color="#bad555"/>
+          </View>
+        ) : 
+          null
+        }
+        <FlatList
+          data={customers}
+          renderItem={renderItem}
+          keyExtractor={(item, index)=> index.toString()}
+          ListEmptyComponent={()=>(
+            <View style={{
+              flex:1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 50
+            }}>
+            <Text style={{color:'#bad555' }}>No Customers Found</Text>
+            </View>
+          )}
+        />
+      </View>
     </View>
   );
 }
