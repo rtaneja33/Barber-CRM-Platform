@@ -11,7 +11,7 @@ export default function App() {
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
-  const [didMount, setDidMount] = React.useState(false);
+  const [inMemoryContacts, setMemContacts] = React.useState([]);
   console.log("hello world");
   loadContacts = async()=>{
     console.log("in load contacts");
@@ -26,44 +26,58 @@ export default function App() {
       Contacts.Fields.Emails]
     });
     updateCustomers(data);
+    setMemContacts(data);
     console.log(customers);
     setIsLoading(false);
   } 
   
   useEffect(() => {
-    setDidMount(true);
     setIsLoading(true);
     loadContacts();
   }, [])
 
   renderItem = ({item}) =>(
     <View style={{minHeight:70, padding:5}}>
-      <Text>
-        {item.firstName}{item.lastName}
+      <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
+        {item.firstName} {item.lastName}
       </Text>
-      <Text>
+      <Text style={{color:'#f7444e', fontWeight:'bold'}}>
         {item.phoneNumbers[0].digits}
       </Text>
     </View>
   );
 
+  const searchContacts = (value) =>{
+    
+    const filteredContacts = inMemoryContacts.filter(
+      contact => {
+        let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
+        let searchTermLowercase = value.toLowerCase()
+
+        return contactLowercase.indexOf(searchTermLowercase) > -1;
+      }
+    )
+    updateCustomers(filteredContacts)
+  }
+
   return (
     <View style={{flex: 1}}>
-      <SafeAreaView style={{backgroundColor: '#2f353c' }} />
+      <SafeAreaView style={{backgroundColor: '#f7f8f3' }} />
       <TextInput
         placeholder="Search"
         placeholderTextColor="#dddddd"
         style={{
-          backgroundColor: '#2f363c', 
+          backgroundColor: '#f7f8f3', 
           height: 50,
           fontSize:36,
           padding: 10,
-          color: 'white',
+          color: '#78bcc4',
           borderBottomWidth:0.5,
           borderBottomColor: '#7d90a0'
       }}
+        onChangeText={(value)=> searchContacts(value)}
       />
-      <View style={{flex:1, backgroundColor: '#2f363c'}}>
+      <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
         {isLoading? (
           <View style={{...StyleSheet.absoluteFill,
             alignItems: 'center', justifyContent: 'center'}}>
