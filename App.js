@@ -5,9 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions'
 import * as Sharing from 'expo-sharing';
 import * as Contacts from 'expo-contacts';
+import { Avatar } from 'react-native-elements';
 import uploadToAnonymousFilesAsync from 'anonymous-files';
 import { render } from 'react-dom';
-import Avatar, { IconTypes, Sizes } from 'rn-avatar';
 
 
 
@@ -16,12 +16,13 @@ export default function App() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
-  console.log("hello world");
-  loadContacts = async()=>{
-    console.log("in load contacts");
+  console.log("in app")
+  const loadContacts = async()=>{
+    console.log("in load contacts!!!!!!");
     const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
     if(status !== 'granted')
     {
+      setIsLoading(false);
       return
     }
     console.log("granted")
@@ -40,7 +41,7 @@ export default function App() {
     loadContacts();
   }, [])
 
-  renderItem = ({item}) =>(
+  const renderItem = ({item}) =>(
     
     <View style={{minHeight:70, padding:5}}>
       <TouchableOpacity onPress={() => alert('Item pressed!')}>
@@ -51,12 +52,12 @@ export default function App() {
             alignItems: 'center'
           }}>
           <Avatar
+            size="medium"
             rounded
-            icon={{
-              name: 'user', type: IconTypes.FontAwesome,
-            }}
-            size={50}
-            containerStyle={{ margin: 0, marginRight: 10 }}
+            title="MT"
+            overlayContainerStyle={{backgroundColor: '#78bcc4'}}
+            onPress={() => console.log("Works!")}
+            activeOpacity={0.4}
           />
           <View
             style={{
@@ -105,6 +106,7 @@ export default function App() {
 
   return (
     <View
+    
     style={{
       flex: 1,
       paddingHorizontal: 20,
@@ -142,6 +144,7 @@ export default function App() {
           keyExtractor={(item, index)=> index.toString()}
           ItemSeparatorComponent={renderSeparator}
           ListHeaderComponent={
+          
           <View
             style={{
               backgroundColor: 'white',
