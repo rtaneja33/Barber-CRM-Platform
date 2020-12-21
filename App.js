@@ -16,9 +16,7 @@ export default function App() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
-  console.log("in app")
   const loadContacts = async()=>{
-    console.log("in load contacts!!!!!!");
     const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
     if(status !== 'granted')
     {
@@ -63,13 +61,12 @@ export default function App() {
             style={{
               flexDirection: 'column',
               padding: 16,
-              alignItems: 'left'
             }}>
             <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
               {item.firstName} {item.lastName}
             </Text>
             <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers[0].digits}
+            {item.phoneNumbers[0].number}
             </Text>
           </View>
         </View>
