@@ -7,7 +7,9 @@ import * as Sharing from 'expo-sharing';
 import * as Contacts from 'expo-contacts';
 import uploadToAnonymousFilesAsync from 'anonymous-files';
 import { render } from 'react-dom';
-import { Avatar } from 'react-native-elements';
+import Avatar, { IconTypes, Sizes } from 'rn-avatar';
+
+
 
 export default function App() {
 
@@ -48,20 +50,29 @@ export default function App() {
             padding: 16,
             alignItems: 'center'
           }}>
-          <Avatar rounded title="MD"/>
-          <Text
-            category='s1'
+          <Avatar
+            rounded
+            icon={{
+              name: 'user', type: IconTypes.FontAwesome,
+            }}
+            size={50}
+            containerStyle={{ margin: 0, marginRight: 10 }}
+          />
+          <View
             style={{
-              color: '#000'
-            }}>{item.firstName} {item.lastName}</Text>
+              flexDirection: 'column',
+              padding: 16,
+              alignItems: 'left'
+            }}>
+            <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
+              {item.firstName} {item.lastName}
+            </Text>
+            <Text style={{color:'#f7444e', fontWeight:'bold'}}>
+            {item.phoneNumbers[0].digits}
+            </Text>
+          </View>
         </View>
       </TouchableOpacity>
-      <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
-        {item.firstName} {item.lastName}
-      </Text>
-      <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-        {item.phoneNumbers[0].digits}
-      </Text>
     </View>
   );
 

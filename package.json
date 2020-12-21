@@ -23,7 +23,10 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-elements": "^3.0.1",
     "react-native-svg": "12.1.0",
-    "react-native-web": "~0.13.12"
+    "react-native-user-avatar": "^1.0.7",
+    "react-native-vector-icons": "^7.1.0",
+    "react-native-web": "~0.13.12",
+    "rn-avatar": "^1.0.3"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
