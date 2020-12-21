@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import logo from './assets/logo.png';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions'
@@ -7,6 +7,8 @@ import * as Sharing from 'expo-sharing';
 import * as Contacts from 'expo-contacts';
 import uploadToAnonymousFilesAsync from 'anonymous-files';
 import { render } from 'react-dom';
+import { Avatar } from 'react-native-elements';
+
 export default function App() {
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -37,7 +39,23 @@ export default function App() {
   }, [])
 
   renderItem = ({item}) =>(
+    
     <View style={{minHeight:70, padding:5}}>
+      <TouchableOpacity onPress={() => alert('Item pressed!')}>
+        <View
+          style={{
+            flexDirection: 'row',
+            padding: 16,
+            alignItems: 'center'
+          }}>
+          <Avatar rounded title="MD"/>
+          <Text
+            category='s1'
+            style={{
+              color: '#000'
+            }}>{item.firstName} {item.lastName}</Text>
+        </View>
+      </TouchableOpacity>
       <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
         {item.firstName} {item.lastName}
       </Text>
@@ -60,9 +78,30 @@ export default function App() {
     updateCustomers(filteredContacts)
   }
 
+  const renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '86%',
+          backgroundColor: '#CED0CE',
+          marginLeft: '5%'
+        }}
+      />
+    )
+  }
+
+
   return (
-    <View style={{flex: 1}}>
-      <SafeAreaView style={{backgroundColor: '#f7f8f3' }} />
+    <View
+    style={{
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+      marginTop: 40,
+      backgroundColor: '#f7f8f3'
+    }}>
+      {/* <SafeAreaView style={{backgroundColor: '#f7f8f3' }} />
       <TextInput
         placeholder="Search"
         placeholderTextColor="#dddddd"
@@ -76,7 +115,7 @@ export default function App() {
           borderBottomColor: '#7d90a0'
       }}
         onChangeText={(value)=> searchContacts(value)}
-      />
+      /> */}
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
         {isLoading? (
           <View style={{...StyleSheet.absoluteFill,
@@ -90,6 +129,31 @@ export default function App() {
           data={customers}
           renderItem={renderItem}
           keyExtractor={(item, index)=> index.toString()}
+          ItemSeparatorComponent={renderSeparator}
+          ListHeaderComponent={
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 10,
+              borderRadius: 25,
+              borderWidth: 1,
+              borderColor: '#CED0CE',
+              justifyContent: 'center',
+              marginBottom: 20
+            }}>
+            <TextInput
+              onChangeText={(value)=> searchContacts(value)}
+              placeholder='Search'
+              textStyle={{ color: '#78bcc4' }}
+              style={{
+                marginLeft: 10,
+                color:'#78bcc4',
+                fontSize:20,
+                fontWeight: 'bold',
+              }}
+            />
+          </View>
+           }
           ListEmptyComponent={()=>(
             <View style={{
               flex:1,
@@ -97,7 +161,7 @@ export default function App() {
               justifyContent: 'center',
               marginTop: 50
             }}>
-            <Text style={{color:'#bad555' }}>No Customers Found</Text>
+            <Text style={{ color:'#bad555' }}>No Customers Found</Text>
             </View>
           )}
         />
