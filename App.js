@@ -66,7 +66,7 @@ export default function App() {
               {item.firstName} {item.lastName}
             </Text>
             <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers[0].number}
+            {item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
             </Text>
           </View>
         </View>
@@ -111,21 +111,6 @@ export default function App() {
       marginTop: 40,
       backgroundColor: '#f7f8f3'
     }}>
-      {/* <SafeAreaView style={{backgroundColor: '#f7f8f3' }} />
-      <TextInput
-        placeholder="Search"
-        placeholderTextColor="#dddddd"
-        style={{
-          backgroundColor: '#f7f8f3', 
-          height: 50,
-          fontSize:36,
-          padding: 10,
-          color: '#78bcc4',
-          borderBottomWidth:0.5,
-          borderBottomColor: '#7d90a0'
-      }}
-        onChangeText={(value)=> searchContacts(value)}
-      /> */}
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
         {isLoading? (
           <View style={{...StyleSheet.absoluteFill,
