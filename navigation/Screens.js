@@ -1,5 +1,5 @@
 import React from "react";
-import { Easing, Animated, Dimensions } from "react-native";
+import { Easing, Animated, Dimensions, TextInput } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -144,15 +144,16 @@ function HomeStack(props) {
         name="Rohan"
         component={Home}
         options={{
-          header: ({ navigation, scene }) => (
+          header: ({ navigation, scene, route }) => (
             <Header
               title="Rohan"
+              searchFunc={scene.descriptor.options.searchFunc}
               search
               navigation={navigation}
               scene={scene}
             />
           ),
-          cardStyle: { backgroundColor: "#F8F9FE" }
+          cardStyle: { backgroundColor: "#F8F9FE" },
         }}
       />
       <Stack.Screen

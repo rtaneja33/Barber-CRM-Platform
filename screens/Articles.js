@@ -19,7 +19,7 @@ const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - theme.SIZES.BASE * 2;
 const categories = [
   {
-    title: "Music Album",
+    title: "Rohan's PHotos",
     description:
       "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
     image:

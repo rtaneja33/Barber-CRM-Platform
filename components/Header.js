@@ -1,6 +1,6 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions,TextInput } from 'react-native';
 import { Button, Block, NavBar, Text, theme } from 'galio-framework';
 
 import Icon from './Icon';
@@ -105,21 +105,23 @@ class Header extends React.Component {
         break;
     }
   }
-  renderSearch = () => {
+  renderSearch = (val) => {
     const { navigation } = this.props;
     return (
       <Input
         right
         color="black"
         style={styles.search}
-        placeholder="Search Customer Names"
+        placeholder="Search My Customers"
         placeholderTextColor={'#8898AA'}
-        onFocus={() => navigation.navigate('Pro')}
+        onChange = {(event)=> {
+          const searchkey = event.nativeEvent.text;
+          val(searchkey)}
+        }
         iconContent={<Icon size={16} color={theme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />}
       />
     );
   }
-  // renderSearchFunction = { searchFunc };
   renderOptions = () => {
     const { navigation, optionLeft, optionRight } = this.props;
 
@@ -154,11 +156,13 @@ class Header extends React.Component {
     )
   }
   renderHeader = () => {
-    const { search, options, tabs } = this.props;
-    if (search || tabs || options) {
+    const { search, options, tabs, searchFunc } = this.props;
+    console.log("searchFunc is");
+    console.log(searchFunc)
+    if ((search && searchFunc) || tabs || options) {
       return (
         <Block center>
-          {search ? this.renderSearch() : null}
+          {search ? this.renderSearch(searchFunc) : null}
           {options ? this.renderOptions() : null}
           {tabs ? this.renderTabs() : null}
         </Block>

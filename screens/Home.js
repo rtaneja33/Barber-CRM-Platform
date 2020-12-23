@@ -1,6 +1,6 @@
 import { Image, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 import { Avatar } from 'react-native-elements';
@@ -10,8 +10,7 @@ import { Card } from '../components';
 import articles from '../constants/articles';
 const { width } = Dimensions.get('screen');
 
-export default function Home() {
-
+export default function Home({ navigation, route }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
@@ -29,14 +28,21 @@ export default function Home() {
     });
     updateCustomers(data);
     setMemContacts(data);
-    console.log(customers);
+    console.log("just loaded mem contacts!", data.length)
+   // console.log(customers);
     setIsLoading(false);
   } 
   
   useEffect(() => {
     setIsLoading(true);
     loadContacts();
-  }, [])
+    console.log("called loadContacts in useEffect");
+    //console.log("inMemContacts have length of", inMemoryContacts.length);
+    // navigation.setOptions({
+    //   searchFunc: searchContacts,
+    // });
+  }, []);
+
 
   const renderItem = ({item}) =>(
     
@@ -74,7 +80,8 @@ export default function Home() {
   );
 
   const searchContacts = (value) =>{
-    
+    console.log("value is", value);
+    console.log("In mem contacts from searchContacts have length...", inMemoryContacts.length);
     const filteredContacts = inMemoryContacts.filter(
       contact => {
         let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
@@ -85,6 +92,12 @@ export default function Home() {
     )
     updateCustomers(filteredContacts)
   }
+
+  useEffect(() => {
+    navigation.setOptions({
+      searchFunc: searchContacts.bind(this)
+    });
+  }, [isLoading])
 
   const renderSeparator = () => {
     return (
@@ -98,7 +111,7 @@ export default function Home() {
       />
     )
   }
-
+  
 
   return (
     <View
@@ -107,7 +120,6 @@ export default function Home() {
       flex: 1,
       paddingHorizontal: 20,
       paddingVertical: 20,
-      marginTop: 40,
       backgroundColor: '#f7f8f3'
     }}>
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
@@ -125,7 +137,6 @@ export default function Home() {
           keyExtractor={(item, index)=> index.toString()}
           ItemSeparatorComponent={renderSeparator}
           ListHeaderComponent={
-          
           <View
             style={{
               backgroundColor: 'white',
