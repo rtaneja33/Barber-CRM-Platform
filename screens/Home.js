@@ -1,24 +1,16 @@
-import React, { useEffect } from 'react';
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
-import logo from './assets/logo.png';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions'
-import * as Sharing from 'expo-sharing';
+import { Image, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+
+import React, { useEffect, useLayoutEffect } from 'react';
+import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 import { Avatar } from 'react-native-elements';
-import uploadToAnonymousFilesAsync from 'anonymous-files';
-import { render } from 'react-dom';
-import { Block, GalioProvider } from "galio-framework";
-import { NavigationContainer } from "@react-navigation/native";
-import { enableScreens } from "react-native-screens";
-enableScreens();
+import { Block, theme } from 'galio-framework';
 
-import Screens from "./navigation/Screens";
-import { Images, articles, argonTheme } from "./constants";
+import { Card } from '../components';
+import articles from '../constants/articles';
+const { width } = Dimensions.get('screen');
 
-
-export default function App() {
-
+export default function Home({ navigation, route }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
@@ -36,14 +28,21 @@ export default function App() {
     });
     updateCustomers(data);
     setMemContacts(data);
-    console.log(customers);
+    console.log("just loaded mem contacts!", data.length)
+   // console.log(customers);
     setIsLoading(false);
   } 
   
   useEffect(() => {
     setIsLoading(true);
     loadContacts();
-  }, [])
+    console.log("called loadContacts in useEffect");
+    //console.log("inMemContacts have length of", inMemoryContacts.length);
+    // navigation.setOptions({
+    //   searchFunc: searchContacts,
+    // });
+  }, []);
+
 
   const renderItem = ({item}) =>(
     
@@ -81,7 +80,8 @@ export default function App() {
   );
 
   const searchContacts = (value) =>{
-    
+    console.log("value is", value);
+    console.log("In mem contacts from searchContacts have length...", inMemoryContacts.length);
     const filteredContacts = inMemoryContacts.filter(
       contact => {
         let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
@@ -92,6 +92,12 @@ export default function App() {
     )
     updateCustomers(filteredContacts)
   }
+
+  useEffect(() => {
+    navigation.setOptions({
+      searchFunc: searchContacts.bind(this)
+    });
+  }, [isLoading])
 
   const renderSeparator = () => {
     return (
@@ -105,72 +111,63 @@ export default function App() {
       />
     )
   }
-
+  
 
   return (
-    <NavigationContainer>
-          <GalioProvider theme={argonTheme}>
-            <Block flex>
-              <Screens />
-            </Block>
-          </GalioProvider>
-        </NavigationContainer>
-    // <View
+    <View
     
-    // style={{
-    //   flex: 1,
-    //   paddingHorizontal: 20,
-    //   paddingVertical: 20,
-    //   marginTop: 40,
-    //   backgroundColor: '#f7f8f3'
-    // }}>
-    //   <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
-    //     {isLoading? (
-    //       <View style={{...StyleSheet.absoluteFill,
-    //         alignItems: 'center', justifyContent: 'center'}}>
-    //           <ActivityIndicator size ="large" color="#bad555"/>
-    //       </View>
-    //     ) : 
-    //       null
-    //     }
-    //     <FlatList
-    //       data={customers}
-    //       renderItem={renderItem}
-    //       keyExtractor={(item, index)=> index.toString()}
-    //       ItemSeparatorComponent={renderSeparator}
-    //       ListHeaderComponent={
-          
-    //       <View
-    //         style={{
-    //           backgroundColor: 'white',
-    //           padding: 10,
-    //           borderRadius: 25,
-    //           borderWidth: 1,
-    //           borderColor: '#CED0CE',
-    //           justifyContent: 'center',
-    //           marginBottom: 20
-    //         }}>
-    //         <TextInput
-    //           onChangeText={(value)=> searchContacts(value)}
-    //           placeholder='Search'
-    //           textStyle={{ color: '#78bcc4' }}
-    //           style={styles.searchBar}
-    //         />
-    //       </View>
-    //        }
-    //       ListEmptyComponent={()=>(
-    //         <View style={{
-    //           flex:1,
-    //           alignItems: 'center',
-    //           justifyContent: 'center',
-    //           marginTop: 50
-    //         }}>
-    //         <Text style={{ color:'#bad555' }}>No Customers Found</Text>
-    //         </View>
-    //       )}
-    //     />
-    //   </View>
-    // </View>
+    style={{
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+      backgroundColor: '#f7f8f3'
+    }}>
+      <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
+        {isLoading? (
+          <View style={{...StyleSheet.absoluteFill,
+            alignItems: 'center', justifyContent: 'center'}}>
+              <ActivityIndicator size ="large" color="#bad555"/>
+          </View>
+        ) : 
+          null
+        }
+        <FlatList
+          data={customers}
+          renderItem={renderItem}
+          keyExtractor={(item, index)=> index.toString()}
+          ItemSeparatorComponent={renderSeparator}
+          ListHeaderComponent={
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 10,
+              borderRadius: 25,
+              borderWidth: 1,
+              borderColor: '#CED0CE',
+              justifyContent: 'center',
+              marginBottom: 20
+            }}>
+            <TextInput
+              onChangeText={(value)=> searchContacts(value)}
+              placeholder='Search'
+              textStyle={{ color: '#78bcc4' }}
+              style={styles.searchBar}
+            />
+          </View>
+           }
+          ListEmptyComponent={()=>(
+            <View style={{
+              flex:1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 50
+            }}>
+            <Text style={{ color:'#bad555' }}>No Customers Found</Text>
+            </View>
+          )}
+        />
+      </View>
+    </View>
   );
 }
 
