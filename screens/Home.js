@@ -45,9 +45,8 @@ export default function Home({ navigation, route }) {
 
 
   const renderItem = ({item}) =>(
-    
     <View style={{minHeight:70, padding:5}}>
-      <TouchableOpacity onPress={() => alert('Item pressed!')}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName }, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
         <View
           style={{
             flexDirection: 'row',

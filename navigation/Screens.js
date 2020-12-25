@@ -96,7 +96,7 @@ function ArticlesStack(props) {
   );
 }
 
-function ProfileStack(props) {
+function ProfileStack(props, route) {
   return (
     <Stack.Navigator initialRouteName="Profile" mode="card" headerMode="screen">
       <Stack.Screen
@@ -113,7 +113,7 @@ function ProfileStack(props) {
             />
           ),
           cardStyle: { backgroundColor: "#FFFFFF" },
-          headerTransparent: true
+          headerTransparent: true,
         }}
       />
             <Stack.Screen
@@ -138,6 +138,9 @@ function ProfileStack(props) {
 }
 
 function HomeStack(props) {
+  // const { fullName } = props.route.params.params;
+  // console.log("full name is", fullName);
+  // console.log("in profile stack");
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
@@ -158,7 +161,27 @@ function HomeStack(props) {
       />
       <Stack.Screen
         name="Pro"
-        component={Pro}
+        component={Onboarding}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title=""
+              back
+              white
+              transparent
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          headerTransparent: true
+        }}
+      />
+      <Stack.Screen
+        name="UserProfile"
+        component={Profile}
+        // initialParams = {{
+        //   ...{fullName}
+        // }}
         options={{
           header: ({ navigation, scene }) => (
             <Header

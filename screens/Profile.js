@@ -8,6 +8,7 @@ import {
   Platform
 } from "react-native";
 import { Block, Text, theme } from "galio-framework";
+import equal from 'fast-deep-equal';
 
 import { Button } from "../components";
 import { Images, argonTheme } from "../constants";
@@ -18,7 +19,12 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 
 class Profile extends React.Component {
+
   render() {
+    console.log("before finding fullname");
+    console.log(this.props);
+    const { fullName } = this.props.route.params;
+    console.log("IN RENDER PROFILE, full name is", fullName);
     return (
       <Block flex style={styles.profile}>
         <Block flex>
@@ -97,7 +103,7 @@ class Profile extends React.Component {
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                      Jessica Jones, 27
+                      { fullName }
                     </Text>
                     <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
                       San Francisco, USA

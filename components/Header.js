@@ -12,7 +12,7 @@ const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 const BellButton = ({isWhite, style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Pro')}>
+  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Profile')}>
     <Icon
       family="ArgonExtra"
       size={16}
@@ -109,7 +109,7 @@ class Header extends React.Component {
     const { navigation } = this.props;
     return (
       <Input
-        right
+        left
         color="black"
         style={styles.search}
         placeholder="Search My Customers"
@@ -118,7 +118,7 @@ class Header extends React.Component {
           const searchkey = event.nativeEvent.text;
           val(searchkey)}
         }
-        iconContent={<Icon size={16} color={theme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />}
+        iconContent={<Icon size={16} color={theme.COLORS.MUTED} style={{ marginRight: 10 }} name="search1" family="AntDesign" />}
       />
     );
   }
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     width: width - 32,
     marginHorizontal: 16,
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 10,
     borderColor: argonTheme.COLORS.BORDER
   },
   options: {
