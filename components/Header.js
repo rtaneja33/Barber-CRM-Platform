@@ -1,6 +1,6 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions,TextInput } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions,TextInput, View } from 'react-native';
 import { Button, Block, NavBar, Text, theme } from 'galio-framework';
 
 import Icon from './Icon';
@@ -12,7 +12,7 @@ const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 const BellButton = ({isWhite, style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Pro')}>
+  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Profile')}>
     <Icon
       family="ArgonExtra"
       size={16}
@@ -61,7 +61,7 @@ class Header extends React.Component {
     }
 
     switch (title) {
-      case 'Rohan':
+      case 'My Customers':
         return ([
           <BellButton key='chat-home' navigation={navigation} isWhite={white} />,
           <BasketButton key='basket-home' navigation={navigation} isWhite={white} />
@@ -108,18 +108,21 @@ class Header extends React.Component {
   renderSearch = (val) => {
     const { navigation } = this.props;
     return (
-      <Input
-        right
-        color="black"
-        style={styles.search}
-        placeholder="Search My Customers"
-        placeholderTextColor={'#8898AA'}
-        onChange = {(event)=> {
-          const searchkey = event.nativeEvent.text;
-          val(searchkey)}
-        }
-        iconContent={<Icon size={16} color={theme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />}
-      />
+        <Input
+          left
+          // autoFocus = {true}
+          hitSlop={{top: 20, bottom: 20, left: 50, right: 40}}
+          color="black"
+          style={styles.search}
+          placeholder="Search My Customers"
+          placeholderTextColor={'#8898AA'}
+          clearButtonMode = "always"
+          onChange = {(event)=> {
+            const searchkey = event.nativeEvent.text;
+            val(searchkey)}
+          }
+          iconContent={<Icon size={16} color={theme.COLORS.MUTED} style={{ marginRight: 10 }} name="search1" family="AntDesign" />}
+        />
     );
   }
   renderOptions = () => {
@@ -157,8 +160,8 @@ class Header extends React.Component {
   }
   renderHeader = () => {
     const { search, options, tabs, searchFunc } = this.props;
-    console.log("searchFunc is");
-    console.log(searchFunc)
+    // console.log("searchFunc is");
+    // console.log(searchFunc)
     if ((search && searchFunc) || tabs || options) {
       return (
         <Block center>
@@ -201,7 +204,7 @@ class Header extends React.Component {
             />
               
           }
-          leftStyle={{ paddingVertical: 12, flex: 0.2 }}
+          leftStyle={{ paddingVertical: 12 }}
           titleStyle={[
             styles.title,
             { color: argonTheme.COLORS[white ? 'WHITE' : 'HEADER'] },
@@ -224,6 +227,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center'
   },
   navbar: {
     paddingVertical: 0,
@@ -260,7 +264,7 @@ const styles = StyleSheet.create({
     width: width - 32,
     marginHorizontal: 16,
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 10,
     borderColor: argonTheme.COLORS.BORDER
   },
   options: {

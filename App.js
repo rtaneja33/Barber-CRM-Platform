@@ -36,7 +36,7 @@ export default function App() {
     });
     updateCustomers(data);
     setMemContacts(data);
-    console.log(customers);
+    // console.log(customers);
     setIsLoading(false);
   } 
   
@@ -72,7 +72,7 @@ export default function App() {
               {item.firstName} {item.lastName}
             </Text>
             <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
+            {item.phoneNumbers && item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
             </Text>
           </View>
         </View>
@@ -115,62 +115,6 @@ export default function App() {
             </Block>
           </GalioProvider>
         </NavigationContainer>
-    // <View
-    
-    // style={{
-    //   flex: 1,
-    //   paddingHorizontal: 20,
-    //   paddingVertical: 20,
-    //   marginTop: 40,
-    //   backgroundColor: '#f7f8f3'
-    // }}>
-    //   <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
-    //     {isLoading? (
-    //       <View style={{...StyleSheet.absoluteFill,
-    //         alignItems: 'center', justifyContent: 'center'}}>
-    //           <ActivityIndicator size ="large" color="#bad555"/>
-    //       </View>
-    //     ) : 
-    //       null
-    //     }
-    //     <FlatList
-    //       data={customers}
-    //       renderItem={renderItem}
-    //       keyExtractor={(item, index)=> index.toString()}
-    //       ItemSeparatorComponent={renderSeparator}
-    //       ListHeaderComponent={
-          
-    //       <View
-    //         style={{
-    //           backgroundColor: 'white',
-    //           padding: 10,
-    //           borderRadius: 25,
-    //           borderWidth: 1,
-    //           borderColor: '#CED0CE',
-    //           justifyContent: 'center',
-    //           marginBottom: 20
-    //         }}>
-    //         <TextInput
-    //           onChangeText={(value)=> searchContacts(value)}
-    //           placeholder='Search'
-    //           textStyle={{ color: '#78bcc4' }}
-    //           style={styles.searchBar}
-    //         />
-    //       </View>
-    //        }
-    //       ListEmptyComponent={()=>(
-    //         <View style={{
-    //           flex:1,
-    //           alignItems: 'center',
-    //           justifyContent: 'center',
-    //           marginTop: 50
-    //         }}>
-    //         <Text style={{ color:'#bad555' }}>No Customers Found</Text>
-    //         </View>
-    //       )}
-    //     />
-    //   </View>
-    // </View>
   );
 }
 

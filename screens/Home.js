@@ -1,14 +1,18 @@
 import { Image, Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 import { Avatar } from 'react-native-elements';
 import { Block, theme } from 'galio-framework';
-
-import { Card } from '../components';
-import articles from '../constants/articles';
 const { width } = Dimensions.get('screen');
+import { LinearGradient as Gradient } from 'expo-linear-gradient';
+const BASE_SIZE = theme.SIZES.BASE;
+const GRADIENT_BLUE = ['#6B84CA', '#8F44CE'];
+const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
+const COLOR_WHITE = theme.COLORS.WHITE;
+const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
+import Icon from "../components/Icon";
 
 export default function Home({ navigation, route }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -28,7 +32,6 @@ export default function Home({ navigation, route }) {
     });
     updateCustomers(data);
     setMemContacts(data);
-    console.log("just loaded mem contacts!", data.length)
    // console.log(customers);
     setIsLoading(false);
   } 
@@ -36,7 +39,7 @@ export default function Home({ navigation, route }) {
   useEffect(() => {
     setIsLoading(true);
     loadContacts();
-    console.log("called loadContacts in useEffect");
+    //console.log("called loadContacts in useEffect");
     //console.log("inMemContacts have length of", inMemoryContacts.length);
     // navigation.setOptions({
     //   searchFunc: searchContacts,
@@ -44,44 +47,38 @@ export default function Home({ navigation, route }) {
   }, []);
 
 
-  const renderItem = ({item}) =>(
-    
+  const renderItem = ({item}) => 
+    (
     <View style={{minHeight:70, padding:5}}>
-      <TouchableOpacity onPress={() => alert('Item pressed!')}>
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 16,
-            alignItems: 'center'
-          }}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName }, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
+      <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
+        <Block style={styles.left}>
           <Avatar
             size="medium"
             rounded
-            title="MT"
+            title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
             overlayContainerStyle={{backgroundColor: '#78bcc4'}}
-            onPress={() => console.log("Works!")}
             activeOpacity={0.4}
           />
-          <View
-            style={{
-              flexDirection: 'column',
-              padding: 16,
-            }}>
-            <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
-              {item.firstName} {item.lastName}
-            </Text>
-            <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
-            </Text>
-          </View>
+        </Block>
+        <Block flex>
+          <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.firstName} {item.lastName}</Text>
+          <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}</Text>
+        </Block>
+        <View style={styles.right}>
+          <Icon
+              name="nav-right"
+              family="ArgonExtra"
+              size={BASE_SIZE}
+              color={COLOR_GREY}
+          />
         </View>
+      </Block>
       </TouchableOpacity>
     </View>
   );
 
   const searchContacts = (value) =>{
-    console.log("value is", value);
-    console.log("In mem contacts from searchContacts have length...", inMemoryContacts.length);
     const filteredContacts = inMemoryContacts.filter(
       contact => {
         let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
@@ -119,7 +116,7 @@ export default function Home({ navigation, route }) {
     style={{
       flex: 1,
       paddingHorizontal: 20,
-      paddingVertical: 20,
+      paddingVertical: 10,
       backgroundColor: '#f7f8f3'
     }}>
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
@@ -135,26 +132,6 @@ export default function Home({ navigation, route }) {
           data={customers}
           renderItem={renderItem}
           keyExtractor={(item, index)=> index.toString()}
-          ItemSeparatorComponent={renderSeparator}
-          ListHeaderComponent={
-          <View
-            style={{
-              backgroundColor: 'white',
-              padding: 10,
-              borderRadius: 25,
-              borderWidth: 1,
-              borderColor: '#CED0CE',
-              justifyContent: 'center',
-              marginBottom: 20
-            }}>
-            <TextInput
-              onChangeText={(value)=> searchContacts(value)}
-              placeholder='Search'
-              textStyle={{ color: '#78bcc4' }}
-              style={styles.searchBar}
-            />
-          </View>
-           }
           ListEmptyComponent={()=>(
             <View style={{
               flex:1,
@@ -208,5 +185,51 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     resizeMode: "contain"
-  }
+  },
+  // card: {
+  //   backgroundColor: theme.COLORS.WHITE,
+  //   width: width - theme.SIZES.BASE * 2,
+  //   marginVertical: 0,
+  //   elevation: theme.SIZES.BASE / 2,
+  // },
+  full: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0,
+  },
+  noRadius: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  rounded: {
+    borderRadius: theme.SIZES.BASE * 0.1875,
+  },
+  gradient: {
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 90,
+    position: 'absolute',
+    overflow: 'hidden',
+    borderBottomRightRadius: theme.SIZES.BASE * 0.5,
+    borderBottomLeftRadius: theme.SIZES.BASE * 0.5,
+  },
+  card: {
+    borderColor: 'transparent',
+    // marginHorizontal: BASE_SIZE,
+    // marginVertical: BASE_SIZE / 2,
+    marginVertical: 1,
+    padding: BASE_SIZE+10,
+    backgroundColor: COLOR_WHITE,
+    shadowOpacity: .9,
+  },
+  left: {
+    marginRight: BASE_SIZE,
+  },
+  right: {
+    width: BASE_SIZE * 2,
+    backgroundColor: 'transparent',
+    elevation: 10, justifyContent:'center', alignItems: 'center',
+  },
 });
