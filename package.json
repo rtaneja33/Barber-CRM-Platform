@@ -42,8 +42,10 @@
     "react-native-svg": "12.1.0",
     "react-native-user-avatar": "^1.0.7",
     "react-native-vector-icons": "^7.1.0",
+    "react-native-vega-scroll-list": "^1.0.0",
     "react-native-web": "~0.13.12",
-    "rn-avatar": "^1.0.3"
+    "rn-avatar": "^1.0.3",
+    "expo-linear-gradient": "~8.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

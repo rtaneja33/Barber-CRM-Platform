@@ -10,7 +10,7 @@ class DrawerItem extends React.Component {
     const { title, focused } = this.props;
 
     switch (title) {
-      case "Rohan":
+      case "My Customers":
         return (
           <Icon
             name="shop"

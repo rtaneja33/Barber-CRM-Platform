@@ -5,13 +5,49 @@ import {
   Image,
   TouchableWithoutFeedback,
   ImageBackground,
-  Dimensions
+  Dimensions,
+  View
 } from "react-native";
+import { LinearGradient as Gradient } from 'expo-linear-gradient';
+const BASE_SIZE = theme.SIZES.BASE;
+const GRADIENT_BLUE = ['#6B84CA', '#8F44CE'];
+const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
+const COLOR_WHITE = theme.COLORS.WHITE;
+const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 //galio
-import { Block, Text, theme } from "galio-framework";
+import { Block, Text, theme, Button } from "galio-framework";
+import Icon from "../components/Icon";
 //argon
 import { articles, Images, argonTheme } from "../constants/";
 import { Card } from "../components/";
+const cards = [
+  {
+    title: 'Tasks',
+    subtitle: '15 completed tasks',
+    icon: 'list-bullet',
+    iconFamily: 'Galio',
+  },
+
+  {
+    title: 'Aquisitions',
+    subtitle: '15 completed tasks',
+    icon: 'bag-17',
+    iconFamily: 'Galio',
+  },
+  {
+    title: 'Cards',
+    subtitle: '15 completed tasks',
+    icon: 'credit-card',
+    iconFamily: 'Galio',
+  },
+
+  {
+    title: 'Settings',
+    subtitle: '15 completed tasks',
+    icon: 'settings-gear-65',
+    iconFamily: 'Galio',
+  },
+];
 
 const { width } = Dimensions.get("screen");
 
@@ -77,6 +113,42 @@ class Articles extends React.Component {
       </TouchableWithoutFeedback>
     );
   };
+
+  renderSpecialCard = (props, index) => {
+    const gradientColors = index % 2 ? GRADIENT_BLUE : GRADIENT_PINK;
+    console.log(props);
+    return (
+      <Block row center card shadow space="between" style={styles.card} key={props.title}>
+        <Gradient
+          start={[0.45, 0.45]}
+          end={[0.90, 0.90]}
+          colors={gradientColors}
+          style={[styles.gradient, styles.left]}
+        >
+          <Icon
+            size={16}
+            name={props.icon}
+            color={COLOR_WHITE}
+            family={props.iconFamily}
+          />
+        </Gradient>
+        <Block flex>
+          <Text size={BASE_SIZE * 1.125}>{props.title}</Text>
+          <Text size={BASE_SIZE * 0.875} muted>{props.subtitle}</Text>
+        </Block>
+        <View style={styles.right}>
+          <Icon
+              name="nav-right"
+              family="ArgonExtra"
+              size={BASE_SIZE}
+              color="red"
+          />
+        </View>
+      </Block>
+    );
+  }
+
+  renderSpecialCards = () => cards.map((card, index) => this.renderSpecialCard(card, index));
 
   renderCards = () => {
     return (
@@ -186,6 +258,7 @@ class Articles extends React.Component {
         <ScrollView
           showsVerticalScrollIndicator={false}
         >
+          {this.renderSpecialCards()}
           {this.renderCards()}
           {this.renderAlbum()}
         </ScrollView>
@@ -247,7 +320,38 @@ const styles = StyleSheet.create({
   productDescription: {
     paddingTop: theme.SIZES.BASE
     // paddingBottom: theme.SIZES.BASE * 2,
-  }
+  },
+  card: {
+    borderColor: 'transparent',
+    marginHorizontal: BASE_SIZE,
+    marginVertical: BASE_SIZE / 2,
+    padding: BASE_SIZE,
+    backgroundColor: COLOR_WHITE,
+    shadowOpacity: 0.9,
+  },
+  menu: {
+    width: BASE_SIZE * 2,
+    borderColor: 'transparent',
+  },
+  settings: {
+    width: BASE_SIZE * 2,
+    borderColor: 'transparent',
+  },
+  left: {
+    marginRight: BASE_SIZE,
+  },
+  right: {
+    width: BASE_SIZE * 2,
+    backgroundColor: 'transparent',
+    elevation: 10, justifyContent:'center', alignItems: 'center',
+  },
+  gradient: {
+    width: BASE_SIZE * 3.25,
+    height: BASE_SIZE * 3.25,
+    borderRadius: BASE_SIZE * 3.25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default Articles;

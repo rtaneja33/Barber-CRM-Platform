@@ -144,12 +144,12 @@ function HomeStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
-        name="Rohan"
+        name="My Customers"
         component={Home}
         options={{
           header: ({ navigation, scene, route }) => (
             <Header
-              title="Rohan"
+              title="My Customers"
               searchFunc={scene.descriptor.options.searchFunc}
               search
               navigation={navigation}
