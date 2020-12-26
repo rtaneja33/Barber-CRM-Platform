@@ -56,15 +56,14 @@ export default function Home({ navigation, route }) {
           <Avatar
             size="medium"
             rounded
-            title= {item.firstName[0] + item.lastName[0]}
+            title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
             overlayContainerStyle={{backgroundColor: '#78bcc4'}}
-            onPress={() => console.log("Works!")}
             activeOpacity={0.4}
           />
         </Block>
         <Block flex>
           <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.firstName} {item.lastName}</Text>
-          <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}</Text>
+          <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}</Text>
         </Block>
         <View style={styles.right}>
           <Icon

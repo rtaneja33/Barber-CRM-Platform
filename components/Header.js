@@ -1,6 +1,6 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions,TextInput } from 'react-native';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions,TextInput, View } from 'react-native';
 import { Button, Block, NavBar, Text, theme } from 'galio-framework';
 
 import Icon from './Icon';
@@ -108,18 +108,21 @@ class Header extends React.Component {
   renderSearch = (val) => {
     const { navigation } = this.props;
     return (
-      <Input
-        left
-        color="black"
-        style={styles.search}
-        placeholder="Search My Customers"
-        placeholderTextColor={'#8898AA'}
-        onChange = {(event)=> {
-          const searchkey = event.nativeEvent.text;
-          val(searchkey)}
-        }
-        iconContent={<Icon size={16} color={theme.COLORS.MUTED} style={{ marginRight: 10 }} name="search1" family="AntDesign" />}
-      />
+        <Input
+          left
+          // autoFocus = {true}
+          hitSlop={{top: 20, bottom: 20, left: 50, right: 40}}
+          color="black"
+          style={styles.search}
+          placeholder="Search My Customers"
+          placeholderTextColor={'#8898AA'}
+          clearButtonMode = "always"
+          onChange = {(event)=> {
+            const searchkey = event.nativeEvent.text;
+            val(searchkey)}
+          }
+          iconContent={<Icon size={16} color={theme.COLORS.MUTED} style={{ marginRight: 10 }} name="search1" family="AntDesign" />}
+        />
     );
   }
   renderOptions = () => {
@@ -224,6 +227,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center'
   },
   navbar: {
     paddingVertical: 0,

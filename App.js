@@ -72,7 +72,7 @@ export default function App() {
               {item.firstName} {item.lastName}
             </Text>
             <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
+            {item.phoneNumbers && item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
             </Text>
           </View>
         </View>
