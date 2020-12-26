@@ -36,7 +36,7 @@ export default function App() {
     });
     updateCustomers(data);
     setMemContacts(data);
-    console.log(customers);
+    // console.log(customers);
     setIsLoading(false);
   } 
   

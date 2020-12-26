@@ -157,8 +157,8 @@ class Header extends React.Component {
   }
   renderHeader = () => {
     const { search, options, tabs, searchFunc } = this.props;
-    console.log("searchFunc is");
-    console.log(searchFunc)
+    // console.log("searchFunc is");
+    // console.log(searchFunc)
     if ((search && searchFunc) || tabs || options) {
       return (
         <Block center>

@@ -116,7 +116,7 @@ class Articles extends React.Component {
 
   renderSpecialCard = (props, index) => {
     const gradientColors = index % 2 ? GRADIENT_BLUE : GRADIENT_PINK;
-    console.log(props);
+    // console.log(props);
     return (
       <Block row center card shadow space="between" style={styles.card} key={props.title}>
         <Gradient

@@ -32,7 +32,6 @@ export default function Home({ navigation, route }) {
     });
     updateCustomers(data);
     setMemContacts(data);
-    console.log("just loaded mem contacts!", data.length)
    // console.log(customers);
     setIsLoading(false);
   } 
@@ -40,7 +39,7 @@ export default function Home({ navigation, route }) {
   useEffect(() => {
     setIsLoading(true);
     loadContacts();
-    console.log("called loadContacts in useEffect");
+    //console.log("called loadContacts in useEffect");
     //console.log("inMemContacts have length of", inMemoryContacts.length);
     // navigation.setOptions({
     //   searchFunc: searchContacts,
@@ -76,40 +75,11 @@ export default function Home({ navigation, route }) {
           />
         </View>
       </Block>
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            padding: 16,
-            alignItems: 'center'
-          }}>
-          <Avatar
-            size="medium"
-            rounded
-            title="MT"
-            overlayContainerStyle={{backgroundColor: '#78bcc4'}}
-            onPress={() => console.log("Works!")}
-            activeOpacity={0.4}
-          />
-          <View
-            style={{
-              flexDirection: 'column',
-              padding: 16,
-            }}>
-            <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
-              {item.firstName} {item.lastName}
-            </Text>
-            <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
-            </Text>
-          </View>
-        </View> */}
       </TouchableOpacity>
     </View>
   );
 
   const searchContacts = (value) =>{
-    console.log("value is", value);
-    console.log("In mem contacts from searchContacts have length...", inMemoryContacts.length);
     const filteredContacts = inMemoryContacts.filter(
       contact => {
         let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
