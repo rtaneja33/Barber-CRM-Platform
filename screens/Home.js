@@ -50,7 +50,7 @@ export default function Home({ navigation, route }) {
   const renderItem = ({item}) => 
     (
     <View style={{minHeight:70, padding:5}}>
-      <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName }, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName, phoneNumber:(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
       <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
         <Block style={styles.left}>
           <Avatar
@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
   },
   card: {
     borderColor: 'transparent',
-    // marginHorizontal: BASE_SIZE,
     // marginVertical: BASE_SIZE / 2,
     marginVertical: 1,
     padding: BASE_SIZE+10,
