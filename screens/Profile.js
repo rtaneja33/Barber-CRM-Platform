@@ -5,21 +5,61 @@ import {
   ScrollView,
   Image,
   ImageBackground,
-  Platform
+  Platform,
+  View
 } from "react-native";
-import { Block, Text, theme } from "galio-framework";
-import equal from 'fast-deep-equal';
-
+import { Button as GaButton, Block, Text, theme } from "galio-framework";
 import { Button } from "../components";
 import { Images, argonTheme } from "../constants";
 import Icon from "../components/Icon";
 import { HeaderHeight } from "../constants/utils";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
 class Profile extends React.Component {
+  renderAlbum = () => {
+    const { navigation } = this.props;
+
+    return (
+      <Block
+        flex
+        style={[styles.group, { paddingBottom: theme.SIZES.BASE * 5 }]}
+      >
+        <Text bold size={16} style={styles.title}>
+          Customer Photos
+        </Text>
+        <Block style={{ marginHorizontal: theme.SIZES.BASE * 2 }}>
+          <Block flex right>
+            <Text
+              size={12}
+              color={theme.COLORS.PRIMARY}
+              onPress={() => navigation.navigate("Home")}
+            >
+              View All
+            </Text>
+          </Block>
+          <Block
+            row
+            space="between"
+            style={{ marginTop: theme.SIZES.BASE, flexWrap: "wrap" }}
+          >
+            {Images.Viewed.map((img, index) => (
+              <Block key={`viewed-${img}`} style={styles.shadow}>
+                <Image
+                  resizeMode="cover"
+                  source={{ uri: img }}
+                  style={styles.albumThumb}
+                />
+              </Block>
+            ))}
+          </Block>
+        </Block>
+      </Block>
+    );
+  };
 
   render() {
     console.log("before finding fullname");
@@ -28,6 +68,7 @@ class Profile extends React.Component {
     console.log("PHONE NUMBER IS", phoneNumber)
     console.log("IN RENDER PROFILE, full name is", fullName);
     return (
+      
       <Block flex style={styles.profile}>
         <Block flex>
           <ImageBackground
@@ -69,7 +110,7 @@ class Profile extends React.Component {
                       </Text>
                 </Block>
                 <Block style={styles.info}>
-                  <Block row space="start">
+                  <Block row space="evenly">
                   {/* <Block middle>
                   <Icon
                     size={20}
@@ -97,30 +138,78 @@ class Profile extends React.Component {
                     {/* </Block>  */}
                   </Block>
                 </Block>
+                <Block center>
+                      <Button 
+                        style={styles.button}
+                      >
+                        Add Appointment Photos
+                      </Button>
+                </Block>
+                <Block center>
+                      <Button
+                        color="default"
+                        textStyle={{ color: "white", fontSize: 12, fontWeight: "700" }}
+                        style={styles.button}
+                      >
+                        Add Preferences
+                      </Button>
+                </Block>
                 <Block
                     middle
                     row
                     space="evenly"
-                    style={{ marginTop: 20, paddingBottom: 24 }}
+                    style={{ marginTop: 20, paddingBottom: 24, marginHorizontal: 20 }}
                   >
-                    <Button
-                      small
-                      style={{ backgroundColor: argonTheme.COLORS.INFO }}
-                    >
-                      ADD PHOTO
-                    </Button>
+                      <Button style={{ ...styles.socialButtons, marginRight: 30 }}>
+                        <Block column center>
+                          <Icon
+                            name="add-a-photo"
+                            family="MaterialIcons"
+                            size={30}
+                            color={"white"}
+                            style={{ marginTop: 2, marginRight: 5 }}
+                          />
+                          <Text style={styles.socialTextButtons}>ADD PHOTO</Text>
+                        </Block>
+                      </Button>
+                      <Button style={{ ...styles.socialButtons, marginRight: 30, backgroundColor: '#172B4D' }}>
+                        <Block column center>
+                          <Icon
+                            name="mode-edit"
+                            family="MaterialIcons"
+                            size={30}
+                            color={"white"}
+                            style={{ marginTop: 2, marginRight: 5 }}
+                          />
+                          <Text style={styles.socialTextButtons}>ADD NOTES</Text>
+                        </Block>
+                      </Button>
+
+                        {/* <Button
+                        small
+                        style={{ backgroundColor: argonTheme.COLORS.INFO }}
+                      >
+                        ADD PHOTO
+                      </Button>
                     <Button
                       small
                       style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}
                     >
                       MESSAGE
-                    </Button>
+                    </Button> */}
                   </Block>
+                  
                 <Block flex>
                   <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
                     <Block style={styles.divider} />
                   </Block>
-                  <Block middle>
+                  
+                  {/* world is my oyster */}
+
+                  {/* {this.renderAlbum()} */}
+
+
+                  {/* <Block middle>
                     <Text
                       size={16}
                       color="#525F7F"
@@ -166,9 +255,17 @@ class Profile extends React.Component {
                         />
                       ))}
                     </Block>
-                  </Block>
+                  </Block> */}
                 </Block>
               </Block>
+              <Block flex center>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                >
+                  {this.renderAlbum()}
+                </ScrollView>
+              </Block>
+
             </ScrollView>
           </ImageBackground>
         </Block>
@@ -184,6 +281,16 @@ const styles = StyleSheet.create({
     // marginBottom: -HeaderHeight * 2,
     flex: 1
   },
+  button: {
+    width: width - theme.SIZES.BASE * 4,
+  },
+  albumThumb: {
+    borderRadius: 4,
+    marginVertical: 4,
+    alignSelf: "center",
+    width: thumbMeasure,
+    height: thumbMeasure
+  },
   profileContainer: {
     width: width,
     height: height,
@@ -198,7 +305,7 @@ const styles = StyleSheet.create({
     // position: "relative",
     padding: theme.SIZES.BASE,
     marginHorizontal: theme.SIZES.BASE,
-    marginTop: 45,
+    marginTop: 60,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     backgroundColor: theme.COLORS.WHITE,
@@ -225,10 +332,37 @@ const styles = StyleSheet.create({
   nameInfo: {
     marginTop: 15
   },
+  title: {
+    paddingBottom: theme.SIZES.BASE,
+    paddingHorizontal: theme.SIZES.BASE * 2,
+    marginTop: 22,
+    color: argonTheme.COLORS.HEADER
+  },
+  group: {
+    paddingTop: theme.SIZES.BASE
+  },
   divider: {
     width: "90%",
     borderWidth: 1,
     borderColor: "#E9ECEF"
+  },
+  socialButtons: {
+    width: 120,
+    height: 65,
+    shadowColor: argonTheme.COLORS.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 4
+    },
+    shadowRadius: 8,
+    shadowOpacity: 0.1,
+    elevation: 1
+  },
+  socialTextButtons: {
+    marginTop: 5,
+    color: "white",
+    fontWeight: "800",
+    fontSize: 14
   },
   thumb: {
     borderRadius: 4,
