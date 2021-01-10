@@ -1,4 +1,9 @@
 export default {
+  SIZES: {
+    BASE: 16,
+    FONT: 16,
+    OPACITY: 0.8
+  },
   COLORS: {
     DEFAULT: '#172B4D',
     PRIMARY: '#5E72E4',
