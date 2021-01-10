@@ -55,7 +55,7 @@ export default function Home({ navigation, route }) {
             size="medium"
             rounded
             title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
-            overlayContainerStyle={{backgroundColor: '#78bcc4'}}
+            overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
             activeOpacity={0.4}
           />
         </Block>

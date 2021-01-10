@@ -4,7 +4,6 @@ import { Easing, Animated, Dimensions, TextInput } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import { Block } from "galio-framework";
 
 // screens
@@ -215,43 +214,95 @@ export default function OnboardingStack(props) {
   );
 }
 
-function AppStack(props) {
+function AppStack(props) { // if this causes an error, try expo start -c to clean cache -> rebuild (requires new version for tab nav.)
   return (
-    <Drawer.Navigator
-      style={{ flex: 1 }}
-      drawerContent={props => <CustomDrawerContent {...props} />}
-      drawerStyle={{
-        backgroundColor: "white",
-        width: width * 0.8
-      }}
-      drawerContentOptions={{
-        activeTintcolor: "white",
-        inactiveTintColor: "#000",
-        activeBackgroundColor: "transparent",
-        itemStyle: {
-          width: width * 0.75,
-          backgroundColor: "transparent",
-          paddingVertical: 16,
-          paddingHorizonal: 12,
-          justifyContent: "center",
-          alignContent: "center",
-          alignItems: "center",
-          overflow: "hidden"
-        },
-        labelStyle: {
-          fontSize: 18,
-          marginLeft: 12,
-          fontWeight: "normal"
-        }
-      }}
-      initialRouteName="Home"
-    >
-      <Drawer.Screen name="Home" component={HomeStack} />
-      <Drawer.Screen name="Profile" component={ProfileStack} />
-      <Drawer.Screen name="Account" component={Register} />
-      <Drawer.Screen name="Elements" component={ElementsStack} />
-      <Drawer.Screen name="Articles" component={ArticlesStack} />
-    </Drawer.Navigator>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={HomeStack} options ={{
+          tabBarLabel: "Recent Cuts",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+            name="cut"
+            family="Ionicon"
+            size= {size}
+            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+          />
+          ),
+        }} />
+        {/* <Tab.Screen name="Profile" component={ProfileStack} options ={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+            name="shop"
+            family="ArgonExtra"
+            size={14}
+            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+          />
+          ), }}
+          /> */}
+        <Tab.Screen name="Account" component={Register} options ={{
+          tabBarLabel: "Customers",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+            name="people"
+            family="IonIcon"
+            size= {size}
+            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+          />
+          ), }}/>
+        {/* <Tab.Screen name="Elements" component={ElementsStack} options ={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+            name="shop"
+            family="ArgonExtra"
+            size={14}
+            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+          />
+          ), }}/> */}
+        <Tab.Screen name="Articles" component={ArticlesStack} options ={{
+          tabBarLabel: "My Shop",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+            name="store"
+            family="MaterialIcons"
+            size= {size}
+            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+          />
+          ), }}/>
+      </Tab.Navigator>
+    // <Tab.Navigator
+    //   style={{ flex: 1 }}
+    //   drawerContent={props => <CustomDrawerContent {...props} />}
+    //   drawerStyle={{
+    //     backgroundColor: "white",
+    //     width: width * 0.8
+    //   }}
+    //   drawerContentOptions={{
+    //     activeTintcolor: "white",
+    //     inactiveTintColor: "#000",
+    //     activeBackgroundColor: "transparent",
+    //     itemStyle: {
+    //       width: width * 0.75,
+    //       backgroundColor: "transparent",
+    //       paddingVertical: 16,
+    //       paddingHorizonal: 12,
+    //       justifyContent: "center",
+    //       alignContent: "center",
+    //       alignItems: "center",
+    //       overflow: "hidden"
+    //     },
+    //     labelStyle: {
+    //       fontSize: 18,
+    //       marginLeft: 12,
+    //       fontWeight: "normal"
+    //     }
+    //   }}
+    //   initialRouteName="Home"
+    // >
+    //   <Tab.Screen name="Home" component={HomeStack} />
+    //   <Tab.Screen name="Profile" component={ProfileStack} />
+    //   <Tab.Screen name="Account" component={Register} />
+    //   <Tab.Screen name="Elements" component={ElementsStack} />
+    //   <Tab.Screen name="Articles" component={ArticlesStack} />
+    // </Tab.Navigator>
   );
 }
 
