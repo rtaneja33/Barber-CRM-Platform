@@ -5,11 +5,9 @@ import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 import { Avatar } from 'react-native-elements';
 import { Block, theme } from 'galio-framework';
+import { articles, Images, argonTheme } from "../constants/";
 const { width } = Dimensions.get('screen');
-import { LinearGradient as Gradient } from 'expo-linear-gradient';
 const BASE_SIZE = theme.SIZES.BASE;
-const GRADIENT_BLUE = ['#6B84CA', '#8F44CE'];
-const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
 const COLOR_WHITE = theme.COLORS.WHITE;
 const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 import Icon from "../components/Icon";
@@ -50,14 +48,14 @@ export default function Home({ navigation, route }) {
   const renderItem = ({item}) => 
     (
     <View style={{minHeight:70, padding:5}}>
-      <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName }, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName, phoneNumber:(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
       <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
         <Block style={styles.left}>
           <Avatar
             size="medium"
             rounded
             title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
-            overlayContainerStyle={{backgroundColor: '#78bcc4'}}
+            overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
             activeOpacity={0.4}
           />
         </Block>
@@ -217,7 +215,6 @@ const styles = StyleSheet.create({
   },
   card: {
     borderColor: 'transparent',
-    // marginHorizontal: BASE_SIZE,
     // marginVertical: BASE_SIZE / 2,
     marginVertical: 1,
     padding: BASE_SIZE+10,
