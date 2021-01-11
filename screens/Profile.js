@@ -82,10 +82,11 @@ class Profile extends React.Component {
             >
               <Block flex style={styles.profileCard}>
                 <Block middle style={styles.avatarContainer}>
-                  <Image
+                  
+                  {/* <Image
                     source={{ uri: Images.ProfilePicture }}
                     style={styles.avatar}
-                  />
+                  /> */}
                 </Block>
                 <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">

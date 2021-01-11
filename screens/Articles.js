@@ -1,356 +1,388 @@
 import React from "react";
 import {
-  ScrollView,
   StyleSheet,
-  Image,
-  TouchableWithoutFeedback,
-  ImageBackground,
   Dimensions,
-  View
+  ScrollView,
+  Image,
+  ImageBackground,
+  Platform,
+  View,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { LinearGradient as Gradient } from 'expo-linear-gradient';
-const BASE_SIZE = theme.SIZES.BASE;
-const GRADIENT_BLUE = ['#6B84CA', '#8F44CE'];
-const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
-const COLOR_WHITE = theme.COLORS.WHITE;
-const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
-//galio
-import { Block, Text, theme, Button } from "galio-framework";
-import Icon from "../components/Icon";
-//argon
-import { articles, Images, argonTheme } from "../constants/";
+import { Avatar } from "react-native-elements";
 import { Card } from "../components/";
-const cards = [
-  {
-    title: 'Tasks',
-    subtitle: '15 completed tasks',
-    icon: 'list-bullet',
-    iconFamily: 'Galio',
-  },
+import { Block, Text, theme, Button as GaButton } from "galio-framework";
 
-  {
-    title: 'Aquisitions',
-    subtitle: '15 completed tasks',
-    icon: 'bag-17',
-    iconFamily: 'Galio',
-  },
-  {
-    title: 'Cards',
-    subtitle: '15 completed tasks',
-    icon: 'credit-card',
-    iconFamily: 'Galio',
-  },
-
-  {
-    title: 'Settings',
-    subtitle: '15 completed tasks',
-    icon: 'settings-gear-65',
-    iconFamily: 'Galio',
-  },
-];
-
-const { width } = Dimensions.get("screen");
+import { Button } from "../components";
+import { Images, argonTheme as nowTheme, articles } from "../constants";
+import { HeaderHeight } from "../constants/utils";
+import zIndex from "@material-ui/core/styles/zIndex";
+const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
-const cardWidth = width - theme.SIZES.BASE * 2;
-const categories = [
-  {
-    title: "Rohan's PHotos",
-    description:
-      "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
-    image:
-      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
-    price: "$125"
-  },
-  {
-    title: "Events",
-    description:
-      "Rock music is a genre of popular music. It developed during and after the 1960s in the United Kingdom.",
-    image:
-      "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-    price: "$35"
-  }
-];
-
-class Articles extends React.Component {
-  renderProduct = (item, index) => {
-    const { navigation } = this.props;
-
-    return (
-      <TouchableWithoutFeedback
-        style={{ zIndex: 3 }}
-        key={`product-${item.title}`}
-        onPress={() => navigation.navigate("Pro", { product: item })}
-      >
-        <Block center style={styles.productItem}>
-          <Image
-            resizeMode="cover"
-            style={styles.productImage}
-            source={{ uri: item.image }}
-          />
-          <Block center style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Text
-              center
-              size={16}
-              color={theme.COLORS.MUTED}
-              style={styles.productPrice}
-            >
-              {item.price}
-            </Text>
-            <Text center size={34}>
-              {item.title}
-            </Text>
-            <Text
-              center
-              size={16}
-              color={theme.COLORS.MUTED}
-              style={styles.productDescription}
-            >
-              {item.description}
-            </Text>
-          </Block>
-        </Block>
-      </TouchableWithoutFeedback>
-    );
-  };
-
-  renderSpecialCard = (props, index) => {
-    const gradientColors = index % 2 ? GRADIENT_BLUE : GRADIENT_PINK;
-    // console.log(props);
-    return (
-      <Block row center card shadow space="between" style={styles.card} key={props.title}>
-        <Gradient
-          start={[0.45, 0.45]}
-          end={[0.90, 0.90]}
-          colors={gradientColors}
-          style={[styles.gradient, styles.left]}
+const cardWidth = width - nowTheme.SIZES.BASE * 2;
+const Articles = () => {
+  const categories = [
+    {
+      image:
+        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
+      price: "Trieu",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+      price: "Vinny",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+      price: "Cathy",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+      price: "John",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+      price: "Tim",
+    },
+  ];
+  return (
+    <Block
+      style={{
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+    >
+      <Block flex={1}>
+        <ImageBackground
+          source={Images.BarberBackground}
+          style={styles.profileContainer}
+          imageStyle={styles.profileBackground}
         >
-          <Icon
-            size={16}
-            name={props.icon}
-            color={COLOR_WHITE}
-            family={props.iconFamily}
-          />
-        </Gradient>
-        <Block flex>
-          <Text size={BASE_SIZE * 1.125}>{props.title}</Text>
-          <Text size={BASE_SIZE * 0.875} muted>{props.subtitle}</Text>
-        </Block>
-        <View style={styles.right}>
-          <Icon
-              name="nav-right"
-              family="ArgonExtra"
-              size={BASE_SIZE}
-              color="red"
-          />
-        </View>
-      </Block>
-    );
-  }
-
-  renderSpecialCards = () => cards.map((card, index) => this.renderSpecialCard(card, index));
-
-  renderCards = () => {
-    return (
-      <Block flex style={styles.group}>
-        <Text bold size={16} style={styles.title}>
-          Cards
-        </Text>
-        <Block flex>
-          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Card item={articles[0]} horizontal />
-            <Block flex row>
-              <Card
-                item={articles[1]}
-                style={{ marginRight: theme.SIZES.BASE }}
-              />
-              <Card item={articles[2]} />
-            </Block>
-            <Card item={articles[4]} full />
-            <Block flex card shadow style={styles.category}>
-              <ImageBackground
-                source={{ uri: Images.Products["View article"] }}
-                style={[
-                  styles.imageBlock,
-                  { width: width - theme.SIZES.BASE * 2, height: 252 }
-                ]}
-                imageStyle={{
-                  width: width - theme.SIZES.BASE * 2,
-                  height: 252
-                }}
-              >
-                <Block style={styles.categoryTitle}>
-                  <Text size={18} bold color={theme.COLORS.WHITE}>
-                    View article
-                  </Text>
-                </Block>
-              </ImageBackground>
-            </Block>
-          </Block>
-          <Block flex style={{ marginTop: theme.SIZES.BASE / 2 }}>
-            <ScrollView
-              horizontal={true}
-              pagingEnabled={true}
-              decelerationRate={0}
-              scrollEventThrottle={16}
-              snapToAlignment="center"
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={cardWidth + theme.SIZES.BASE * 0.375}
-              contentContainerStyle={{
-                paddingHorizontal: theme.SIZES.BASE / 2
+          <Block flex>
+            <View style={styles.overlay} />
+            <Block
+              style={{
+                position: "absolute",
+                width: width,
+                zIndex: 5,
+                paddingHorizontal: 20,
               }}
             >
-              {categories &&
-                categories.map((item, index) =>
-                  this.renderProduct(item, index)
-                )}
-            </ScrollView>
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
+              <Block style={{ top: height * 0.05 }}>
+                <Block middle>
+                  <Text
+                    style={{
+                      fontFamily: "montserrat-bold",
+                      marginBottom: nowTheme.SIZES.BASE / 2,
+                      fontWeight: "900",
+                      fontSize: 26,
+                    }}
+                    color="#ffffff"
+                  >
+                    Trieu's Barber Shop
+                  </Text>
 
-  renderAlbum = () => {
-    const { navigation } = this.props;
-
-    return (
-      <Block
-        flex
-        style={[styles.group, { paddingBottom: theme.SIZES.BASE * 5 }]}
-      >
-        <Text bold size={16} style={styles.title}>
-          Album
-        </Text>
-        <Block style={{ marginHorizontal: theme.SIZES.BASE * 2 }}>
-          <Block flex right>
-            <Text
-              size={12}
-              color={theme.COLORS.PRIMARY}
-              onPress={() => navigation.navigate("Home")}
-            >
-              View All
-            </Text>
-          </Block>
-          <Block
-            row
-            space="between"
-            style={{ marginTop: theme.SIZES.BASE, flexWrap: "wrap" }}
-          >
-            {Images.Viewed.map((img, index) => (
-              <Block key={`viewed-${img}`} style={styles.shadow}>
-                <Image
-                  resizeMode="cover"
-                  source={{ uri: img }}
-                  style={styles.albumThumb}
-                />
+                  <Text
+                    size={16}
+                    color="white"
+                    style={{
+                      marginTop: 2,
+                      fontFamily: "montserrat-bold",
+                      lineHeight: 20,
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      opacity: 0.9,
+                    }}
+                  >
+                    123 Wallaby Way
+                  </Text>
+                </Block>
               </Block>
-            ))}
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
+            </Block>
 
-  render() {
-    return (
-      <Block flex center>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-        >
-          {this.renderSpecialCards()}
-          {this.renderCards()}
-          {this.renderAlbum()}
-        </ScrollView>
+            <Block
+              middle
+              row
+              style={{
+                position: "absolute",
+                width: width,
+                top: height * 0.18 - 26,
+                zIndex: 99,
+              }}
+            >
+              <Button
+                style={{
+                  width: 114,
+                  height: 44,
+                  marginHorizontal: 5,
+                  elevation: 0,
+                }}
+                textStyle={{ fontSize: 16, fontWeight: "bold" }}
+                round
+              >
+                Book
+              </Button>
+              {/* <GaButton
+                round
+                onlyIcon
+                shadowless
+                icon="twitter"
+                iconFamily="Font-Awesome"
+                iconColor={nowTheme.COLORS.WHITE}
+                iconSize={nowTheme.SIZES.BASE * 1.375}
+                color={'#888888'}
+                style={[styles.social, styles.shadow]}
+              />
+              <GaButton
+                round
+                onlyIcon
+                shadowless
+                icon="pinterest"
+                iconFamily="Font-Awesome"
+                iconColor={nowTheme.COLORS.WHITE}
+                iconSize={nowTheme.SIZES.BASE * 1.375}
+                color={'#888888'}
+                style={[styles.social, styles.shadow]}
+              /> */}
+            </Block>
+          </Block>
+        </ImageBackground>
       </Block>
-    );
-  }
-}
+      <Block flex={3} center>
+        <ScrollView flex ={1} showsVerticalScrollIndicator={true} nestedScrollEnabled={true}>
+          <Block flex>
+            <Text bold size={16} style={styles.title}>
+              Barbers
+            </Text>
+            <Block flex>
+              <Block flex style={{ marginTop: nowTheme.SIZES.BASE / 2 }}>
+                <ScrollView
+                  horizontal={true}
+                  nestedScrollEnabled={true}
+                  // pagingEnabled={true}
+                  // decelerationRate={0}
+                  scrollEventThrottle={16}
+                  // snapToAlignment="center"
+                  showsHorizontalScrollIndicator={false}
+                  // snapToInterval={cardWidth + nowTheme.SIZES.BASE * 0.375}
+                  contentContainerStyle={{
+                    paddingHorizontal: 20
+                  }}
+                >
+                  {categories &&
+                    categories.map((item, index) => (
+                      <TouchableWithoutFeedback
+                        style={{ zIndex: 3 }}
+                        key={`product-${item.title}`}
+                        onPress={() =>
+                          alert("clicked Barber")
+                        }
+                      >
+                        <Block center style={styles.productItem}>
+                          <Image
+                            resizeMode="cover"
+                            style={styles.productImage}
+                            source={{ uri: item.image }}
+                          />
+                          <Block
+                            center
+                            // style={{ paddingHorizontal: theme.SIZES.BASE }}
+                          >
+                            <Text
+                              center
+                              size={16}
+                              color={theme.COLORS.MUTED}
+                              style={styles.productPrice}
+                            >
+                              {item.price}
+                            </Text>
+                            {/* <Text center size={34}>
+                              {item.title}
+                            </Text>
+                            <Text
+                              center
+                              size={16}
+                              color={theme.COLORS.MUTED}
+                              style={styles.productDescription}
+                            >
+                              {item.description}
+                            </Text> */}
+                          </Block>
+                        </Block>
+                      </TouchableWithoutFeedback>
+                    ))}
+                </ScrollView>
+              </Block>
+            </Block>
+          </Block>
+        {/* </ScrollView>
+      </Block> */}
+      <Block flex={1} style={{ padding: nowTheme.SIZES.BASE }}>
+        {/* <ScrollView showsVerticalScrollIndicator={true}> */}
+          <Block flex style={{ marginTop: 20 }}>
+            <Block middle>
+              <Text
+                style={{
+                  color: "#2c2c2c",
+                  fontWeight: "bold",
+                  fontSize: 19,
+                  fontFamily: "montserrat-bold",
+                  marginTop: 15,
+                  marginBottom: 30,
+                  zIndex: 2,
+                }}
+              >
+                About me
+              </Text>
+              <Text
+                size={16}
+                muted
+                style={{
+                  textAlign: "center",
+                  fontFamily: "montserrat-regular",
+                  zIndex: 2,
+                  lineHeight: 25,
+                  color: "#9A9A9A",
+                  paddingHorizontal: 15,
+                }}
+              >
+                An artist of considerable range, named Ryan — the name has taken
+                by Melbourne has raised, Brooklyn-based Nick Murphy — writes,
+                performs and records all of his own music.
+              </Text>
+            </Block>
+            <Block
+              row
+              style={{ paddingVertical: 14, paddingHorizontal: 15 }}
+              space="between"
+            >
+              <Text bold size={16} color="#2c2c2c" style={{ marginTop: 3 }}>
+                Album
+              </Text>
+              <Button
+                small
+                color="transparent"
+                textStyle={{ color: nowTheme.COLORS.PRIMARY, fontSize: 14 }}
+              >
+                View all
+              </Button>
+            </Block>
+
+            <Block
+              style={{
+                paddingBottom: -HeaderHeight * 2,
+                paddingHorizontal: 15,
+              }}
+            >
+              <Block row space="between" style={{ flexWrap: "wrap" }}>
+                {Images.Viewed2.map((img, imgIndex) => (
+                  <Image
+                    source={img}
+                    key={`viewed-${img}`}
+                    resizeMode="cover"
+                    style={styles.thumb}
+                  />
+                ))}
+              </Block>
+            </Block>
+          </Block>
+        {/* </ScrollView> */}
+      </Block>
+      </ScrollView>
+      </Block>
+    </Block>
+  );
+};
 
 const styles = StyleSheet.create({
-  title: {
-    paddingBottom: theme.SIZES.BASE,
-    paddingHorizontal: theme.SIZES.BASE * 2,
-    marginTop: 22,
-    color: argonTheme.COLORS.HEADER
+  profileContainer: {
+    width,
+    height,
+    padding: 0,
+    zIndex: 1,
   },
-  group: {
-    paddingTop: theme.SIZES.BASE
+  overlay: {
+    backgroundColor: "black",
+    width,
+    height: height * 0.18,
+    opacity: 0.5,
   },
-  albumThumb: {
+  profileBackground: {
+    width,
+    height: height * 0.18,
+    opacity: 0.4,
+  },
+  info: {
+    marginTop: 30,
+    paddingHorizontal: 10,
+    height: height * 0.8,
+  },
+  avatarContainer: {
+    position: "relative",
+    marginTop: -80,
+  },
+  avatar: {
+    width: thumbMeasure,
+    height: thumbMeasure,
+    borderRadius: 50,
+    borderWidth: 0,
+  },
+  nameInfo: {
+    marginTop: 35,
+  },
+  thumb: {
     borderRadius: 4,
     marginVertical: 4,
     alignSelf: "center",
     width: thumbMeasure,
-    height: thumbMeasure
+    height: thumbMeasure,
   },
-  category: {
-    backgroundColor: theme.COLORS.WHITE,
-    marginVertical: theme.SIZES.BASE / 2,
-    borderWidth: 0
-  },
-  categoryTitle: {
-    height: "100%",
-    paddingHorizontal: theme.SIZES.BASE,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  social: {
+    width: nowTheme.SIZES.BASE * 3,
+    height: nowTheme.SIZES.BASE * 3,
+    borderRadius: nowTheme.SIZES.BASE * 1.5,
     justifyContent: "center",
-    alignItems: "center"
+    zIndex: 99,
+    marginHorizontal: 5,
+  },
+  title: {
+    paddingBottom: nowTheme.SIZES.BASE,
+    paddingHorizontal: nowTheme.SIZES.BASE * 2,
+    marginTop: 22,
+    color: nowTheme.COLORS.HEADER,
+  },
+  group: {
+    paddingTop: nowTheme.SIZES.BASE,
   },
   imageBlock: {
     overflow: "hidden",
-    borderRadius: 4
+    borderRadius: 4,
   },
   productItem: {
-    width: cardWidth - theme.SIZES.BASE * 2,
-    marginHorizontal: theme.SIZES.BASE,
+    width: cardWidth/4,
+    marginHorizontal: 10,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 7 },
     shadowRadius: 10,
-    shadowOpacity: 0.2
+    shadowOpacity: 0.2,
   },
   productImage: {
-    width: cardWidth - theme.SIZES.BASE,
-    height: cardWidth - theme.SIZES.BASE,
-    borderRadius: 3
+    width: cardWidth / 4,
+    height: cardWidth / 4,
+    borderRadius: 100,
   },
   productPrice: {
-    paddingTop: theme.SIZES.BASE,
-    paddingBottom: theme.SIZES.BASE / 2
+    paddingTop: nowTheme.SIZES.BASE,
+    paddingBottom: nowTheme.SIZES.BASE / 2,
   },
   productDescription: {
-    paddingTop: theme.SIZES.BASE
-    // paddingBottom: theme.SIZES.BASE * 2,
-  },
-  card: {
-    borderColor: 'transparent',
-    marginHorizontal: BASE_SIZE,
-    marginVertical: BASE_SIZE / 2,
-    padding: BASE_SIZE,
-    backgroundColor: COLOR_WHITE,
-    shadowOpacity: 0.9,
-  },
-  menu: {
-    width: BASE_SIZE * 2,
-    borderColor: 'transparent',
-  },
-  settings: {
-    width: BASE_SIZE * 2,
-    borderColor: 'transparent',
-  },
-  left: {
-    marginRight: BASE_SIZE,
-  },
-  right: {
-    width: BASE_SIZE * 2,
-    backgroundColor: 'transparent',
-    elevation: 10, justifyContent:'center', alignItems: 'center',
-  },
-  gradient: {
-    width: BASE_SIZE * 3.25,
-    height: BASE_SIZE * 3.25,
-    borderRadius: BASE_SIZE * 3.25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: nowTheme.SIZES.BASE,
+    // paddingBottom: nowTheme.SIZES.BASE * 2,
   },
 });
 
