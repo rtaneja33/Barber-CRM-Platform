@@ -57,121 +57,102 @@ const Articles = () => {
         justifyContent: "space-between",
       }}
     >
-      <Block flex={1}>
-        <ImageBackground
-          source={Images.BarberBackground}
-          style={styles.profileContainer}
-          imageStyle={styles.profileBackground}
+      <Block flex center>
+        <ScrollView
+          flex={1}
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
         >
-          <Block flex>
-            <View style={styles.overlay} />
-            <Block
-              style={{
-                position: "absolute",
-                width: width,
-                zIndex: 5,
-                paddingHorizontal: 20,
-              }}
+          <Block flex={1} >
+            <ImageBackground
+              source={Images.BarberBackground}
+              style={styles.profileContainer}
+              imageStyle={styles.profileBackground}
             >
-              <Block style={{ top: height * 0.05 }}>
-                <Block middle>
-                  <Text
-                    style={{
-                      fontFamily: "montserrat-bold",
-                      marginBottom: nowTheme.SIZES.BASE / 2,
-                      fontWeight: "900",
-                      fontSize: 26,
-                    }}
-                    color="#ffffff"
-                  >
-                    Trieu's Barber Shop
-                  </Text>
+              <Block flex>
+                <View style={styles.overlay} />
+                <Block
+                  style={{
+                    position: "absolute",
+                    width: width,
+                    zIndex: 5,
+                    paddingHorizontal: 20,
+                  }}
+                >
+                  <Block style={{ top: height * 0.05 }}>
+                    <Block middle>
+                      <Text
+                        style={{
+                          fontFamily: "montserrat-bold",
+                          marginBottom: nowTheme.SIZES.BASE / 2,
+                          fontWeight: "900",
+                          fontSize: 26,
+                        }}
+                        color="#ffffff"
+                      >
+                        Trieu's Barber Shop
+                      </Text>
 
-                  <Text
-                    size={16}
-                    color="white"
+                      <Text
+                        size={16}
+                        color="white"
+                        style={{
+                          marginTop: 2,
+                          fontFamily: "montserrat-bold",
+                          lineHeight: 20,
+                          fontWeight: "bold",
+                          fontSize: 18,
+                          opacity: 0.9,
+                        }}
+                      >
+                        123 Wallaby Way
+                      </Text>
+                    </Block>
+                  </Block>
+                </Block>
+
+                <Block
+                  middle
+                  row
+                  style={{
+                    position: "absolute",
+                    width: width,
+                    top: height * 0.18 - 26,
+                    zIndex: 99,
+                  }}
+                >
+                  <Button
                     style={{
-                      marginTop: 2,
-                      fontFamily: "montserrat-bold",
-                      lineHeight: 20,
-                      fontWeight: "bold",
-                      fontSize: 18,
-                      opacity: 0.9,
+                      width: 114,
+                      height: 44,
+                      marginHorizontal: 5,
+                      elevation: 0,
                     }}
+                    textStyle={{ fontSize: 16, fontWeight: "bold" }}
+                    round
                   >
-                    123 Wallaby Way
-                  </Text>
+                    Book
+                  </Button>
                 </Block>
               </Block>
-            </Block>
-
-            <Block
-              middle
-              row
-              style={{
-                position: "absolute",
-                width: width,
-                top: height * 0.18 - 26,
-                zIndex: 99,
-              }}
-            >
-              <Button
-                style={{
-                  width: 114,
-                  height: 44,
-                  marginHorizontal: 5,
-                  elevation: 0,
-                }}
-                textStyle={{ fontSize: 16, fontWeight: "bold" }}
-                round
-              >
-                Book
-              </Button>
-              {/* <GaButton
-                round
-                onlyIcon
-                shadowless
-                icon="twitter"
-                iconFamily="Font-Awesome"
-                iconColor={nowTheme.COLORS.WHITE}
-                iconSize={nowTheme.SIZES.BASE * 1.375}
-                color={'#888888'}
-                style={[styles.social, styles.shadow]}
-              />
-              <GaButton
-                round
-                onlyIcon
-                shadowless
-                icon="pinterest"
-                iconFamily="Font-Awesome"
-                iconColor={nowTheme.COLORS.WHITE}
-                iconSize={nowTheme.SIZES.BASE * 1.375}
-                color={'#888888'}
-                style={[styles.social, styles.shadow]}
-              /> */}
-            </Block>
+            </ImageBackground>
           </Block>
-        </ImageBackground>
-      </Block>
-      <Block flex={3} center>
-        <ScrollView flex ={1} showsVerticalScrollIndicator={true} nestedScrollEnabled={true}>
-          <Block flex>
+          <Block flex={3}>
             <Text bold size={16} style={styles.title}>
               Barbers
             </Text>
             <Block flex>
-              <Block flex style={{ marginTop: nowTheme.SIZES.BASE / 2 }}>
+              <Block style={{ marginTop: nowTheme.SIZES.BASE / 2 }}>
                 <ScrollView
                   horizontal={true}
                   nestedScrollEnabled={true}
                   // pagingEnabled={true}
-                  // decelerationRate={0}
                   scrollEventThrottle={16}
                   // snapToAlignment="center"
                   showsHorizontalScrollIndicator={false}
                   // snapToInterval={cardWidth + nowTheme.SIZES.BASE * 0.375}
                   contentContainerStyle={{
-                    paddingHorizontal: 20
+                    paddingHorizontal: 20,
                   }}
                 >
                   {categories &&
@@ -179,9 +160,7 @@ const Articles = () => {
                       <TouchableWithoutFeedback
                         style={{ zIndex: 3 }}
                         key={`product-${item.title}`}
-                        onPress={() =>
-                          alert("clicked Barber")
-                        }
+                        onPress={() => alert("clicked Barber")}
                       >
                         <Block center style={styles.productItem}>
                           <Image
@@ -220,80 +199,80 @@ const Articles = () => {
               </Block>
             </Block>
           </Block>
-        {/* </ScrollView>
+          {/* </ScrollView>
       </Block> */}
-      <Block flex={1} style={{ padding: nowTheme.SIZES.BASE }}>
-        {/* <ScrollView showsVerticalScrollIndicator={true}> */}
-          <Block flex style={{ marginTop: 20 }}>
-            <Block middle>
-              <Text
-                style={{
-                  color: "#2c2c2c",
-                  fontWeight: "bold",
-                  fontSize: 19,
-                  fontFamily: "montserrat-bold",
-                  marginTop: 15,
-                  marginBottom: 30,
-                  zIndex: 2,
-                }}
+          <Block flex={1} style={{ padding: nowTheme.SIZES.BASE }}>
+            {/* <ScrollView showsVerticalScrollIndicator={true}> */}
+            <Block flex style={{ marginTop: 20 }}>
+              <Block middle>
+                <Text
+                  style={{
+                    color: "#2c2c2c",
+                    fontWeight: "bold",
+                    fontSize: 19,
+                    fontFamily: "montserrat-bold",
+                    marginTop: 15,
+                    marginBottom: 30,
+                    zIndex: 2,
+                  }}
+                >
+                  About me
+                </Text>
+                <Text
+                  size={16}
+                  muted
+                  style={{
+                    textAlign: "center",
+                    fontFamily: "montserrat-regular",
+                    zIndex: 2,
+                    lineHeight: 25,
+                    color: "#9A9A9A",
+                    paddingHorizontal: 15,
+                  }}
+                >
+                  An artist of considerable range, named Ryan — the name has
+                  taken by Melbourne has raised, Brooklyn-based Nick Murphy —
+                  writes, performs and records all of his own music.
+                </Text>
+              </Block>
+              <Block
+                row
+                style={{ paddingVertical: 14, paddingHorizontal: 15 }}
+                space="between"
               >
-                About me
-              </Text>
-              <Text
-                size={16}
-                muted
+                <Text bold size={16} color="#2c2c2c" style={{ marginTop: 3 }}>
+                  Album
+                </Text>
+                <Button
+                  small
+                  color="transparent"
+                  textStyle={{ color: nowTheme.COLORS.PRIMARY, fontSize: 14 }}
+                >
+                  View all
+                </Button>
+              </Block>
+
+              <Block
                 style={{
-                  textAlign: "center",
-                  fontFamily: "montserrat-regular",
-                  zIndex: 2,
-                  lineHeight: 25,
-                  color: "#9A9A9A",
+                  paddingBottom: -HeaderHeight * 2,
                   paddingHorizontal: 15,
                 }}
               >
-                An artist of considerable range, named Ryan — the name has taken
-                by Melbourne has raised, Brooklyn-based Nick Murphy — writes,
-                performs and records all of his own music.
-              </Text>
-            </Block>
-            <Block
-              row
-              style={{ paddingVertical: 14, paddingHorizontal: 15 }}
-              space="between"
-            >
-              <Text bold size={16} color="#2c2c2c" style={{ marginTop: 3 }}>
-                Album
-              </Text>
-              <Button
-                small
-                color="transparent"
-                textStyle={{ color: nowTheme.COLORS.PRIMARY, fontSize: 14 }}
-              >
-                View all
-              </Button>
-            </Block>
-
-            <Block
-              style={{
-                paddingBottom: -HeaderHeight * 2,
-                paddingHorizontal: 15,
-              }}
-            >
-              <Block row space="between" style={{ flexWrap: "wrap" }}>
-                {Images.Viewed2.map((img, imgIndex) => (
-                  <Image
-                    source={img}
-                    key={`viewed-${img}`}
-                    resizeMode="cover"
-                    style={styles.thumb}
-                  />
-                ))}
+                <Block row space="between" style={{ flexWrap: "wrap" }}>
+                  {Images.Viewed2.map((img, imgIndex) => (
+                    <Image
+                      source={img}
+                      key={`viewed-${img}`}
+                      resizeMode="cover"
+                      style={styles.thumb}
+                    />
+                  ))}
+                </Block>
               </Block>
             </Block>
+            {/* </ScrollView> */}
           </Block>
-        {/* </ScrollView> */}
-      </Block>
-      </ScrollView>
+        </ScrollView>
       </Block>
     </Block>
   );
@@ -302,7 +281,6 @@ const Articles = () => {
 const styles = StyleSheet.create({
   profileContainer: {
     width,
-    height,
     padding: 0,
     zIndex: 1,
   },
@@ -364,7 +342,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   productItem: {
-    width: cardWidth/4,
+    width: cardWidth / 4,
     marginHorizontal: 10,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 7 },
