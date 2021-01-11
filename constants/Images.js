@@ -5,6 +5,7 @@ const LogoOnboarding = require("../assets/logo.png");
 const ProfileBackground = require("../assets/imgs/profile-screen-bg.png");
 const ProfilePicture2 = require('../assets/imgs2/profile-img.jpg');
 const ProfileBackground2 = require("../assets/imgs2/bg5.png");
+const BarberBackground = require("../assets/imgs2/barberbg.png");
 const RegisterBackground = require("../assets/imgs/register-bg.png");
 const Pro = require("../assets/imgs/getPro-bg.png");
 const ArgonLogo = require("../assets/imgs/argonlogo.png");
@@ -42,6 +43,7 @@ export default {
   ProfileBackground,
   ProfilePicture,
   ProfileBackground2,
+  BarberBackground,
   ProfilePicture2,
   RegisterBackground,
   Viewed,
