@@ -221,7 +221,7 @@ export default function OnboardingStack(props) {
 function AppStack(props) { // if this causes an error, try expo start -c to clean cache -> rebuild (requires new version for tab nav.)
   return (
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeStack} options ={{
+        <Tab.Screen name="Home" component={Register} options ={{
           tabBarLabel: "Recent Cuts",
           tabBarIcon: ({ focused, color, size }) => (
             <Icon
@@ -242,7 +242,7 @@ function AppStack(props) { // if this causes an error, try expo start -c to clea
           />
           ), }}
           /> */}
-        <Tab.Screen name="Account" component={Register} options ={{
+        <Tab.Screen name="Account" component={HomeStack} options ={{
           tabBarLabel: "Customers",
           tabBarIcon: ({ focused, color, size }) => (
             <Icon
