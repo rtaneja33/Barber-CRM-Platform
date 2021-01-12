@@ -60,7 +60,7 @@ const Articles = () => {
       <Block flex center>
         <ScrollView
           flex={1}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
         >
           <Block flex={1} >
@@ -137,8 +137,44 @@ const Articles = () => {
               </Block>
             </ImageBackground>
           </Block>
-          <Block flex={3}>
-            <Text bold size={16} style={styles.title}>
+            {/* <ScrollView showsVerticalScrollIndicator={true}> */}
+            <Block flex style={[styles.profileCard, { marginTop: theme.SIZES.BASE*2.5 }]}>
+              <Block style = {{ paddingBottom: 12 }}>
+                {/* <Text
+                  style={{
+                    color: "#2c2c2c",
+                    fontWeight: "bold",
+                    fontSize: 19,
+                    fontFamily: "montserrat-bold",
+                    marginTop: 15,
+                    marginBottom: 20,
+                    zIndex: 2,
+                  }}
+                >
+                  Description
+                </Text> */}
+                <Text bold size={18} style={styles.title}>
+                  About
+                </Text>
+                <Text
+                  size={16}
+                  muted
+                  style={{
+                    textAlign: "center",
+                    fontFamily: "montserrat-regular",
+                    zIndex: 2,
+                    lineHeight: 25,
+                    color: "#9A9A9A",
+                    paddingHorizontal: 15,
+                  }}
+                >
+                  Barbershop serving customers for over 30+ years in the DMV area. Specializes in men's hair styles, shaves, trims, etc. 
+                  Come swing by our shop on Gallows Rd. for a fresh shapeup! 
+                </Text>
+              </Block>
+              </Block>
+          <Block flex={3} style={styles.profileCard}>
+            <Text bold size={18} style={styles.title}>
               Barbers
             </Text>
             <Block flex>
@@ -149,7 +185,7 @@ const Articles = () => {
                   // pagingEnabled={true}
                   scrollEventThrottle={16}
                   // snapToAlignment="center"
-                  showsHorizontalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={true}
                   // snapToInterval={cardWidth + nowTheme.SIZES.BASE * 0.375}
                   contentContainerStyle={{
                     paddingHorizontal: 20,
@@ -204,44 +240,14 @@ const Articles = () => {
           <Block flex={1} style={{ padding: nowTheme.SIZES.BASE }}>
             {/* <ScrollView showsVerticalScrollIndicator={true}> */}
             <Block flex style={{ marginTop: 20 }}>
-              <Block middle>
-                <Text
-                  style={{
-                    color: "#2c2c2c",
-                    fontWeight: "bold",
-                    fontSize: 19,
-                    fontFamily: "montserrat-bold",
-                    marginTop: 15,
-                    marginBottom: 30,
-                    zIndex: 2,
-                  }}
-                >
-                  About me
-                </Text>
-                <Text
-                  size={16}
-                  muted
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "montserrat-regular",
-                    zIndex: 2,
-                    lineHeight: 25,
-                    color: "#9A9A9A",
-                    paddingHorizontal: 15,
-                  }}
-                >
-                  An artist of considerable range, named Ryan — the name has
-                  taken by Melbourne has raised, Brooklyn-based Nick Murphy —
-                  writes, performs and records all of his own music.
-                </Text>
-              </Block>
+            
               <Block
                 row
                 style={{ paddingVertical: 14, paddingHorizontal: 15 }}
                 space="between"
               >
                 <Text bold size={16} color="#2c2c2c" style={{ marginTop: 3 }}>
-                  Album
+                  Portfolio
                 </Text>
                 <Button
                   small
@@ -284,11 +290,29 @@ const styles = StyleSheet.create({
     padding: 0,
     zIndex: 1,
   },
+  profileCard: {
+    // position: "relative",
+    marginHorizontal: 8,
+    padding: theme.SIZES.BASE,
+    marginTop: 10,
+    borderRadius: 6,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    backgroundColor: theme.COLORS.WHITE,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 0 },
+    //ios
+    shadowRadius: 8,
+    shadowOpacity: .15,
+    zIndex: 2,
+    //android
+    elevation: 3
+  },
   overlay: {
     backgroundColor: "black",
     width,
     height: height * 0.18,
-    opacity: 0.5,
+    opacity: 0.45,
   },
   profileBackground: {
     width,

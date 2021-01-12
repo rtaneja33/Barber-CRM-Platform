@@ -205,7 +205,6 @@ class Profile extends React.Component {
                     <Block style={styles.divider} />
                   </Block>
                   
-                  {/* world is my oyster */}
 
                   {/* {this.renderAlbum()} */}
 
