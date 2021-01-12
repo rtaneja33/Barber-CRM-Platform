@@ -8,13 +8,16 @@ import {
   Platform,
   View,
   TouchableWithoutFeedback,
+  TouchableOpacity,
+  FlatList
 } from "react-native";
 import { Avatar } from "react-native-elements";
+import Icon from "../components/Icon";
 import { Card } from "../components/";
 import { Block, Text, theme, Button as GaButton } from "galio-framework";
 
 import { Button } from "../components";
-import { Images, argonTheme as nowTheme, articles } from "../constants";
+import { Images, argonTheme as nowTheme, articles, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import zIndex from "@material-ui/core/styles/zIndex";
 const { width, height } = Dimensions.get("screen");
@@ -49,6 +52,35 @@ const Articles = () => {
       price: "Tim",
     },
   ];
+  const renderItem = ({item}) => 
+    (
+    <View style={{minHeight:70}}>
+      <TouchableOpacity onPress={()=>alert("open services? idk")}>
+      <Block row center card shadow space="between" style={styles.card} key={item}>
+        <Block style={{marginRight: nowTheme.SIZES.BASE}}>
+        <Icon
+              name="scissors"
+              family="entypo"
+              size={25}
+              color="white"
+          />
+        </Block>
+        <Block flex>
+          <Text style={{ color: "white",fontSize: 20, fontWeight: '600' }} size={nowTheme.SIZES.BASE * 1.125}>{item}</Text>
+          <Text style={{ color: "white", paddingTop: 2 }} size={nowTheme.SIZES.BASE * 0.875} muted>Tap for more details </Text>
+        </Block>
+        <View style={styles.right}>
+          <Icon
+              name="nav-right"
+              family="ArgonExtra"
+              size={nowTheme.SIZES.BASE}
+              color="white"
+          />
+        </View>
+      </Block>
+      </TouchableOpacity>
+    </View>
+  );
   return (
     <Block
       style={{
@@ -57,11 +89,16 @@ const Articles = () => {
         justifyContent: "space-between",
       }}
     >
-      <Block flex center>
+      <Block flex center >
         <ScrollView
           flex={1}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
+          contentContainerStyle={
+            {
+              paddingBottom: 10
+            }
+          }
         >
           <Block flex={1} >
             <ImageBackground
@@ -277,6 +314,51 @@ const Articles = () => {
             </Block>
             {/* </ScrollView> */}
           </Block>
+          <Block flex={1} >
+            {/* <ScrollView showsVerticalScrollIndicator={true}> */}
+            <Block flex style={styles.profileCard}>
+            
+              <Block
+                row
+                space="between"
+              >
+                <Text bold size={18} style={styles.title}>
+                  Services
+                </Text>
+                <Button
+                  small
+                  color="transparent"
+                  textStyle={{ color: nowTheme.COLORS.PRIMARY, fontSize: 14 }}
+                >
+                  View all
+                </Button>
+              </Block>
+
+              <Block
+                style={{
+                  paddingBottom: -HeaderHeight * 2,
+                }}
+              >
+                <FlatList
+                  data={["Hair", "Shaves", "Nails", "Waxing","Products"]}
+                  scrollEnabled={false}
+                  renderItem={renderItem}
+                  keyExtractor={(item, index)=> index.toString()}
+                  ListEmptyComponent={()=>(
+                    <View style={{
+                      flex:1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: 50
+                    }}>
+                    <Text style={{ color:'#bad555' }}>No Customers Found</Text>
+                    </View>
+                  )}
+                />
+              </Block>
+            </Block>
+            {/* </ScrollView> */}
+          </Block>
         </ScrollView>
       </Block>
     </Block>
@@ -284,6 +366,15 @@ const Articles = () => {
 };
 
 const styles = StyleSheet.create({
+  card: {
+    borderColor: 'transparent',
+    // marginVertical: nowTheme.SIZES.BASE / 2,
+    marginVertical: 1,
+    padding: nowTheme.SIZES.BASE+10,
+    backgroundColor: nowTheme.COLORS.WHITE,
+    shadowOpacity: .4,
+    backgroundColor: nowTheme.COLORS.HEADER,
+  },
   profileContainer: {
     width,
     padding: 0,
