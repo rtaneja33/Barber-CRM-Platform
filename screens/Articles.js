@@ -160,7 +160,7 @@ const Articles = () => {
                   size={16}
                   muted
                   style={{
-                    textAlign: "center",
+                    textAlign: "left",
                     fontFamily: "montserrat-regular",
                     zIndex: 2,
                     lineHeight: 25,
@@ -188,7 +188,7 @@ const Articles = () => {
                   showsHorizontalScrollIndicator={true}
                   // snapToInterval={cardWidth + nowTheme.SIZES.BASE * 0.375}
                   contentContainerStyle={{
-                    paddingHorizontal: 20,
+                    paddingHorizontal: 10,
                   }}
                 >
                   {categories &&
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     // position: "relative",
     marginHorizontal: 8,
     padding: theme.SIZES.BASE,
-    marginTop: 10,
+    marginTop: 7,
     borderRadius: 6,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingBottom: nowTheme.SIZES.BASE,
-    paddingHorizontal: nowTheme.SIZES.BASE * 2,
+    paddingHorizontal: 15,
     marginTop: 22,
     color: nowTheme.COLORS.HEADER,
   },
