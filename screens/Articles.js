@@ -237,16 +237,15 @@ const Articles = () => {
           </Block>
           {/* </ScrollView>
       </Block> */}
-          <Block flex={1} style={{ padding: nowTheme.SIZES.BASE }}>
+          <Block flex={1} >
             {/* <ScrollView showsVerticalScrollIndicator={true}> */}
-            <Block flex style={{ marginTop: 20 }}>
+            <Block flex style={styles.profileCard}>
             
               <Block
                 row
-                style={{ paddingVertical: 14, paddingHorizontal: 15 }}
                 space="between"
               >
-                <Text bold size={16} color="#2c2c2c" style={{ marginTop: 3 }}>
+                <Text bold size={18} style={styles.title}>
                   Portfolio
                 </Text>
                 <Button
