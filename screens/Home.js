@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 import { Avatar } from 'react-native-elements';
+import Modal from 'react-native-modal';
 import { Block, theme } from 'galio-framework';
 import { articles, Images, argonTheme } from "../constants/";
 const { width } = Dimensions.get('screen');
@@ -48,6 +49,7 @@ export default function Home({ navigation, route }) {
   const renderItem = ({item}) => 
     (
     <View style={{minHeight:70, padding:5}}>
+     
       <TouchableOpacity onPress={() => {navigation.navigate('Home', { params: { fullName: item.firstName + " " + item.lastName, phoneNumber:(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
       <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
         <Block style={styles.left}>
@@ -117,6 +119,7 @@ export default function Home({ navigation, route }) {
       paddingVertical: 10,
       backgroundColor: '#f7f8f3'
     }}>
+          
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
         {isLoading? (
           <View style={{...StyleSheet.absoluteFill,
@@ -141,7 +144,9 @@ export default function Home({ navigation, route }) {
             </View>
           )}
         />
+
       </View>
+          
     </View>
   );
 }
