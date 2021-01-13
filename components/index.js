@@ -6,8 +6,10 @@ import Header from './Header';
 import Input from './Input';
 import Switch from './Switch';
 import Select from './Select';
+import Accordian from './Accordian';
 
 export {
+  Accordian,
   Button,
   Card,
   DrawerItem,
