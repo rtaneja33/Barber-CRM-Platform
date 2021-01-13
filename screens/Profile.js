@@ -83,10 +83,10 @@ class Profile extends React.Component {
               <Block flex style={styles.profileCard}>
                 <Block middle style={styles.avatarContainer}>
                   
-                  {/* <Image
+                  <Image
                     source={{ uri: Images.ProfilePicture }}
                     style={styles.avatar}
-                  /> */}
+                  />
                 </Block>
                 <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
@@ -324,10 +324,11 @@ const styles = StyleSheet.create({
     marginTop: -63
   },
   avatar: {
-    width: 100,
-    height: 100,
+    width: 110,
+    height: 110,
     borderRadius: 62,
-    borderWidth: 0
+    borderWidth: 3,
+    borderColor: "white"
   },
   nameInfo: {
     marginTop: 15
