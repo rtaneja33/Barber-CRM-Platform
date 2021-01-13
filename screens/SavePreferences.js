@@ -12,7 +12,7 @@ import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { firebase } from '../src/firebase/config'
-import { Camera } from 'expo-camera';
+import { CustomCamera } from '../components';
 
 const { width, height } = Dimensions.get("screen")
 
@@ -29,7 +29,7 @@ class SavePreferences extends React.Component {
                 </View>
                 <View style={styles.subbox}>
                 <Text style={styles.text}> Service </Text>
-                
+                <CustomCamera></CustomCamera>
                 </View>
                 
                 
