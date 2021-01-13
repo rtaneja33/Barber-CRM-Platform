@@ -5,26 +5,57 @@ import {
   ScrollView,
   Image,
   ImageBackground,
-  Platform,
   View,
   TouchableWithoutFeedback,
   TouchableOpacity,
   FlatList
 } from "react-native";
+import {ExpandableListView} from 'react-native-expandable-listview';
 import { Avatar } from "react-native-elements";
 import Icon from "../components/Icon";
-import { Card } from "../components/";
+import { Card, Accordian } from "../components/";
 import { Block, Text, theme, Button as GaButton } from "galio-framework";
 
 import { Button } from "../components";
-import { Images, argonTheme as nowTheme, articles, argonTheme } from "../constants";
+import { Images, argonTheme as nowTheme, Service, ServiceList, articles, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import zIndex from "@material-ui/core/styles/zIndex";
+import { render } from "react-dom";
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
+
 const Articles = () => {
+  const [services, setServices] = React.useState([
+    new ServiceList("Popular", [
+      new Service("Men's Cut", "$25"),
+    ]),
+    new ServiceList("Haircut", [
+      new Service("Men's Cut", "$25"),
+      new Service("Short Trim", "$20"),
+      new Service("Cut+Shave", "$38"),
+      new Service("Low Fade Cut", "$23"),
+    ]
+    ),
+    new ServiceList("Products", [
+      new Service("Axe Hair Gel", "$15"),
+      new Service("Crew Men's Pomade", "$10"),
+    ]
+    )
+  ]);
+  const renderAccordions=()=> {
+    const items =[];
+    services.map((item) => {
+      items.push(
+        <Accordian
+          serviceType = {item.serviceType}
+          services = {item.services}
+        />
+      );
+    })
+    return items;
+  }
   const categories = [
     {
       image:
@@ -190,9 +221,31 @@ const Articles = () => {
                 >
                   Description
                 </Text> */}
-                <Text bold size={18} style={styles.title}>
+                <Block
+                    row
+                    space="between"
+                  >
+                 <Text bold size={18} style={styles.title}>
                   About
                 </Text>
+                <TouchableOpacity
+                  small
+                  color="transparent"
+                  onPress={(text)=>{alert(text)}}
+                  style={{
+                    shadow: 0,
+                    paddingRight: 10,
+                    marginTop: 22,
+                  }}
+                >
+                  <Icon
+                    name="edit"
+                    family="FontAwesome5"
+                    size={25}
+                    color={nowTheme.COLORS.DEFAULT}
+                  />
+                </TouchableOpacity>
+                </Block>
                 <Text
                   size={16}
                   muted
@@ -211,9 +264,33 @@ const Articles = () => {
               </Block>
               </Block>
           <Block flex={3} style={styles.profileCard}>
-            <Text bold size={18} style={styles.title}>
+                  <Block
+                    row
+                    space="between"
+                  >
+                 <Text bold size={18} style={styles.title}>
+                  Barbers
+                </Text>
+                <TouchableOpacity
+                  small
+                  color="transparent"
+                  style={{
+                    shadow: 0,
+                    paddingRight: 10,
+                    marginTop: 22,
+                  }}
+                >
+                  <Icon
+                    name="edit"
+                    family="FontAwesome5"
+                    size={25}
+                    color={nowTheme.COLORS.DEFAULT}
+                  />
+                </TouchableOpacity>
+              </Block>
+            {/* <Text bold size={18} style={styles.title}>
               Barbers
-            </Text>
+            </Text> */}
             <Block flex>
               <Block style={{ marginTop: nowTheme.SIZES.BASE / 2 }}>
                 <ScrollView
@@ -325,13 +402,22 @@ const Articles = () => {
                 <Text bold size={18} style={styles.title}>
                   Services
                 </Text>
-                <Button
+                <TouchableOpacity
                   small
                   color="transparent"
-                  textStyle={{ color: nowTheme.COLORS.PRIMARY, fontSize: 14 }}
+                  style={{
+                    shadow: 0,
+                    paddingRight: 10,
+                    marginTop: 22,
+                  }}
                 >
-                  View all
-                </Button>
+                  <Icon
+                    name="edit"
+                    family="FontAwesome5"
+                    size={25}
+                    color={nowTheme.COLORS.DEFAULT}
+                  />
+                </TouchableOpacity>
               </Block>
 
               <Block
@@ -339,22 +425,13 @@ const Articles = () => {
                   paddingBottom: -HeaderHeight * 2,
                 }}
               >
-                <FlatList
-                  data={["Hair", "Shaves", "Nails", "Waxing","Products"]}
-                  scrollEnabled={false}
-                  renderItem={renderItem}
-                  keyExtractor={(item, index)=> index.toString()}
-                  ListEmptyComponent={()=>(
-                    <View style={{
-                      flex:1,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginTop: 50
-                    }}>
-                    <Text style={{ color:'#bad555' }}>No Customers Found</Text>
-                    </View>
-                  )}
-                />
+                {/* <ExpandableListView
+                  data={CONTENT} // required
+                /> */}
+                <View style={styles.accordion}>
+                  { renderAccordions() }
+                </View>
+               
               </Block>
             </Block>
             {/* </ScrollView> */}
@@ -476,6 +553,11 @@ const styles = StyleSheet.create({
     paddingTop: nowTheme.SIZES.BASE,
     // paddingBottom: nowTheme.SIZES.BASE * 2,
   },
+  container: {
+    flex:1,
+    paddingTop:100,
+    backgroundColor: nowTheme.COLORS.PRIMARY
+  }
 });
 
 export default Articles;
