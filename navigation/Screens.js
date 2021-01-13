@@ -8,7 +8,9 @@ import { Block } from "galio-framework";
 
 // screens
 import Home from "../screens/Home";
-import Onboarding from "../screens/Onboarding";
+import SignupScreen from "../screens/SignupScreen";
+import AddAppointment from "../screens/AddAppointment";
+import SavePreferences from "../screens/SavePreferences";
 import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
 import Register from "../screens/Register";
@@ -164,7 +166,7 @@ function HomeStack(props) {
       />
       <Stack.Screen
         name="Pro"
-        component={Onboarding}
+        component={SignupScreen}
         options={{
           header: ({ navigation, scene }) => (
             <Header
@@ -199,6 +201,41 @@ function HomeStack(props) {
           headerTransparent: true
         }}
       />
+          <Stack.Screen
+            name="AddAppointment"
+            component={AddAppointment}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title=""
+                    back
+                    white
+                    transparent
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+                headerTransparent: true
+              }}
+          />
+          <Stack.Screen
+            name="SavePreferences"
+            component={SavePreferences}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title=""
+                    back
+                    white
+                    transparent
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+                headerTransparent: true
+              }}
+          />
+
     </Stack.Navigator>
   );
 }
@@ -207,8 +244,8 @@ export default function OnboardingStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="none">
       <Stack.Screen
-        name="Onboarding"
-        component={Onboarding}
+        name="SignupScreen"
+        component={SignupScreen}
         option={{
           headerTransparent: true
         }}

@@ -11,12 +11,12 @@ import argonTheme from '../constants/Theme';
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
-const BellButton = ({isWhite, style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Profile')}>
+const PlusButton = ({isWhite, style, navigation}) => (
+  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('AddAppointment')}>
     <Icon
-      family="ArgonExtra"
+      family="AntDesign"
       size={16}
-      name="bell"
+      name="pluscircleo"
       color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
     />
     <Block middle style={styles.notify} />
@@ -55,7 +55,6 @@ class Header extends React.Component {
 
     if (title === 'Title') {
       return [
-        <BellButton key='chat-title' navigation={navigation} isWhite={white} />,
         <BasketButton key='basket-title' navigation={navigation} isWhite={white} />
       ]
     }
@@ -63,43 +62,7 @@ class Header extends React.Component {
     switch (title) {
       case 'My Customers':
         return ([
-          <BellButton key='chat-home' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-home' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Deals':
-        return ([
-          <BellButton key='chat-categories' navigation={navigation} />,
-          <BasketButton key='basket-categories' navigation={navigation} />
-        ]);
-      case 'Categories':
-        return ([
-          <BellButton key='chat-categories' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-categories' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Category':
-        return ([
-          <BellButton key='chat-deals' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-deals' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Profile':
-        return ([
-          <BellButton key='chat-profile' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-deals' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Product':
-        return ([
-          <SearchButton key='search-product' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-product' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Search':
-        return ([
-          <BellButton key='chat-search' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Settings':
-        return ([
-          <BellButton key='chat-search' navigation={navigation} isWhite={white} />,
-          <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
+          <PlusButton key='plus-home' navigation={navigation} isWhite={white} />
         ]);
       default:
         break;
@@ -130,12 +93,6 @@ class Header extends React.Component {
 
     return (
       <Block row style={styles.options}>
-        <Button shadowless style={[styles.tab, styles.divider]} onPress={() => navigation.navigate('Pro')}>
-          <Block row middle>
-            <Icon name="diamond" family="ArgonExtra" style={{ paddingRight: 8 }} color={argonTheme.COLORS.ICON} />
-            <Text size={16} style={styles.tabTitle}>{optionLeft || 'Beauty'}</Text>
-          </Block>
-        </Button>
         <Button shadowless style={styles.tab} onPress={() => navigation.navigate('Pro')}>
           <Block row middle>
             <Icon size={16} name="bag-17" family="ArgonExtra" style={{ paddingRight: 8 }} color={argonTheme.COLORS.ICON}/>
