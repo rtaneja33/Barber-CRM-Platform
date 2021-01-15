@@ -15,6 +15,8 @@ import { Images, argonTheme } from "../constants";
 import { firebase } from '../src/firebase/config'
 import { ImagePicker } from "react-native-image-picker";
 
+import Appointment from "../models/Appointment"
+
 const { width, height } = Dimensions.get("screen");
 
 class AddAppointment extends React.Component {
@@ -69,6 +71,12 @@ class AddAppointment extends React.Component {
         return firebase.firestore().collection('Appointments').doc(id).set(uploadData)
     }
     
+    test = async () => {
+        var example = Appointment.createNew();
+        example.privateNotes = "hello";
+        example.update();
+    }
+    
     render() {
         const { navigation } = this.props;
         
@@ -100,7 +108,7 @@ class AddAppointment extends React.Component {
                 </View>
                 
                 <View style={styles.finalsubbox}>
-                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { navigation.navigate('SavePreferences'); }}>
+                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { this.test() /*navigation.navigate('SavePreferences');*/ }}>
                     <Text> Continue </Text>
                     </TouchableOpacity>
                     
