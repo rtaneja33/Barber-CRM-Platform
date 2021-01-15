@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from 'react';
 import { Easing, Animated, Dimensions, TextInput } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Block } from "galio-framework";
-
+import { firebase } from '../src/firebase/config'
 // screens
 import Home from "../screens/Home";
 import SignupScreen from "../screens/SignupScreen";
@@ -22,6 +22,7 @@ import CustomDrawerContent from "./Menu";
 // header for screens
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
+import { useEffect } from "react";
 
 const { width } = Dimensions.get("screen");
 
@@ -241,16 +242,51 @@ function HomeStack(props) {
 }
 
 export default function OnboardingStack(props) {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [user, setUser] = useState(null);
+  if(isLoading){
+    return(
+      <></>
+    )
+  }
+  // https://www.freecodecamp.org/news/react-native-firebase-tutorial/
+  useEffect(() => {
+    const usersRef = firebase.firestore().collection('users');
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        usersRef
+          .doc(user.uid)
+          .get()
+          .then((document) => {
+            const userData = document.data()
+            setLoading(false)
+            setUser(userData)
+          })
+          .catch((error) => {
+            setLoading(false)
+          });
+      } else {
+        setLoading(false)
+      }
+    });
+  }, []);
+
   return (
     <Stack.Navigator mode="card" headerMode="none">
-      <Stack.Screen
-        name="SignupScreen"
-        component={SignupScreen}
-        option={{
-          headerTransparent: true
-        }}
-      />
-      <Stack.Screen name="App" component={AppStack} />
+      { user ? (
+        <Stack.Screen name="App" component={AppStack} />
+      ) : (
+        <>
+          <Stack.Screen
+            name="SignupScreen"
+            component={SignupScreen}
+            option={{
+              headerTransparent: true
+            }}
+          />
+           <Stack.Screen name="App" component={AppStack} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

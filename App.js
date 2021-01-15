@@ -12,100 +12,11 @@ import { Block, GalioProvider } from "galio-framework";
 import { NavigationContainer } from "@react-navigation/native";
 import { enableScreens } from "react-native-screens";
 enableScreens();
-
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
 
 
 export default function App() {
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [customers, updateCustomers] = React.useState([]);
-  const [inMemoryContacts, setMemContacts] = React.useState([]);
-  const loadContacts = async()=>{
-    const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
-    if(status !== 'granted')
-    {
-      setIsLoading(false);
-      return
-    }
-    console.log("granted")
-    const {data} = await Contacts.getContactsAsync({
-      fields:[Contacts.Fields.PhoneNumbers,
-      Contacts.Fields.Emails]
-    });
-    updateCustomers(data);
-    setMemContacts(data);
-    // console.log(customers);
-    setIsLoading(false);
-  } 
-  
-  useEffect(() => {
-    setIsLoading(true);
-    loadContacts();
-  }, [])
-
-  const renderItem = ({item}) =>(
-    
-    <View style={{minHeight:70, padding:5}}>
-      <TouchableOpacity onPress={() => alert('Item pressed!')}>
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 16,
-            alignItems: 'center'
-          }}>
-          <Avatar
-            size="medium"
-            rounded
-            title="MT"
-            overlayContainerStyle={{backgroundColor: '#78bcc4'}}
-            onPress={() => console.log("Works!")}
-            activeOpacity={0.4}
-          />
-          <View
-            style={{
-              flexDirection: 'column',
-              padding: 16,
-            }}>
-            <Text style={{color: '#78bcc4', fontWeight: 'bold', fontSize: 26}}>
-              {item.firstName} {item.lastName}
-            </Text>
-            <Text style={{color:'#f7444e', fontWeight:'bold'}}>
-            {item.phoneNumbers && item.phoneNumbers.length > 0 ? item.phoneNumbers[0].number : ""}
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const searchContacts = (value) =>{
-    
-    const filteredContacts = inMemoryContacts.filter(
-      contact => {
-        let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
-        let searchTermLowercase = value.toLowerCase()
-
-        return contactLowercase.indexOf(searchTermLowercase) > -1;
-      }
-    )
-    updateCustomers(filteredContacts)
-  }
-
-  const renderSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: '86%',
-          backgroundColor: '#CED0CE',
-          marginLeft: '5%'
-        }}
-      />
-    )
-  }
-
 
   return (
     <NavigationContainer>
