@@ -8,8 +8,10 @@ import {
   View,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  TouchableHighlight,
   FlatList
 } from "react-native";
+import Modal from 'react-native-modal';
 import {ExpandableListView} from 'react-native-expandable-listview';
 import { Avatar } from "react-native-elements";
 import Icon from "../components/Icon";
@@ -21,13 +23,45 @@ import { Images, argonTheme as nowTheme, Service, ServiceList, articles, argonTh
 import { HeaderHeight } from "../constants/utils";
 import zIndex from "@material-ui/core/styles/zIndex";
 import { render } from "react-dom";
+import { TruckFlatbed } from "react-bootstrap-icons";
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
 const Articles = () => {
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const renderModal=()=>{
+    return (
+      <View style={styles.centeredView} renderToHardwareTextureAndroid shouldRasterizeIOS>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          backdropOpacity={0.5}
+          
+          isVisible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Edit Services</Text>
+  
+              <TouchableHighlight
+                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}>
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+      </View>
+      );
+  }
   const [services, setServices] = React.useState([
+    
     new ServiceList("Popular", [
       new Service("Men's Cut", "$25"),
     ]),
@@ -56,7 +90,7 @@ const Articles = () => {
     })
     return items;
   }
-  const categories = [
+  const categories = [ //barbers 
     {
       image:
         "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
@@ -402,9 +436,15 @@ const Articles = () => {
                 <Text bold size={18} style={styles.title}>
                   Services
                 </Text>
+                <View style={styles.modal}>
+                  { renderModal() }
+                </View>
                 <TouchableOpacity
                   small
                   color="transparent"
+                  onPress={()=>{
+                    setModalVisible(true);
+                  }}
                   style={{
                     shadow: 0,
                     paddingRight: 10,
@@ -557,7 +597,47 @@ const styles = StyleSheet.create({
     flex:1,
     paddingTop:100,
     backgroundColor: nowTheme.COLORS.PRIMARY
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    height: "70%",
+    width: "95%",
+  },
+  openButton: {
+    backgroundColor: '#F194FF',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 25
+  },
 });
 
 export default Articles;
