@@ -14,7 +14,6 @@ import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { firebase } from '../src/firebase/config'
 import { ImagePicker } from "react-native-image-picker";
-
 import Appointment from "../models/Appointment"
 
 const { width, height } = Dimensions.get("screen");
@@ -72,9 +71,10 @@ class AddAppointment extends React.Component {
     }
     
     test = async () => {
-        var example = Appointment.createNew();
-        example.privateNotes = "hello";
-        example.update();
+        Appointment.createNew().then( (appointment) => {
+            appointment.notes = "hello";
+            appointment.update();
+        });
     }
     
     render() {

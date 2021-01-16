@@ -1,35 +1,46 @@
 import { firebase } from '../src/firebase/config'
 
-class Services {
+export default class Services {
     
     uid = ""
     serviceName = ""
     price = 0
     
     update() {
-        var servicesRef = firebase.firestore().collection('Services').doc(uid);
+        var servicesRef = firebase.firestore().collection('Services').doc(this.uid);
         
         return new Promise(resolve => {
             servicesRef.update({
-                barberUID: barberUID,
-                appointmentUID: appointmentUID,
+                barberUID: this.barberUID,
+                appointmentUID: this.appointmentUID,
             })
             resolve(true);
         });
     }
     
-    static createNew() {
+    static createNew(fromID = "") {
         var services = new Services();
         
         return new Promise(resolve => {
-            firebase.firestore().collection('Services').add({
-                barberUID: services.barberUID,
-                appointmentUID: services.appointmentUID,
-                photoURL: services.photoURL,
-            }).then(function(docRef) {
-                services.uid = docRef.id;
+            if (fromID == "") {
+                firebase.firestore().collection('Services').add({
+                    barberUID: services.barberUID,
+                    appointmentUID: services.appointmentUID,
+                    photoURL: services.photoURL,
+                }).then(function(docRef) {
+                    services.uid = docRef.id;
+                    resolve(services);
+                })
+            } else {
+                firebase.firestore().collection('Services').doc(fromID).set({
+                    barberUID: services.barberUID,
+                    appointmentUID: services.appointmentUID,
+                    photoURL: services.photoURL,
+                })
+                
+                services.uid = fromID;
                 resolve(services);
-            })
+            }
         });
     }
     

@@ -16,34 +16,49 @@ export default class Appointment {
         
         return new Promise(resolve => {
             appointmentRef.update({
-                barberUID: barberUID,
-                customerUID: customerUID,
-                appointmentUID: appointmentUID,
-                notes: notes,
-                serviceProvided: serviceProvided,
-                approvedByCustomer: approvedByCustomer,
-                privateNotes: privateNotes
+                barberUID: this.barberUID,
+                customerUID: this.customerUID,
+                appointmentUID: this.appointmentUID,
+                notes: this.notes,
+                serviceProvided: this.serviceProvided,
+                approvedByCustomer: this.approvedByCustomer,
+                privateNotes: this.privateNotes
             })
             resolve(true);
-          });
+        });
     }
     
-    static createNew() {
+    static createNew(fromID = "") {
         var appointment = new Appointment();
         
         return new Promise(resolve => {
-            firebase.firestore().collection('Appointments').add({
-                barberUID: appointment.barberUID,
-                customerUID: appointment.customerUID,
-                appointmentUID: appointment.appointmentUID,
-                notes: appointment.notes,
-                serviceProvided: appointment.serviceProvided,
-                approvedByCustomer: appointment.approvedByCustomer,
-                privateNotes: appointment.privateNotes,
-            }).then(function(docRef) {
-                appointment.uid = docRef.id;
+            if (fromID == "") {
+                firebase.firestore().collection('Appointments').add({
+                    barberUID: appointment.barberUID,
+                    customerUID: appointment.customerUID,
+                    appointmentUID: appointment.appointmentUID,
+                    notes: appointment.notes,
+                    serviceProvided: appointment.serviceProvided,
+                    approvedByCustomer: appointment.approvedByCustomer,
+                    privateNotes: appointment.privateNotes,
+                }).then(function(docRef) {
+                    appointment.uid = docRef.id;
+                    resolve(appointment);
+                })
+            } else {
+                firebase.firestore().collection('Appointments').doc(fromID).set({
+                    barberUID: appointment.barberUID,
+                    customerUID: appointment.customerUID,
+                    appointmentUID: appointment.appointmentUID,
+                    notes: appointment.notes,
+                    serviceProvided: appointment.serviceProvided,
+                    approvedByCustomer: appointment.approvedByCustomer,
+                    privateNotes: appointment.privateNotes,
+                })
+                
+                appointment.uid = fromID;
                 resolve(appointment);
-            })
+            }
         });
     }
     
