@@ -23,6 +23,18 @@ const PlusButton = ({isWhite, style, navigation}) => (
   </TouchableOpacity>
 );
 
+const PlusButtonService = ({isWhite, style, navigation}) => (
+  <TouchableOpacity style={[styles.button, style]}>
+    <Icon
+      family="AntDesign"
+      size={16}
+      name="pluscircleo"
+      color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+    />
+    <Block middle style={styles.notify} />
+  </TouchableOpacity>
+);
+
 const BasketButton = ({isWhite, style, navigation}) => (
   <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('Pro')}>
     <Icon
@@ -63,6 +75,10 @@ class Header extends React.Component {
       case 'My Customers':
         return ([
           <PlusButton key='plus-home' navigation={navigation} isWhite={white} />
+        ]);
+      case 'My Shop':
+        return ([
+          <PlusButtonService key='plus-home' navigation={navigation} isWhite={white}/>
         ]);
       default:
         break;

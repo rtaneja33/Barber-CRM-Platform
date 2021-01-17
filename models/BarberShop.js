@@ -9,11 +9,11 @@ export default class BarberShop {
     shopName = ""
     baberIDs = []
     admin = ""
-    services = []
+    services = {}
     
     update() {
+        console.log("in update for BarberShop, uid is", this.uid)
         var barberShopRef = firebase.firestore().collection('BarberShops').doc(this.uid);
-        
         return new Promise(resolve => {
             barberShopRef.update({
                 aboutDescription: this.aboutDescription,
@@ -66,13 +66,12 @@ export default class BarberShop {
     }
     
     static loadFromID(id) {
-        
         var barberShop = new BarberShop();
         return new Promise(resolve => {
-            firebase.firestore().collection('BarberShops').doc(id).get().then(querySnapshot => {
+            firebase.firestore().collection('BarberShops').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
-                    barberShop.uid = documentSnapshot.documentID
+                    barberShop.uid = id
                     barberShop.aboutDescription = data["aboutDescription"]
                     barberShop.address = data["address"]
                     barberShop.email = data["email"]

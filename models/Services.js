@@ -1,8 +1,7 @@
-import { firebase } from '../src/firebase/config'
-
+import { firebase } from '../src/firebase/config';
+import BarberShops from '../models/BarberShop';
 export default class Services {
-    
-    uid = ""
+    shopUID = ""
     serviceName = ""
     price = 0
     
@@ -11,55 +10,41 @@ export default class Services {
         
         return new Promise(resolve => {
             servicesRef.update({
-                barberUID: this.barberUID,
-                appointmentUID: this.appointmentUID,
+                serviceName: this.serviceName,
+                price: this.price,
             })
             resolve(true);
         });
     }
     
-    static createNew(fromID = "") {
-        var services = new Services();
-        
+    static createNew(serviceCategory, serviceObj) {
+        const uid = firebase.auth().currentUser.uid;
         return new Promise(resolve => {
-            if (fromID == "") {
-                firebase.firestore().collection('Services').add({
-                    barberUID: services.barberUID,
-                    appointmentUID: services.appointmentUID,
-                    photoURL: services.photoURL,
-                }).then(function(docRef) {
-                    services.uid = docRef.id;
-                    resolve(services);
+            BarberShops.loadFromID(uid)
+                .then((barberShopRef) => {
+                    barberShopRef.services[serviceCategory] = serviceObj;
+                    barberShopRef.update()
+                    resolve(serviceObj)
                 })
-            } else {
-                firebase.firestore().collection('Services').doc(fromID).set({
-                    barberUID: services.barberUID,
-                    appointmentUID: services.appointmentUID,
-                    photoURL: services.photoURL,
-                })
-                
-                services.uid = fromID;
-                resolve(services);
-            }
         });
     }
     
-    static loadFromID(id) {
-        var services = new Services();
-        return new Promise(resolve => {
-            firebase.firestore().collection('Services').doc(id).get().then(querySnapshot => {
-                if (documentSnapshot.exists) {
-                    let data = documentSnapshot.data();
-                    services.uid = documentSnapshot.documentID
-                    services.barberUID = data["barberUID"]
-                    services.appointmentUID = data["appointmentUID"]
-                    services.photoURL = data["photoURL"]
+    // static loadServices(id) {
+    //     var services = new Services();
+    //     return new Promise(resolve => {
+    //         firebase.firestore().collection('Services').doc(id).get().then(documentSnapshot => {
+    //             if (documentSnapshot.exists) {
+    //                 let data = documentSnapshot.data();
+    //                 services.uid = documentSnapshot.documentID
+    //                 services.shopUID = data["shopUID"]
+    //                 services.serviceName = data["serviceName"]
+    //                 services.price = data["price"]
                     
-                    resolve(services);
-                } else {
-                    resolve(null);
-                }
-            });
-        });
-    }
+    //                 resolve(services);
+    //             } else {
+    //                 resolve(null);
+    //             }
+    //         });
+    //     });
+    // }
 }

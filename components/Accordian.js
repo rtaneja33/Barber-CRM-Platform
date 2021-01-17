@@ -16,7 +16,7 @@ class Accordian extends React.Component{
         super(props);
         this.state = { 
           data: props.data,
-          expanded : false,
+          expanded : true,
         }
 
         if (Platform.OS === 'android') {

@@ -9,8 +9,8 @@ import {
 import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
-import { firebase } from '../src/firebase/config'
-import BarberShop from "../models/BarberShop"
+import { firebase } from '../src/firebase/config';
+import BarberShop from "../models/BarberShop";
 
 const { width, height } = Dimensions.get("screen");
 class SignupScreen extends React.Component {
@@ -37,8 +37,24 @@ class SignupScreen extends React.Component {
     }
     
     signinPressed = () => {
+
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
-            
+             const uid = response.user.uid
+                const barberShopsRef = firebase.firestore().collection('BarberShops')
+                barberShopsRef
+                    .doc(uid)
+                    .get()
+                    .then(firestoreDocument => {
+                        if (!firestoreDocument.exists) {
+                            alert("User does not exist!")
+                            return;
+                        }
+                        const { navigation } = this.props;
+                        navigation.navigate('App')
+                    })
+                    .catch(error => {
+                        alert(error)
+                    });
         })
         .catch(error => {
             alert(error)

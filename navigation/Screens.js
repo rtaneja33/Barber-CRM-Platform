@@ -242,13 +242,14 @@ function HomeStack(props) {
 }
 
 export default function OnboardingStack(props) {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
   const [user, setUser] = useState(null);
   if(isLoading){
     return(
       <></>
     )
   }
+  
   // https://www.freecodecamp.org/news/react-native-firebase-tutorial/
   useEffect(() => {
     const usersRef = firebase.firestore().collection('users');
