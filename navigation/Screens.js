@@ -16,6 +16,7 @@ import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
+import EditServices from "../screens/EditServices";
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -82,22 +83,19 @@ function ArticlesStack(props) {
         }}
       />
             <Stack.Screen
-        name="Pro"
-        component={Pro}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
-        }}
-      />
+              name="EditServices"
+              component={EditServices}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title="Edit Services"
+                    back
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+              }}
+          />
     </Stack.Navigator>
   );
 }

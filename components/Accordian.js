@@ -1,15 +1,15 @@
 // https://github.com/KPS250/React-Native-Accordion/tree/simple-accordian
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, LayoutAnimation, Platform, UIManager, FlatList} from "react-native";
+import { View, TouchableOpacity, StyleSheet, LayoutAnimation, Platform, UIManager, FlatList, Dimensions} from "react-native";
 import { ListItem } from 'react-native-elements';
 import Icon from "../components/Icon";
 import { argonTheme } from "../constants";
 import { Block, Text } from "galio-framework";
 import { argonTheme as nowTheme } from "../constants";
 import { color } from 'react-native-reanimated';
+import { validateContent } from '../constants/utils';
 
-
-
+const { width, height } = Dimensions.get("screen");
 class Accordian extends React.Component{
 
     constructor(props) {
@@ -22,6 +22,30 @@ class Accordian extends React.Component{
         if (Platform.OS === 'android') {
             UIManager.setLayoutAnimationEnabledExperimental(true);
         }
+    }
+    renderVerticalSeparator = () => {
+      return (
+        <View
+          style={{
+            height: width / 10,
+            width: 1,
+            backgroundColor: '#CED0CE',
+            marginRight: nowTheme.SIZES.BASE
+          }}
+        />
+      )
+    }
+    renderVerticalServiceSeparator = () => {
+      return (
+        <View
+          style={{
+            height: width / 10,
+            width: 1,
+            backgroundColor: nowTheme.COLORS.HEADER,
+            marginRight: nowTheme.SIZES.BASE
+          }}
+        />
+      )
     }
 
     renderSeparator = () => {
@@ -45,23 +69,55 @@ class Accordian extends React.Component{
       <Block row center card shadow space="between" style={styles.card}>
         <Block style={{marginRight: nowTheme.SIZES.BASE}}>
         <Icon
-              name="scissors"
-              family="entypo"
-              size={25}
-              color="white"
-          />
+            name="scissors"
+            family="entypo"
+            size={25}
+            color="white"
+        />
         </Block>
         <Block flex>
           <Text style={{ color: "white",fontSize: 20, fontWeight: '600' }} size={nowTheme.SIZES.BASE * 1.125}>{this.props.serviceType}</Text>
           <Text style={{ color: "white", paddingTop: 2 }} size={nowTheme.SIZES.BASE * 0.875} muted>Tap for more details </Text>
         </Block>
         <View style={styles.right}>
-          <Icon
+          { this.props.editable ? 
+            (
+              <Block row center>
+                { this.renderVerticalSeparator() }
+                <TouchableOpacity
+                  small
+                  color="transparent"
+                  onPress={() => {
+                    if(this.props.editable){
+                      this.props.setModalVisible(true);
+                      this.props.setServiceField({ 
+                        serviceType: {
+                          label: 'Service Category',
+                          validators: [validateContent],
+                        }
+                      });
+                    }
+                }
+                }
+                >
+                  <Icon
+                      name="edit"
+                      family="FontAwesome5"
+                      size={25}
+                      color={'white'}
+                  />
+                </TouchableOpacity>
+              </Block>
+            ): 
+            ( 
+            <Icon
               name={this.state.expanded ? 'nav-down' : 'nav-right'}
               family="ArgonExtra"
               size={nowTheme.SIZES.BASE}
               color="white"
-          />
+            />
+          ) 
+          }
         </View>
       </Block>
       </TouchableOpacity>
@@ -73,17 +129,40 @@ class Accordian extends React.Component{
                 <FlatList
                   data={this.props.services}
                   scrollEnabled={false}
-                  renderItem={({ item }) => ( 
-                      
+                  renderItem={({ item, index }) => ( 
+                    // here, just remove that index from the Service Category in Firestore 
                     <ListItem                  
                       title={`${item.serviceName}`}  
                       subtitle={item.price}     
                      
                       containerStyle={{  backgroundColor:'transparent' }} 
                      ><ListItem.Content>
-                        <Block style={styles.subtitleView}>
+                        <Block center row style={styles.subtitleView}>
                             <Text style={styles.serviceFont}>{item.serviceName}</Text>
+                            <Block center row>
                             <Text style={styles.ratingText}>{item.price}</Text>
+                            { this.props.editable ? 
+                                (
+                                  
+                                    <TouchableOpacity
+                                      small
+                                      color="transparent"
+                                      style = {{ marginLeft: 20}}
+                                    >
+                                      <Icon
+                                        name="edit"
+                                        family="FontAwesome5"
+                                        size={25}
+                                        color={nowTheme.COLORS.HEADER}
+                                      />
+                                    </TouchableOpacity>
+                                  
+                                ): 
+                                ( 
+                                <></>
+                              ) 
+                            }
+                            </Block>
                         </Block>
                    </ListItem.Content></ListItem>       
                    )}  
@@ -96,7 +175,6 @@ class Accordian extends React.Component{
                       justifyContent: 'center',
                       marginTop: 50
                     }}>
-                    <Text style={{ color:'#bad555' }}>No Customers Found</Text>
                     </View>
                   )}
                 />
@@ -142,7 +220,7 @@ const styles = StyleSheet.create({
         width:'100%'
     },
     child:{
-        backgroundColor: "#525F7F30",
+        backgroundColor: "#525F7F20",
         padding:16,
     },
     subtitleView: { 

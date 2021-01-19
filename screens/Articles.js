@@ -12,7 +12,8 @@ import {
   FlatList,
 } from "react-native";
 import Modal from "react-native-modal";
-import DynamicForm from "react-native-dynamic-form";
+import { validateContent } from '../constants/utils';
+import CustomForm from "../components/CustomForm";
 import { ListItem } from 'react-native-elements';
 import Icon from "../components/Icon";
 import { firebase } from "../src/firebase/config";
@@ -35,7 +36,7 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
-const Articles = () => {
+const Articles = ({navigation}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [spinner, setSpinner] = React.useState(true);
   const [shopInformation, setShopInformation] = useState({});
@@ -69,137 +70,7 @@ const Articles = () => {
     }
     setServices(shopServices);
   };
-  const renderModal = () => {
-    const form = [
-      {
-        key: 'hdghhdbdfgh',
-        type: 'header',
-        subtype: 'h1',
-        label: 'Dynamic Form',
-      },
-    ];
-    return (
-      <View
-        style={styles.centeredView}
-        renderToHardwareTextureAndroid
-        shouldRasterizeIOS
-      >
-        <Spinner
-          visible={spinner}
-          textContent={"Loading..."}
-          textStyle={styles.spinnerTextStyles}
-        />
-        <Modal
-          animationType="fade"
-          transparent={true}
-          backdropOpacity={0.5}
-          useNativeDriver={false}
-          isVisible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Edit Services</Text>
-              <View style={styles.child}>
-                <FlatList
-                  data={services}
-                  scrollEnabled={false}
-                  renderItem={({ item }) => {console.log("ITEM IS", item); return (
-                    <View style = {{ marginTop: 30}}>
-                      
-                    {/* <Sae
-                      label={'Service Type'}
-                      iconClass={FontAwesomeIcon}
-                      iconName={'pencil'}
-                      iconColor={'black'}
-                      inputPadding={16}
-                      labelHeight={24}
-                      inputStyle={{color: 'black'}}
-                      defaultValue={item.serviceType}
-                      // active border height
-                      borderHeight={2}
-                      // TextInput props
-                      autoCapitalize={'none'}
-                      autoCorrect={false}
-                    /> */}
-                    <DynamicForm
-                      form={form}
-                      style={styles.formContainer}
-                    />
-                    <ListItem.Title>
-                      {item.serviceType}
-                    </ListItem.Title>
-                    {
-                      item.services.map((serv) => { 
-                        return (
-                            <ListItem
-                                title={`${serv.serviceName}`}
-                                subtitle={serv.price}
-                                containerStyle={{ backgroundColor: "transparent" }}
-                                bottomDivider
-                            >
-                            <ListItem.Content>
-                              <Block style={styles.subtitleView}>
-                                <Text style={styles.serviceFont}>
-                                  {serv.serviceName}
-                                </Text>
-                                <Text style={styles.ratingText}>{serv.price}</Text>
-                              </Block>
-                            </ListItem.Content>
-                          </ListItem>
-                        )
-                      })
-                    }
-                    </View>
-                  )}}
-                  keyExtractor={(item, index) => index.toString()}
-                  ItemSeparatorComponent={renderSeparator}
-                  ListEmptyComponent={() => (
-                    <View
-                      style={{
-                        flex: 1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginTop: 50,
-                      }}
-                    >
-                      <Text style={{ color: "#bad555" }}>
-                        No Customers Found
-                      </Text>
-                    </View>
-                  )}
-                />
-              </View>
-              <TouchableHighlight
-                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                onPress={() => {
-                  var serviceObj = [
-                    {
-                      serviceName: "Axe Hairgel",
-                      price: "$10",
-                    },
-                    {
-                      serviceName: "Crew Men's Pomade",
-                      price: "$20",
-                    },
-                  ];
-                  //Services.createNew("Products", serviceObj);
-                  // console.log("adding service...");
-                  var value = Form.getValue();
-                  console.log(value)
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
-  };
+  
   const [services, setServices] = React.useState([]);
 
 
@@ -258,6 +129,11 @@ const Articles = () => {
             paddingBottom: 10,
           }}
         >
+          <Spinner
+            visible={spinner}
+            textContent={"Loading..."}
+            textStyle={styles.spinnerTextStyles}
+          />
           <Block flex={1}>
             <ImageBackground
               source={Images.BarberBackground}
@@ -520,12 +396,12 @@ const Articles = () => {
                 <Text bold size={18} style={styles.title}>
                   Services
                 </Text>
-                <View style={styles.modal}>{renderModal()}</View>
                 <TouchableOpacity
                   small
                   color="transparent"
                   onPress={() => {
-                    setModalVisible(true);
+                    navigation.navigate('EditServices', {services: services});
+                    // setModalVisible(true);
                   }}
                   style={{
                     shadow: 0,
@@ -704,6 +580,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
     borderRadius: 20,
     padding: 10,
+    marginTop: 10,
     elevation: 2,
   },
   textStyle: {
