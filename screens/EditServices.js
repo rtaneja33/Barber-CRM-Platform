@@ -15,6 +15,8 @@ import { Block, Text, theme, Button as GaButton } from "galio-framework";
 import { HeaderHeight } from "../constants/utils";
 import CustomForm from "../components/CustomForm";
 const { width, height } = Dimensions.get("screen");
+import { firebase } from '../src/firebase/config'
+import BarberShop from "../models/BarberShop";
 import Spinner from "react-native-loading-spinner-overlay";
 
 import {
@@ -33,29 +35,39 @@ class EditServices extends React.Component {
         this.state = {
             serviceField: null,
             modalVisible: false,
+            serviceModified: null,
+            loading: false,
+            barberShop: this.props.route.params.barberShop,
+            services: this.props.route.params.services
         }
     }
     renderAccordions = (services) => {
         const items = [];
         services.map((item) => {
           items.push(
-            <Accordian serviceType={item.serviceType} services={item.services} editable setServiceField={this.setServiceField} setModalVisible={this.setModalVisible} />
+            <Accordian serviceType={item.serviceType} services={item.services} editable setServiceModified={this.setServiceModified} setServiceField={this.setServiceField} setModalVisible={this.setModalVisible} />
           );
         });
         return items;
     }
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
-        console.log("this.state.modalvisible", this.state.modalVisible)
     }
 
     setServiceField = (field) => {
-        this.state.serviceField = field;
+        this.setState({ serviceField: field });
+    }
+
+    setServiceModified = (oldKey) => {
+        this.setState({ serviceModified: oldKey });
     }
 
     renderModal = (serviceField= null) => {
         {   
-        console.log(serviceField);
+        // console.log(serviceField);
+        if(!serviceField) 
+            return (<></>)
+        const categoryModal = (Object.keys(serviceField).length > 0 && Object.keys(serviceField)[0] === "serviceType");
         return(
         <View
             style={styles.centeredView}
@@ -74,14 +86,57 @@ class EditServices extends React.Component {
             >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
+                <TouchableOpacity
+                style={{
+                    position: 'absolute',
+                    right: 23,
+                    top: 23,
+                    color: '#00000080',
+                }}
+                hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
+                onPress={() => {this.setState((prevState) => { return { ...prevState, modalVisible: !prevState.modalVisible} });}}
+                >
+                    <Icon 
+                        name="close" 
+                        family="AntDesign"
+                        size={25}
+                        style={{
+                            color: '#00000080'
+                        }}
+                    /> 
+                </TouchableOpacity>
                 <Text style={styles.modalText}>Edit Services</Text>
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.child}>
                 <View style = {{ marginTop: 30}}>
                 <CustomForm
-                    action = {()=> console.log("performed action!")}
+                    action = {
+                        (result)=> {
+                            // this.setState({ loading: true })
+                            
+                            // var barberShop = this.state.barberShop
+                            var shallowShop = new BarberShop()
+                            console.log("barbershop, look at services",this.state.barberShop)
+                            shallowShop.services = {...this.state.barberShop.services}
+                            shallowShop.uid = this.state.barberShop.uid
+                            shallowShop.updateServiceCategory(this.state.serviceModified, result)
+                            console.log("shallowshop services are", shallowShop.services);
+                            console.log("this state. services are ", this.state.services);
+                            console.log("BEFORE this.state is ", this.state);
+                            var oldCategory = this.state.serviceModified;
+                            this.setState(prevState => ({
+                                services: prevState.services.map(
+                                obj => (obj.serviceType === oldCategory ? Object.assign(obj, { serviceType: result }) : obj)
+                              )
+                            }));
+                        }
+                    }
                     afterSubmit = {() => console.log("afterSubmit!")}
                     buttonText = "Save Changes"
-                    closeModalText = "Cancel"
+                    closeModalText = {
+                        categoryModal ? 
+                            "Delete Category" : 
+                            "Delete Service"
+                    }
                     fields = {serviceField}
                     closeModal = {() => {this.setState((prevState) => { return { ...prevState, modalVisible: !prevState.modalVisible} });}}
                     // fields={{
@@ -100,25 +155,9 @@ class EditServices extends React.Component {
                     //   },
                     // }}
                 >
-                    {/* <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                    ></TouchableHighlight> */}
-                    {/* <Text>hello</Text> */}
                 </CustomForm>
                 </View>
                 </ScrollView>
-                <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                    onPress={() => {
-                    //Services.createNew("Products", serviceObj);
-                    // console.log("adding service...");
-                    this.setState((prevState) => { return { ...prevState, modalVisible: !prevState.modalVisible} });
-                    // this.state.visible = (!this.state.visible);
-                    // setModalVisible(!modalVisible);
-                    }}
-                >
-                    <Text style={styles.textStyle}>Hide Modal</Text>
-                </TouchableHighlight>
                 </View>
             </View>
             </Modal>
@@ -129,11 +168,14 @@ class EditServices extends React.Component {
 
     render() {
         const { navigation } = this.props;
-        const { services } = this.props.route.params;
-
         return (
             <ScrollView flex={1}>
                 <View style={styles.modal}>{this.renderModal(this.state.serviceField)}</View>
+                <Spinner
+                    visible={this.state.loading}
+                    textContent={"Loading..."}
+                    textStyle={styles.spinnerTextStyles}
+                />
                 <Block flex style={styles.profileCard}>
                 <Block row space="between">
                     <Text bold size={18} style={styles.title}>
@@ -146,7 +188,7 @@ class EditServices extends React.Component {
                     paddingBottom: -HeaderHeight * 2,
                     }}
                 >
-                    <View style={styles.accordion}>{this.renderAccordions(services)}</View>
+                    <View style={styles.accordion}>{this.renderAccordions(this.state.services)}</View>
                 </Block>
                 </Block>
           </ScrollView>
@@ -197,6 +239,7 @@ profileCard: {
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
+    paddingTop: 40,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

@@ -25,14 +25,14 @@ export const validateField = (validators, value) => {
   export const validateFields = (fields, values) => {
     const errors = {};
     const fieldKeys = Object.keys(fields);
-    console.log("Fields are", fields)
-    console.log("Values are", values)
+    // console.log("Fields are", fields)
+    // console.log("Values are", values)
     fieldKeys.forEach((key) => {
       const field = fields[key];
       const validators = field.validators;
       const value = values[key];
       if (validators && validators.length > 0) {
-        console.log("validating VALUE OF", value);
+        //console.log("validating VALUE OF", value);
         const error = validateField(validators, value);
   
         if (error) {
@@ -40,7 +40,7 @@ export const validateField = (validators, value) => {
         }
       }
     });
-    console.log("validate fields errors after are", errors)
+    //console.log("validate fields errors after are", errors)
     return errors;
   };
 

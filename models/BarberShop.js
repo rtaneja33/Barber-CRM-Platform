@@ -12,7 +12,6 @@ export default class BarberShop {
     services = {}
     
     update() {
-        console.log("in update for BarberShop, uid is", this.uid)
         var barberShopRef = firebase.firestore().collection('BarberShops').doc(this.uid);
         return new Promise(resolve => {
             barberShopRef.update({
@@ -63,6 +62,14 @@ export default class BarberShop {
             
             
         });
+    }
+
+   updateServiceCategory(oldKey, updatedKey) { 
+        // console.log("IN BARBERSHOP API, received oldKey of", oldKey, "oldObjectWithoutKey of", oldObjectWithoutKey,"updatedKey of", updatedKey);
+        this.services[updatedKey] = this.services[oldKey];
+        delete this.services[oldKey];
+        console.log("IN BARBERSHOP this.services is",this.services)
+        this.update();
     }
     
     static loadFromID(id) {

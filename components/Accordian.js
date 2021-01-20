@@ -8,6 +8,7 @@ import { Block, Text } from "galio-framework";
 import { argonTheme as nowTheme } from "../constants";
 import { color } from 'react-native-reanimated';
 import { validateContent } from '../constants/utils';
+import { ThreeDots } from 'react-bootstrap-icons';
 
 const { width, height } = Dimensions.get("screen");
 class Accordian extends React.Component{
@@ -62,10 +63,10 @@ class Accordian extends React.Component{
       }
 
   render() {
-
+    console.log(this.props);
     return (
         <View style={{minHeight:70}}>
-      <TouchableOpacity activeOpacity={0.8} ref={this.accordian}  onPress={()=>this.toggleExpand()}>
+      <TouchableOpacity activeOpacity={0.8} ref={this.accordian}  onPress={()=>this.toggleExpand()} disabled={this.props.editable}>
       <Block row center card shadow space="between" style={styles.card}>
         <Block style={{marginRight: nowTheme.SIZES.BASE}}>
         <Icon
@@ -87,12 +88,15 @@ class Accordian extends React.Component{
                 <TouchableOpacity
                   small
                   color="transparent"
+                  hitSlop={{top: 30, bottom: 30, left: 30, right: 30}}
                   onPress={() => {
                     if(this.props.editable){
                       this.props.setModalVisible(true);
+                      this.props.setServiceModified(this.props.serviceType, this.props.services);
                       this.props.setServiceField({ 
                         serviceType: {
-                          label: 'Service Category',
+                          label: 'Service Category*',
+                          defaultValue: this.props.serviceType,
                           validators: [validateContent],
                         }
                       });
@@ -143,11 +147,32 @@ class Accordian extends React.Component{
                             <Text style={styles.ratingText}>{item.price}</Text>
                             { this.props.editable ? 
                                 (
-                                  
                                     <TouchableOpacity
                                       small
                                       color="transparent"
                                       style = {{ marginLeft: 20}}
+                                      onPress={() => {
+                                        if(this.props.editable){
+                                          this.props.setServiceModified({
+                                            serviceCategory: this.props.serviceType,
+                                            serviceIndex: index
+                                          })
+                                          this.props.setModalVisible(true);
+                                          this.props.setServiceField({ 
+                                            serviceName: {
+                                              label: 'Service Name*',
+                                              defaultValue: item.serviceName,
+                                              validators: [validateContent],
+                                            },
+                                            price: {
+                                              label: 'Price',
+                                              defaultValue: item.price,
+                                              validators: [],
+                                            }
+                                          });
+                                        }
+                                      }
+                                    }
                                     >
                                       <Icon
                                         name="edit"

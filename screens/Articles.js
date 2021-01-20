@@ -400,7 +400,7 @@ const Articles = ({navigation}) => {
                   small
                   color="transparent"
                   onPress={() => {
-                    navigation.navigate('EditServices', {services: services});
+                    navigation.navigate('EditServices', {services: services, barberShop: shopInformation});
                     // setModalVisible(true);
                   }}
                   style={{

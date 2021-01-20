@@ -6,10 +6,19 @@ import {argonTheme} from '../constants';
 import CustomField from "./CustomField";
 import SubmitFormButton from "./SubmitFormButton";
 // import Button  from './Button';
-const getInitialState = (fieldKeys) => {
+const getInitialState = (fieldKeys, fields) => {
   const state = {};
   fieldKeys.forEach((key) => {
-    state[key] = '';
+    state[key] = fields[key].defaultValue || ''; 
+  });
+
+  return state;
+};
+
+const getInitialErrorsState = (fieldKeys) => {
+  const state = {};
+  fieldKeys.forEach((key) => {
+    state[key] = ''; 
   });
 
   return state;
@@ -39,16 +48,18 @@ const getInitialState = (fieldKeys) => {
 // shoutout https://scottdomes.com/react-native-sexy-forms/
 const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, closeModalText }) => {
   const fieldKeys = Object.keys(fields);
-  const [values, setValues] = useState(getInitialState(fieldKeys));
+  const [values, setValues] = useState(getInitialState(fieldKeys, fields));
   const [validationErrors, setValidationErrors] = useState(
-    getInitialState(fieldKeys),
+    getInitialErrorsState(fieldKeys),
   );
+  const [disabled, setDisabled] = useState(true);
   const [opacity, setOpacity] = useState(new Animated.Value(1))
   useEffect(()=>{
     setOpacity(new Animated.Value(1));
   }, []);
   const onChangeValue = (key, value) => {
     const newState = { ...values, [key]: value };
+    setDisabled(false);
     setValues(newState);
 
     if(validationErrors[key]){
@@ -62,7 +73,7 @@ const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, close
   }
 
   const submit = () => {
-    setValidationErrors(getInitialState(fieldKeys));
+    setValidationErrors(getInitialErrorsState(fieldKeys));
     const errors = validateFields(fields, values);
     if (hasValidationError(errors)) {
       return setValidationErrors(errors);
@@ -91,13 +102,13 @@ const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, close
         );
       })}
       </Animated.View>
+      <SubmitFormButton disabled={disabled} title={buttonText} titleStyle={{ color: 'white' }} style={ disabled ? styles.disabled : { marginBottom: 10 ,backgroundColor: argonTheme.COLORS.HEADER}} onPress ={submit} />
       {
         closeModal ?
-          <SubmitFormButton title={closeModalText} titleStyle={{ color: 'white' }} style={{ marginBottom: 10 ,backgroundColor: argonTheme.COLORS.HEADER}} onPress ={closeModal} />
+          <SubmitFormButton title={closeModalText}  titleStyle= {{ color: argonTheme.COLORS.BARBERRED }}  style={{ backgroundColor: 'white', borderColor: argonTheme.COLORS.BARBERRED, borderWidth: 1 }} onPress ={closeModal} />
         :     
           <></>  
       }
-      <SubmitFormButton title={buttonText} titleStyle= {{ color: argonTheme.COLORS.HEADER }} style={{ backgroundColor: 'white', borderColor: argonTheme.COLORS.HEADER, borderWidth: 1 }} onPress ={submit} />
     </View>
   );
 };
@@ -107,6 +118,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 15,
+  },
+  disabled: {
+    marginBottom: 10,
+    backgroundColor: "#ccc",
+    color: "#999"
   },
   error: {
     marginBottom: 20,

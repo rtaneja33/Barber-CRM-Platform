@@ -1,5 +1,6 @@
 import { firebase } from '../src/firebase/config';
 import BarberShops from '../models/BarberShop';
+import { Service } from '../constants';
 export default class Services {
     shopUID = ""
     serviceName = ""
@@ -16,6 +17,7 @@ export default class Services {
             resolve(true);
         });
     }
+
     
     static createNew(serviceCategory, serviceObj) {
         const uid = firebase.auth().currentUser.uid;

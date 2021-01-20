@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TouchableWithoutFeedback, View, Text, StyleSheet, Animated, titleStyle} from 'react-native';
 
-const SubmitFormButton = ({ title, onPress, style, titleStyle}) => {
+const SubmitFormButton = ({ title, onPress, style, titleStyle, ...props}) => {
   const [offset] = useState(new Animated.Value(1));
   const [scale] = useState(new Animated.Value(1));
   const handlePress = () => {
@@ -33,10 +33,8 @@ const SubmitFormButton = ({ title, onPress, style, titleStyle}) => {
     { scaleX: scale },
   ];
 
-  console.log("style is", style)
-      console.log("title style is", titleStyle)
   return (
-    <TouchableWithoutFeedback onPressIn={handlePress} onPressOut={handlePressOut}>
+    <TouchableWithoutFeedback onPressIn={handlePress} onPressOut={handlePressOut} {...props}>
       <Animated.View style={{ transform, ...styles.container, ...style }}>
         <Text style={[styles.text, { ...titleStyle }]} >{title}</Text>
       </Animated.View>
