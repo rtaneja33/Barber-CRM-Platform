@@ -68,8 +68,16 @@ export default class BarberShop {
         // console.log("IN BARBERSHOP API, received oldKey of", oldKey, "oldObjectWithoutKey of", oldObjectWithoutKey,"updatedKey of", updatedKey);
         this.services[updatedKey] = this.services[oldKey];
         delete this.services[oldKey];
-        console.log("IN BARBERSHOP this.services is",this.services)
         this.update();
+        return new Promise((resolve, reject) => {
+            this.update().then(success => {
+                resolve(success);
+            })
+            .catch((err)=> {
+                console.log("error updating:", err);
+                reject(err);
+            })
+        })
     }
     
     static loadFromID(id) {

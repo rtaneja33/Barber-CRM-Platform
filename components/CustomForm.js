@@ -78,6 +78,8 @@ const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, close
     if (hasValidationError(errors)) {
       return setValidationErrors(errors);
     }
+    console.log("getValues are", getValues());
+    console.log("values are", values);
     const result = action(...getValues()); 
     const afterSubmitResult = afterSubmit(result);
   };
