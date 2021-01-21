@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Dimensions,
@@ -9,88 +9,95 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   TouchableHighlight,
-  FlatList
+  FlatList,
+  BackHandler
 } from "react-native";
-import Modal from 'react-native-modal';
-import {ExpandableListView} from 'react-native-expandable-listview';
-import { Avatar } from "react-native-elements";
+import Modal from "react-native-modal";
+import { validateContent } from '../constants/utils';
+import CustomForm from "../components/CustomForm";
+import { ListItem } from 'react-native-elements';
 import Icon from "../components/Icon";
-import { Card, Accordian } from "../components/";
+import { firebase } from "../src/firebase/config";
+import { Accordian, renderSeparator } from "../components/";
+import BarberShops from "../models/BarberShop";
 import { Block, Text, theme, Button as GaButton } from "galio-framework";
-
+import Spinner from "react-native-loading-spinner-overlay";
 import { Button } from "../components";
-import { Images, argonTheme as nowTheme, Service, ServiceList, articles, argonTheme } from "../constants";
+import {
+  Images,
+  argonTheme as nowTheme,
+  Service,
+  ServiceList,
+  articles,
+  argonTheme,
+} from "../constants";
 import { HeaderHeight } from "../constants/utils";
-import zIndex from "@material-ui/core/styles/zIndex";
-import { render } from "react-dom";
-import { TruckFlatbed } from "react-bootstrap-icons";
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
-const Articles = () => {
+const Articles = ({navigation}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
-  const renderModal=()=>{
-    return (
-      <View style={styles.centeredView} renderToHardwareTextureAndroid shouldRasterizeIOS>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          backdropOpacity={0.5}
-          
-          isVisible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Edit Services</Text>
-  
-              <TouchableHighlight
-                style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}>
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
-      </View>
-      );
+  const [spinner, setSpinner] = React.useState(true);
+  const [shopInformation, setShopInformation] = useState({});
+  useEffect(() => {
+    console.log("making api call");
+    setSpinner(true);
+
+    BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+      setShopInformation(shopInfo);
+      loadServices(shopInfo.services);
+      setSpinner(false);
+    });
+  }, [services]);
+
+  const onBackHandler = (changeMade)=>{
+    setSpinner(true);
+    if(changeMade) { // change was made in editServices
+      BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+        setShopInformation(shopInfo);
+        loadServices(shopInfo.services);
+        setSpinner(false);
+      });
+    }
   }
-  const [services, setServices] = React.useState([
-    
-    new ServiceList("Popular", [
-      new Service("Men's Cut", "$25"),
-    ]),
-    new ServiceList("Haircut", [
-      new Service("Men's Cut", "$25"),
-      new Service("Short Trim", "$20"),
-      new Service("Cut+Shave", "$38"),
-      new Service("Low Fade Cut", "$23"),
-    ]
-    ),
-    new ServiceList("Products", [
-      new Service("Axe Hair Gel", "$15"),
-      new Service("Crew Men's Pomade", "$10"),
-    ]
-    )
-  ]);
-  const renderAccordions=()=> {
-    const items =[];
+  
+  // useEffect(()=> {
+  //   Services.loadServices(firebase.auth().currentUser.uid)
+  //   .then(data => {
+  //     setServiceInformation(data)
+  //     console.log(serviceInformation)
+  //   }
+  //   )
+  // },[])
+  const loadServices = (servicesMap) => {
+    console.log("LOADING SERVICES");
+    var shopServices = [];
+    for (var serviceType in servicesMap) {
+      var serviceList = new ServiceList(serviceType, []);
+      servicesMap[serviceType].map((item) => {
+        serviceList.services.push(new Service(item.serviceName, item.price));
+      });
+      shopServices.push(serviceList);
+    }
+    setServices(shopServices);
+  };
+  
+  const [services, setServices] = React.useState([]);
+
+
+  const renderAccordions = () => {
+    const items = [];
     services.map((item) => {
       items.push(
-        <Accordian
-          serviceType = {item.serviceType}
-          services = {item.services}
-        />
+        <Accordian serviceType={item.serviceType} services={item.services} />
       );
-    })
+    });
     return items;
-  }
-  const categories = [ //barbers 
+  };
+  const categories = [
+    //barbers
     {
       image:
         "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
@@ -117,35 +124,7 @@ const Articles = () => {
       price: "Tim",
     },
   ];
-  const renderItem = ({item}) => 
-    (
-    <View style={{minHeight:70}}>
-      <TouchableOpacity onPress={()=>alert("open services? idk")}>
-      <Block row center card shadow space="between" style={styles.card} key={item}>
-        <Block style={{marginRight: nowTheme.SIZES.BASE}}>
-        <Icon
-              name="scissors"
-              family="entypo"
-              size={25}
-              color="white"
-          />
-        </Block>
-        <Block flex>
-          <Text style={{ color: "white",fontSize: 20, fontWeight: '600' }} size={nowTheme.SIZES.BASE * 1.125}>{item}</Text>
-          <Text style={{ color: "white", paddingTop: 2 }} size={nowTheme.SIZES.BASE * 0.875} muted>Tap for more details </Text>
-        </Block>
-        <View style={styles.right}>
-          <Icon
-              name="nav-right"
-              family="ArgonExtra"
-              size={nowTheme.SIZES.BASE}
-              color="white"
-          />
-        </View>
-      </Block>
-      </TouchableOpacity>
-    </View>
-  );
+
   return (
     <Block
       style={{
@@ -154,18 +133,21 @@ const Articles = () => {
         justifyContent: "space-between",
       }}
     >
-      <Block flex center >
+      <Block flex center>
         <ScrollView
           flex={1}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
-          contentContainerStyle={
-            {
-              paddingBottom: 10
-            }
-          }
+          contentContainerStyle={{
+            paddingBottom: 10,
+          }}
         >
-          <Block flex={1} >
+          <Spinner
+            visible={spinner}
+            textContent={"Loading..."}
+            textStyle={styles.spinnerTextStyles}
+          />
+          <Block flex={1}>
             <ImageBackground
               source={Images.BarberBackground}
               style={styles.profileContainer}
@@ -207,7 +189,7 @@ const Articles = () => {
                           opacity: 0.9,
                         }}
                       >
-                        123 Wallaby Way
+                        {shopInformation.address}
                       </Text>
                     </Block>
                   </Block>
@@ -239,10 +221,13 @@ const Articles = () => {
               </Block>
             </ImageBackground>
           </Block>
-            {/* <ScrollView showsVerticalScrollIndicator={true}> */}
-            <Block flex style={[styles.profileCard, { marginTop: theme.SIZES.BASE*2.5 }]}>
-              <Block style = {{ paddingBottom: 12 }}>
-                {/* <Text
+          {/* <ScrollView showsVerticalScrollIndicator={true}> */}
+          <Block
+            flex
+            style={[styles.profileCard, { marginTop: theme.SIZES.BASE * 2.5 }]}
+          >
+            <Block style={{ paddingBottom: 12 }}>
+              {/* <Text
                   style={{
                     color: "#2c2c2c",
                     fontWeight: "bold",
@@ -255,17 +240,16 @@ const Articles = () => {
                 >
                   Description
                 </Text> */}
-                <Block
-                    row
-                    space="between"
-                  >
-                 <Text bold size={18} style={styles.title}>
+              <Block row space="between">
+                <Text bold size={18} style={styles.title}>
                   About
                 </Text>
                 <TouchableOpacity
                   small
                   color="transparent"
-                  onPress={(text)=>{alert(text)}}
+                  onPress={(text) => {
+                    alert(text);
+                  }}
                   style={{
                     shadow: 0,
                     paddingRight: 10,
@@ -279,49 +263,46 @@ const Articles = () => {
                     color={nowTheme.COLORS.DEFAULT}
                   />
                 </TouchableOpacity>
-                </Block>
-                <Text
-                  size={16}
-                  muted
-                  style={{
-                    textAlign: "left",
-                    fontFamily: "montserrat-regular",
-                    zIndex: 2,
-                    lineHeight: 25,
-                    color: "#9A9A9A",
-                    paddingHorizontal: 15,
-                  }}
-                >
-                  Barbershop serving customers for over 30+ years in the DMV area. Specializes in men's hair styles, shaves, trims, etc. 
-                  Come swing by our shop on Gallows Rd. for a fresh shapeup! 
-                </Text>
               </Block>
-              </Block>
+              <Text
+                size={16}
+                muted
+                style={{
+                  textAlign: "left",
+                  fontFamily: "montserrat-regular",
+                  zIndex: 2,
+                  lineHeight: 25,
+                  color: "#9A9A9A",
+                  paddingHorizontal: 15,
+                }}
+              >
+                {shopInformation.aboutDescription}
+              </Text>
+            </Block>
+          </Block>
           <Block flex={3} style={styles.profileCard}>
-                  <Block
-                    row
-                    space="between"
-                  >
-                 <Text bold size={18} style={styles.title}>
-                  Barbers
-                </Text>
-                <TouchableOpacity
-                  small
-                  color="transparent"
-                  style={{
-                    shadow: 0,
-                    paddingRight: 10,
-                    marginTop: 22,
-                  }}
-                >
-                  <Icon
-                    name="edit"
-                    family="FontAwesome5"
-                    size={25}
-                    color={nowTheme.COLORS.DEFAULT}
-                  />
-                </TouchableOpacity>
-              </Block>
+            <Block row space="between">
+              <Text bold size={18} style={styles.title}>
+                Barbers
+              </Text>
+              <TouchableOpacity
+                small
+                color="transparent"
+                style={{
+                  shadow: 0,
+                  paddingRight: 10,
+                  marginTop: 22,
+                }}
+              >
+                <Icon
+                  name="edit"
+                  family="FontAwesome5"
+                  size={25}
+                  onPress={() => {}}
+                  color={nowTheme.COLORS.DEFAULT}
+                />
+              </TouchableOpacity>
+            </Block>
             {/* <Text bold size={18} style={styles.title}>
               Barbers
             </Text> */}
@@ -385,14 +366,10 @@ const Articles = () => {
           </Block>
           {/* </ScrollView>
       </Block> */}
-          <Block flex={1} >
+          <Block flex={1}>
             {/* <ScrollView showsVerticalScrollIndicator={true}> */}
             <Block flex style={styles.profileCard}>
-            
-              <Block
-                row
-                space="between"
-              >
+              <Block row space="between">
                 <Text bold size={18} style={styles.title}>
                   Portfolio
                 </Text>
@@ -425,25 +402,19 @@ const Articles = () => {
             </Block>
             {/* </ScrollView> */}
           </Block>
-          <Block flex={1} >
+          <Block flex={1}>
             {/* <ScrollView showsVerticalScrollIndicator={true}> */}
             <Block flex style={styles.profileCard}>
-            
-              <Block
-                row
-                space="between"
-              >
+              <Block row space="between">
                 <Text bold size={18} style={styles.title}>
                   Services
                 </Text>
-                <View style={styles.modal}>
-                  { renderModal() }
-                </View>
                 <TouchableOpacity
                   small
                   color="transparent"
-                  onPress={()=>{
-                    setModalVisible(true);
+                  onPress={() => {
+                    navigation.navigate('EditServices', {services: services, barberShop: shopInformation, onBackHandler: onBackHandler.bind(this) });
+                    // setModalVisible(true);
                   }}
                   style={{
                     shadow: 0,
@@ -468,10 +439,7 @@ const Articles = () => {
                 {/* <ExpandableListView
                   data={CONTENT} // required
                 /> */}
-                <View style={styles.accordion}>
-                  { renderAccordions() }
-                </View>
-               
+                <View style={styles.accordion}>{renderAccordions()}</View>
               </Block>
             </Block>
             {/* </ScrollView> */}
@@ -484,12 +452,12 @@ const Articles = () => {
 
 const styles = StyleSheet.create({
   card: {
-    borderColor: 'transparent',
+    borderColor: "transparent",
     // marginVertical: nowTheme.SIZES.BASE / 2,
     marginVertical: 1,
-    padding: nowTheme.SIZES.BASE+10,
+    padding: nowTheme.SIZES.BASE + 10,
     backgroundColor: nowTheme.COLORS.WHITE,
-    shadowOpacity: .4,
+    shadowOpacity: 0.4,
     backgroundColor: nowTheme.COLORS.HEADER,
   },
   profileContainer: {
@@ -510,10 +478,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     //ios
     shadowRadius: 8,
-    shadowOpacity: .15,
+    shadowOpacity: 0.15,
     zIndex: 2,
     //android
-    elevation: 3
+    elevation: 3,
   },
   overlay: {
     backgroundColor: "black",
@@ -594,23 +562,23 @@ const styles = StyleSheet.create({
     // paddingBottom: nowTheme.SIZES.BASE * 2,
   },
   container: {
-    flex:1,
-    paddingTop:100,
-    backgroundColor: nowTheme.COLORS.PRIMARY
+    flex: 1,
+    paddingTop: 100,
+    backgroundColor: nowTheme.COLORS.PRIMARY,
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -618,25 +586,51 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    height: "70%",
-    width: "95%",
+    height: "90%",
+    width: "100%",
   },
   openButton: {
-    backgroundColor: '#F194FF',
+    backgroundColor: "#F194FF",
     borderRadius: 20,
     padding: 10,
+    marginTop: 10,
     elevation: 2,
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 25
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 25,
+  },
+  spinnerTextStyles: {
+    color: "#FFF",
+  },
+  parentHr: {
+    height: 1,
+    color: argonTheme.COLORS.WHITE,
+    width: "100%",
+  },
+  child: {
+    width: "100%",
+  },
+  subtitleView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  ratingText: {
+    color: nowTheme.COLORS.BLACK,
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  serviceFont: {
+    fontWeight: "bold",
+    fontSize: 18,
+    color: nowTheme.COLORS.HEADER,
   },
 });
 

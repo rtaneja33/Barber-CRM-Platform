@@ -9,7 +9,8 @@ import {
 import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
-import { firebase } from '../src/firebase/config'
+import { firebase } from '../src/firebase/config';
+import BarberShop from "../models/BarberShop";
 
 const { width, height } = Dimensions.get("screen");
 class SignupScreen extends React.Component {
@@ -18,26 +19,17 @@ class SignupScreen extends React.Component {
     }
     
     signupPressed = () => {
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then((response) => {
+
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
                 const uid = response.user.uid
-                const data = {
-                    id: uid,
-                    email: this.state.email,
-                };
-                const usersRef = firebase.firestore().collection('users')
-                usersRef
-                    .doc(uid)
-                    .set(data)
-                    .then(() => {
-                        const { navigation } = this.props;
-                        navigation.navigate("App")
-                    })
-                    .catch((error) => {
-                        alert(error)
-                    });
+                BarberShop.createNew(uid).then( (barberShop) => {
+                    barberShop.aboutDescription = "yo";
+                    barberShop.address = "1919191";
+                    barberShop.update();
+                
+                    const { navigation } = this.props;
+                    navigation.navigate("App");
+                }).catch((error) => {alert(error)});
             })
             .catch((error) => {
                 alert(error)
@@ -45,31 +37,28 @@ class SignupScreen extends React.Component {
     }
     
     signinPressed = () => {
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then((response) => {
-                const uid = response.user.uid
-                const usersRef = firebase.firestore().collection('users')
-                usersRef
+
+        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
+             const uid = response.user.uid
+                const barberShopsRef = firebase.firestore().collection('BarberShops')
+                barberShopsRef
                     .doc(uid)
                     .get()
                     .then(firestoreDocument => {
                         if (!firestoreDocument.exists) {
-                            alert("User does not exist anymore.")
+                            alert("User does not exist!")
                             return;
                         }
-                        //const user = firestoreDocument.data()
                         const { navigation } = this.props;
                         navigation.navigate('App')
                     })
                     .catch(error => {
                         alert(error)
                     });
-            })
-            .catch(error => {
-                alert(error)
-            })
+        })
+        .catch(error => {
+            alert(error)
+        })
     }
     
     render() {

@@ -16,6 +16,7 @@ import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
+import EditServices from "../screens/EditServices";
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -82,22 +83,19 @@ function ArticlesStack(props) {
         }}
       />
             <Stack.Screen
-        name="Pro"
-        component={Pro}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
-        }}
-      />
+              name="EditServices"
+              component={EditServices}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title="Edit Services"
+                    back
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+              }}
+          />
     </Stack.Navigator>
   );
 }
@@ -242,13 +240,14 @@ function HomeStack(props) {
 }
 
 export default function OnboardingStack(props) {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
   const [user, setUser] = useState(null);
   if(isLoading){
     return(
       <></>
     )
   }
+  
   // https://www.freecodecamp.org/news/react-native-firebase-tutorial/
   useEffect(() => {
     const usersRef = firebase.firestore().collection('users');
