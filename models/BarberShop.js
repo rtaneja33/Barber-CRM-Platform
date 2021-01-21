@@ -64,6 +64,24 @@ export default class BarberShop {
         });
     }
 
+    updateServiceItem(serviceCategory, serviceIndex, newServiceObject) { 
+        console.log("in service item update method now")
+        //console.log("IN BARBERSHOP API, received serviceCategory of", serviceCategory, "serviceIndex of", serviceIndex,"serviceObject of", newServiceObject);
+        console.log("hello");
+        console.log("this.services[servicecategory[",this.services[serviceCategory]);
+        this.services[serviceCategory][serviceIndex] = {...newServiceObject};
+        this.update();
+        return new Promise((resolve, reject) => {
+            this.update().then(success => {
+                resolve(success);
+            })
+            .catch((err)=> {
+                console.log("error updating:", err);
+                reject(err);
+            })
+        })
+    }
+
    updateServiceCategory(oldKey, updatedKey) { 
         // console.log("IN BARBERSHOP API, received oldKey of", oldKey, "oldObjectWithoutKey of", oldObjectWithoutKey,"updatedKey of", updatedKey);
         this.services[updatedKey] = this.services[oldKey];

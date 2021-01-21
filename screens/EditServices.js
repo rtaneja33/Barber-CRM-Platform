@@ -33,6 +33,7 @@ import { ScrollView } from "react-native-gesture-handler";
 class EditServices extends React.Component {
   constructor(props) {
     super(props);
+    // console.log(this.props.route.params.barberShop);
     this.state = {
       serviceField: null,
       modalVisible: false,
@@ -67,6 +68,7 @@ class EditServices extends React.Component {
   };
 
   setServiceModified = (oldKey) => {
+    console.log("SET SERVICE MODIFIED, PASSED IN ", oldKey);
     this.setState({ serviceModified: oldKey });
   };
 
@@ -80,6 +82,45 @@ class EditServices extends React.Component {
   }
   submitServiceItem = (price, nameOfService) => {
     console.log("for service item, new price is", price, "and new service is", nameOfService);
+    let serviceLocation = {...this.state.serviceModified};
+    // let newServiceObj = new Service(nameOfService, price);
+    let newServiceObj = {
+        price: price,
+        serviceName: nameOfService,
+    }
+    console.log("new servie obj is",newServiceObj)
+    this.setState({ loading: true });
+    console.log("this state barberShop is", this.state.barberShop)
+    this.state.barberShop
+      .updateServiceItem(serviceLocation.serviceCategory, serviceLocation.serviceIndex, newServiceObj)
+      .then((updated) => {
+        if (updated) {
+            console.log("this.state.services", this.state.services);
+          var tempArr = this.state.services;
+          console.log("tempArr before is", tempArr);
+          tempArr.map((obj) => {
+              if(obj.serviceType === serviceLocation.serviceCategory) {
+                  obj.services[serviceLocation.serviceIndex] = newServiceObj
+              }
+          })
+        } else {
+          throw new Error("COULD NOT UPDATE");
+        }
+        const timer = setTimeout(() => {
+            this.setState({loading: false})
+            this.closeModal();
+            showMessage({
+                message: "Service has been updated!",
+                type: "success",
+                icon: "success"
+            });
+        }, 300);
+      })
+      .catch((err) => {
+        this.setState({loading: false})
+        console.log("edit services", err);
+        console.log("An error occurred with updating");
+      });
   }
 
   submitServiceCategory = (result) => {
@@ -90,7 +131,7 @@ class EditServices extends React.Component {
         console.log("in edit service, updated is", updated);
         if (updated) {
           var oldCategory = this.state.serviceModified;
-          
+          console.log("rohan look, changing services", this.state.services);
           this.setState((prevState) => ({
             services: prevState.services.map((obj) =>
               obj.serviceType === oldCategory
@@ -112,8 +153,7 @@ class EditServices extends React.Component {
                 type: "success",
                 icon: "success"
             });
-        }, 200);
-        
+        }, 300);
       })
       .catch((err) => {
         this.setState({loading: false})

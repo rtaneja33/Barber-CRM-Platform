@@ -92,7 +92,7 @@ class Accordian extends React.Component{
                   onPress={() => {
                     if(this.props.editable){
                       this.props.setModalVisible(true);
-                      this.props.setServiceModified(this.props.serviceType, this.props.services);
+                      this.props.setServiceModified(this.props.serviceType);
                       this.props.setServiceField({ 
                         serviceType: {
                           label: 'Service Category*',
