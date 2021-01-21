@@ -46,7 +46,7 @@ const getInitialErrorsState = (fieldKeys) => {
 /> */}
 
 // shoutout https://scottdomes.com/react-native-sexy-forms/
-const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, closeModalText }) => {
+const CustomForm = ({ fields, buttonText, action, afterSubmit, deleteButton, closeModalText }) => {
   const fieldKeys = Object.keys(fields);
   const [values, setValues] = useState(getInitialState(fieldKeys, fields));
   const [validationErrors, setValidationErrors] = useState(
@@ -82,6 +82,7 @@ const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, close
     const afterSubmitResult = afterSubmit(result);
   };
   
+  
   return (
     <View style={styles.container}>
       <Animated.View style={{ opacity }}>
@@ -104,8 +105,8 @@ const CustomForm = ({ fields, buttonText, action, afterSubmit, closeModal, close
       </Animated.View>
       <SubmitFormButton disabled={disabled} title={buttonText} titleStyle={{ color: 'white' }} style={ disabled ? styles.disabled : { marginBottom: 10 ,backgroundColor: argonTheme.COLORS.HEADER}} onPress ={submit} />
       {
-        closeModal ?
-          <SubmitFormButton title={closeModalText}  titleStyle= {{ color: argonTheme.COLORS.BARBERRED }}  style={{ backgroundColor: 'white', borderColor: argonTheme.COLORS.BARBERRED, borderWidth: 1 }} onPress ={closeModal} />
+        deleteButton ?
+          <SubmitFormButton title={closeModalText}  titleStyle= {{ color: argonTheme.COLORS.BARBERRED }}  style={{ backgroundColor: 'white', borderColor: argonTheme.COLORS.BARBERRED, borderWidth: 1 }} onPress ={deleteButton} />
         :     
           <></>  
       }

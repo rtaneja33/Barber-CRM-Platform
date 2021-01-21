@@ -41,8 +41,16 @@ class EditServices extends React.Component {
       loading: false,
       barberShop: this.props.route.params.barberShop,
       services: this.props.route.params.services,
+      changeMade: false,
     };
   }
+
+  componentWillUnmount(){
+    if(this.props.route.params.onBackHandler){
+        this.props.route.params.onBackHandler(this.state.changeMade)
+    }
+  }
+
   renderAccordions = (services) => {
     const items = [];
     services.map((item) => {
@@ -80,6 +88,40 @@ class EditServices extends React.Component {
         };
     });
   }
+
+  deleteServiceItem = () => {
+    this.setState({ loading: true, changeMade: true });
+    let serviceLocation = {...this.state.serviceModified};
+    console.log("serviceLocation is",serviceLocation )
+    this.state.barberShop
+      .deleteServiceItem(serviceLocation.serviceCategory, serviceLocation.serviceIndex)
+      .then((updated) => {
+        if (updated) {
+            var tempArr = this.state.services;
+            tempArr.map((obj) => {
+                if(obj.serviceType === serviceLocation.serviceCategory) {
+                    obj.services.splice(serviceLocation.serviceIndex, 1)
+                }
+            })
+        } else {
+          throw new Error("COULD NOT DELETE CATEGORY");
+        }
+        const timer = setTimeout(() => {
+            this.setState({loading: false})
+            this.closeModal();
+            showMessage({
+                message: "Service Item has been deleted!",
+                type: "danger",
+                icon: "success"
+            });
+        }, 300);
+      })
+      .catch((err) => {
+        this.setState({loading: false})
+        console.log("An error occurred with deleting service item", err);
+      });
+  };
+
   submitServiceItem = (price, nameOfService) => {
     console.log("for service item, new price is", price, "and new service is", nameOfService);
     let serviceLocation = {...this.state.serviceModified};
@@ -88,16 +130,12 @@ class EditServices extends React.Component {
         price: price,
         serviceName: nameOfService,
     }
-    console.log("new servie obj is",newServiceObj)
-    this.setState({ loading: true });
-    console.log("this state barberShop is", this.state.barberShop)
+    this.setState({ loading: true,changeMade: true });
     this.state.barberShop
       .updateServiceItem(serviceLocation.serviceCategory, serviceLocation.serviceIndex, newServiceObj)
       .then((updated) => {
         if (updated) {
-            console.log("this.state.services", this.state.services);
           var tempArr = this.state.services;
-          console.log("tempArr before is", tempArr);
           tempArr.map((obj) => {
               if(obj.serviceType === serviceLocation.serviceCategory) {
                   obj.services[serviceLocation.serviceIndex] = newServiceObj
@@ -118,20 +156,49 @@ class EditServices extends React.Component {
       })
       .catch((err) => {
         this.setState({loading: false})
-        console.log("edit services", err);
-        console.log("An error occurred with updating");
+        console.log("An error occurred with updating",err);
       });
   }
 
-  submitServiceCategory = (result) => {
-    this.setState({ loading: true });
+  deleteServiceCategory = () => {
+    this.setState({ loading: true, changeMade: true });
+    var oldCategory = this.state.serviceModified;
     this.state.barberShop
-      .updateServiceCategory(this.state.serviceModified, result)
+      .deleteServiceCategory(oldCategory)
       .then((updated) => {
-        console.log("in edit service, updated is", updated);
+        if (updated) {
+            this.setState((prevState) => ({
+                services: prevState.services.filter((obj)=>{
+                    return obj.serviceType !== oldCategory
+                })
+            }));
+        } else {
+          throw new Error("COULD NOT DELETE CATEGORY");
+        }
+        const timer = setTimeout(() => {
+            this.setState({loading: false})
+            this.closeModal();
+            showMessage({
+                message: "Service Category has been deleted!",
+                type: "danger",
+                icon: "success"
+            });
+        }, 300);
+      })
+      .catch((err) => {
+        this.setState({loading: false})
+        console.log("edit services", err);
+        console.log("An error occurred with deleting");
+      });
+  };
+
+  submitServiceCategory = (result) => {
+    this.setState({ loading: true, changeMade: true });
+    this.state.barberShop
+      .deleteServiceCategory(this.state.serviceModified, result)
+      .then((updated) => {
         if (updated) {
           var oldCategory = this.state.serviceModified;
-          console.log("rohan look, changing services", this.state.services);
           this.setState((prevState) => ({
             services: prevState.services.map((obj) =>
               obj.serviceType === oldCategory
@@ -238,7 +305,13 @@ class EditServices extends React.Component {
                         categoryModal ? "Delete Category" : "Delete Service"
                       }
                       fields={serviceField}
-                      closeModal={this.closeModal}
+                      deleteButton={(result)=>{
+                        console.log("result in delete is", result);
+                        categoryModal ? 
+                            this.deleteServiceCategory():
+                            this.deleteServiceItem()
+                      }
+                      }
                       // fields={{
                       //   email: {
                       //     label: 'Email',

@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   FlatList,
+  BackHandler
 } from "react-native";
 import Modal from "react-native-modal";
 import { validateContent } from '../constants/utils';
@@ -50,6 +51,18 @@ const Articles = ({navigation}) => {
       setSpinner(false);
     });
   }, [services]);
+
+  const onBackHandler = (changeMade)=>{
+    setSpinner(true);
+    if(changeMade) { // change was made in editServices
+      BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+        setShopInformation(shopInfo);
+        loadServices(shopInfo.services);
+        setSpinner(false);
+      });
+    }
+  }
+  
   // useEffect(()=> {
   //   Services.loadServices(firebase.auth().currentUser.uid)
   //   .then(data => {
@@ -400,7 +413,7 @@ const Articles = ({navigation}) => {
                   small
                   color="transparent"
                   onPress={() => {
-                    navigation.navigate('EditServices', {services: services, barberShop: shopInformation});
+                    navigation.navigate('EditServices', {services: services, barberShop: shopInformation, onBackHandler: onBackHandler.bind(this) });
                     // setModalVisible(true);
                   }}
                   style={{
