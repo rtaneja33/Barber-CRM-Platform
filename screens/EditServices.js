@@ -195,7 +195,7 @@ class EditServices extends React.Component {
   submitServiceCategory = (result) => {
     this.setState({ loading: true, changeMade: true });
     this.state.barberShop
-      .deleteServiceCategory(this.state.serviceModified, result)
+      .updateServiceCategory(this.state.serviceModified, result)
       .then((updated) => {
         if (updated) {
           var oldCategory = this.state.serviceModified;
