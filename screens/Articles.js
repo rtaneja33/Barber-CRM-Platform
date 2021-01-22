@@ -47,9 +47,10 @@ const Articles = ({navigation}) => {
 
     BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
       setShopInformation(shopInfo);
+      console.log("shop info is", shopInfo)
       loadServices(shopInfo.services);
       setSpinner(false);
-    });
+    }).catch((err)=>{setSpinner(false)});
   }, [services]);
 
   const onBackHandler = (changeMade)=>{
@@ -59,7 +60,7 @@ const Articles = ({navigation}) => {
         setShopInformation(shopInfo);
         loadServices(shopInfo.services);
         setSpinner(false);
-      });
+      }).catch((err) =>{setSpinner(false)});
     }
   }
   
@@ -95,6 +96,103 @@ const Articles = ({navigation}) => {
       );
     });
     return items;
+  };
+
+  const closeModal = () => {
+    this.setState((prevState) => {
+        return {
+          ...prevState,
+          modalVisible: !prevState.modalVisible,
+        };
+    });
+  }
+  const renderModal = () => {
+    {
+      // console.log(serviceField);
+      return (
+        <View
+          style={styles.centeredView}
+          // renderToHardwareTextureAndroid
+          // shouldRasterizeIOS
+        >
+          <Spinner
+            visible={spinner}
+            textContent={"Loading..."}
+            textStyle={styles.spinnerTextStyles}
+          />
+          <Modal
+            animationType="fade"
+            transparent={true}
+            backdropOpacity={0.5}
+            useNativeDriver={false}
+            isVisible={modalVisible} //this.state.modalVisible
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    right: 23,
+                    top: 23,
+                    color: "#00000080",
+                  }}
+                  hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+                  onPress={() => {
+                    setModalVisible(!modalVisible)
+                  }}
+                >
+                  <Icon
+                    name="close"
+                    family="AntDesign"
+                    size={25}
+                    style={{
+                      color: "#00000080",
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.modalText}>Edit About</Text>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={styles.child}
+                >
+                  <View style={{ marginTop: 30 }}>
+                    <CustomForm
+                      action={(description) => {
+                          setSpinner(true);
+                          shopInformation.updateAboutDescription(description)
+                            .then((updated) => {
+                              setModalVisible(!modalVisible)
+                              setSpinner();
+                            }).catch((err) => {
+                              setSpinner(false);
+                              console.log("An error occurred with updating about",err);
+                            });
+                      }}
+                      afterSubmit={() => console.log("afterSubmit!")}
+                      buttonText="Save Changes"
+                      fields={{
+                          About: {
+                            label: 'About',
+                            defaultValue: shopInformation.aboutDescription,
+                            validators: [validateContent],
+                            inputProps: {
+                              multiline: true,
+                              width: width*.8,
+                            },
+                          },
+                      }}
+                    ></CustomForm>
+                  </View>
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      );
+    }
   };
   const categories = [
     //barbers
@@ -142,11 +240,9 @@ const Articles = ({navigation}) => {
             paddingBottom: 10,
           }}
         >
-          <Spinner
-            visible={spinner}
-            textContent={"Loading..."}
-            textStyle={styles.spinnerTextStyles}
-          />
+          <View >
+            {renderModal()}
+          </View>
           <Block flex={1}>
             <ImageBackground
               source={Images.BarberBackground}
@@ -247,8 +343,8 @@ const Articles = ({navigation}) => {
                 <TouchableOpacity
                   small
                   color="transparent"
-                  onPress={(text) => {
-                    alert(text);
+                  onPress={() => {
+                    setModalVisible(true);
                   }}
                   style={{
                     shadow: 0,
@@ -570,13 +666,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
   },
   modalView: {
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    paddingVertical: 35,
+    paddingHorizontal: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -586,7 +682,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    height: "90%",
     width: "100%",
   },
   openButton: {

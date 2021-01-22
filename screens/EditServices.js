@@ -240,8 +240,8 @@ class EditServices extends React.Component {
       return (
         <View
           style={styles.centeredView}
-          renderToHardwareTextureAndroid
-          shouldRasterizeIOS
+        //   renderToHardwareTextureAndroid
+        //   shouldRasterizeIOS
         >
           <Modal
             animationType="fade"

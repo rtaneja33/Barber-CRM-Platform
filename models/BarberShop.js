@@ -63,6 +63,20 @@ export default class BarberShop {
             
         });
     }
+
+    updateAboutDescription(description) {
+        this.aboutDescription = description
+        this.update();
+        return new Promise((resolve, reject) => {
+            this.update().then(success => {
+                resolve(success);
+            })
+            .catch((err)=> {
+                console.log("error updating about description", err);
+                reject(err);
+            })
+        })
+    }
     
     deleteServiceItem(serviceCategory, serviceIndex) { 
         this.services[serviceCategory].splice(serviceIndex, 1);
