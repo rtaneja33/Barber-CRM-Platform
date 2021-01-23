@@ -30,19 +30,20 @@ class SignupScreen extends React.Component {
                     const { navigation } = this.props;
                     navigation.navigate("App");
                 }).catch((error) => {alert(error)});
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 alert(error)
         });
     }
     
     signinPressed = () => {
-        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
+        const { navigation } = this.props;
+        navigation.navigate("App");
+
+        /*firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
             
-        })
-        .catch(error => {
+        }).catch(error => {
             alert(error)
-        })
+        })*/
     }
     
     render() {

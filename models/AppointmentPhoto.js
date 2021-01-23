@@ -7,6 +7,16 @@ export default class AppointmentPhoto {
     appointmentUID = ""
     photoURL = ""
     
+    setAndUpdateImageURI(imageURI) {
+        const imageRef = firebase.storage().ref('AppointmentPhoto').child(this.uid);
+        imageRef.put(imageURI).then(() => {
+            imageRef.getDownloadURL().then((url) => {
+                this.photoURL = url
+                this.update()
+            })
+        })
+    }
+    
     update() {
         var appointmentPhotoRef = firebase.firestore().collection('AppointmentPhotos').doc(this.uid);
         
@@ -17,7 +27,7 @@ export default class AppointmentPhoto {
                 photoURL: this.photoURL,
             })
             resolve(true);
-          });
+        });
     }
     
     static createNew(fromID = "") {

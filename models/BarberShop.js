@@ -60,8 +60,6 @@ export default class BarberShop {
                 barberShop.uid = fromID;
                 resolve(barberShop);
             }
-            
-            
         });
     }
     
@@ -69,7 +67,7 @@ export default class BarberShop {
         
         var barberShop = new BarberShop();
         return new Promise(resolve => {
-            firebase.firestore().collection('BarberShops').doc(id).get().then(querySnapshot => {
+            firebase.firestore().collection('BarberShops').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
                     barberShop.uid = documentSnapshot.documentID

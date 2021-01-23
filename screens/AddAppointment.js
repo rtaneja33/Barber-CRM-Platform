@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   StyleSheet,
-  ImageBackground,
+  Image,
   Dimensions,
   StatusBar,
   KeyboardAvoidingView,
@@ -14,15 +14,14 @@ import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { firebase } from '../src/firebase/config'
 import { ImagePicker } from "react-native-image-picker";
-import Appointment from "../models/Appointment"
 
 const { width, height } = Dimensions.get("screen");
 
 class AddAppointment extends React.Component {
     state = {
-    pickedImageFront: null,
-    pickedImageSide: null,
-    pickedImageRear: null,
+    pickedImageFrontURI: null,
+    pickedImageSideURI: null,
+    pickedImageRearURI: null,
     userPhoneNumber: ""
     }
     
@@ -33,48 +32,45 @@ class AddAppointment extends React.Component {
       });
     }
     
-    pickImageHandler = () => {
-          ImagePicker.showImagePicker({title: "Pick an Image",
-          maxWidth: 800, maxHeight: 600}, res => {
-             if (res.didCancel) {
-                console.log("User cancelled!");
-             } else if (res.error) {
-                console.log("Error", res.error);
-             } else {
-                this.setState({
-                   pickedImage: { uri: res.uri }
-                });
-             }
-          });
-       }
-
-    onSubmit = async () => {
-      try {
-        this.uploadPhoto(post)
-        reset()
-      } catch (e) {
-        console.error(e)
-      }
+    openCamera = (title) => {
+        const { navigation } = this.props;
+        navigation.navigate('CustomCamera', {title: title, parent: this})
     }
     
-    uploadPhoto = async () => {
-        const id = uuid.v4()
-        const uploadData = {
-            id: id,
-            postPhotoFront: this.state.pickedImageFront,
-            postPhotoSide: this.state.pickedImageSide,
-            postPhotoRear: this.state.pickedImageRear,
-            userPhoneNumber: this.state.userPhoneNumber
+    renderImageOrTakePicture = (picType) => {
+        if (picType == "Front") {
+            if (this.state.pickedImageFrontURI == null) {
+                return (
+                        <View style={{alignItems: "center"}}>
+                            <Icon size={25} color={'white'} name={"plus"} family="AntDesign" />
+                        </View>
+                )
+            } else {
+                return ( <Image style={styles.image} source={{uri: this.state.pickedImageFrontURI}} /> )
+            }
         }
-        
-        return firebase.firestore().collection('Appointments').doc(id).set(uploadData)
-    }
-    
-    test = async () => {
-        Appointment.createNew().then( (appointment) => {
-            appointment.notes = "hello";
-            appointment.update();
-        });
+        if (picType == "Side") {
+            if (this.state.pickedImageSideURI == null) {
+                return (
+                        <View style={{alignItems: "center"}}>
+                            <Icon size={25} color={'white'} name={"plus"} family="AntDesign" />
+                        </View>
+                )
+            } else {
+                return ( <Image style={styles.image} source={{uri: this.state.pickedImageSideURI}} /> )
+            }
+        }
+        if (picType == "Rear") {
+            if (this.state.pickedImageRearURI == null) {
+                return (
+                        <View style={{alignItems: "center"}}>
+                            <Icon size={25} color={'white'} name={"plus"} family="AntDesign" />
+                        </View>
+                )
+            } else {
+                return ( <Image style={styles.image} source={{uri: this.state.pickedImageRearURI}} /> )
+            }
+        }
     }
     
     render() {
@@ -86,34 +82,41 @@ class AddAppointment extends React.Component {
                 <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Add Appointment </Text>
                 </View>
+                
                 <View style={styles.subbox}>
-                <Text style={styles.text}> Front Profile </Text>
-                <TouchableOpacity style={styles.buttoncontinue}>
-                <Text> Take picture </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttoncontinue} onPress={ this.pickImageHandler }>
-                <Text> Add picture </Text>
-                </TouchableOpacity>
+                    <Text style={styles.text}> Front View </Text>
+                    
+                    <TouchableOpacity style={styles.takePictureView} onPress={() => { this.openCamera("Front View") }}>
+                        {this.renderImageOrTakePicture("Front")}
+                    </TouchableOpacity>
                 </View>
                 
                 
-                
-                
                 <View style={styles.subbox}>
-                <Text style={styles.text}> Side Profile </Text>
+                    <Text style={styles.text}> Side View </Text>
+                    
+                    <TouchableOpacity style={styles.takePictureView} onPress={() => { this.openCamera("Side View") }}>
+                        {this.renderImageOrTakePicture("Side")}
+                    </TouchableOpacity>
                 </View>
                 
                 <View style={styles.subbox}>
-                <Text style={styles.text}> Rear Profile </Text>
+                    <Text style={styles.text}> Rear View </Text>
+                    
+                    <TouchableOpacity style={styles.takePictureView} onPress={() => { this.openCamera("Rear View") }}>
+                        {this.renderImageOrTakePicture("Rear")}
+                    </TouchableOpacity>
                 </View>
                 
                 <View style={styles.finalsubbox}>
-                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { this.test() /*navigation.navigate('SavePreferences');*/ }}>
-                    <Text> Continue </Text>
-                    </TouchableOpacity>
+                    
                     
                     <TouchableOpacity style={styles.buttoncancel} onPress={() => { navigation.goBack(null); }}>
                     <Text> Cancel </Text>
+                    </TouchableOpacity>
+                
+                <TouchableOpacity style={styles.buttoncontinue} onPress={() => { navigation.navigate('SavePreferences', {pickedImageFrontURI: this.state.pickedImageFrontURI, pickedImageSideURI: this.state.pickedImageSideURI, pickedImageRearURI: this.state.pickedImageRearURI}); }}>
+                    <Text> Continue </Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -179,13 +182,23 @@ titletext: {
     textAlign: 'center'
 },
     
-buttoncontinue: {
+takePictureView: {
     flex: 1,
+    backgroundColor: "black",
+    justifyContent: 'center',
+    borderRadius: 0,
+    borderWidth: 3,
+    borderColor: "skyblue",
+    width: "50%"
+},
+    
+buttoncontinue: {
     alignItems: "center",
     backgroundColor: "skyblue",
     justifyContent: 'center',
     borderRadius: 5,
-    padding: 10
+    padding: 10,
+    width: '50%'
 },
     
 buttoncancel: {
@@ -198,6 +211,11 @@ buttoncancel: {
     borderRadius: 5,
     padding: 10
 },
+    
+image: {
+    flex: 1
+    //resizeMode: 'contain',
+}
 });
 
 export default AddAppointment;

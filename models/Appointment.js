@@ -5,7 +5,9 @@ export default class Appointment {
     uid = ""
     barberUID = ""
     customerUID = ""
-    appointmentUID = ""
+    appointmentFrontPhotoUID = ""
+    appointmentSidePhotoUID = ""
+    appointmentRearPhotoUID = ""
     notes = ""
     serviceProvided = ""
     approvedByCustomer = false
@@ -18,7 +20,9 @@ export default class Appointment {
             appointmentRef.update({
                 barberUID: this.barberUID,
                 customerUID: this.customerUID,
-                appointmentUID: this.appointmentUID,
+                appointmentFrontPhotoUID: this.appointmentFrontPhotoUID,
+                appointmentSidePhotoUID: this.appointmentSidePhotoUID,
+                appointmentRearPhotoUID: this.appointmentRearPhotoUID,
                 notes: this.notes,
                 serviceProvided: this.serviceProvided,
                 approvedByCustomer: this.approvedByCustomer,
@@ -36,7 +40,9 @@ export default class Appointment {
                 firebase.firestore().collection('Appointments').add({
                     barberUID: appointment.barberUID,
                     customerUID: appointment.customerUID,
-                    appointmentUID: appointment.appointmentUID,
+                    appointmentFrontPhotoUID: appointment.appointmentFrontPhotoUID,
+                    appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
+                    appointmentRearPhotoUID: appointment.appointmentRearPhotoUID,
                     notes: appointment.notes,
                     serviceProvided: appointment.serviceProvided,
                     approvedByCustomer: appointment.approvedByCustomer,
@@ -49,7 +55,9 @@ export default class Appointment {
                 firebase.firestore().collection('Appointments').doc(fromID).set({
                     barberUID: appointment.barberUID,
                     customerUID: appointment.customerUID,
-                    appointmentUID: appointment.appointmentUID,
+                    appointmentFrontPhotoUID: appointment.appointmentFrontPhotoUID,
+                    appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
+                    appointmentRearPhotoUID: appointment.appointmentRearPhotoUID,
                     notes: appointment.notes,
                     serviceProvided: appointment.serviceProvided,
                     approvedByCustomer: appointment.approvedByCustomer,
@@ -72,7 +80,9 @@ export default class Appointment {
                     appointment.uid = documentSnapshot.documentID
                     appointment.barberUID = data["barberUID"]
                     appointment.customerUID = data["customerUID"]
-                    appointment.appointmentUID = data["appointmentUID"]
+                    appointment.appointmentFrontPhotoUID = data["appointmentFrontPhotoUID"]
+                    appointment.appointmentSidePhotoUID = data["appointmentSidePhotoUID"]
+                    appointment.appointmentRearPhotoUID = data["appointmentRearPhotoUID"]
                     appointment.notes = data["notes"]
                     appointment.serviceProvided = data["serviceProvided"]
                     appointment.approvedByCustomer = data["approvedByCustomer"]
