@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, StyleSheet } from 'react-native';
+import { Text, TextInput, View, StyleSheet, Dimensions } from 'react-native';
 import {argonTheme} from '../constants';
+const { width, height } = Dimensions.get("screen");
 const CustomField = ({ fieldName, field, value, onChangeText, error }) => {
   return (
     <View style={styles.inputContainer}>
@@ -25,17 +26,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     input: {
-      height: 40,
-      width: 300,
+      width: width*.7,
       fontSize: 20,
       color: '#00000090',
-      paddingHorizontal: 5,
+      paddingHorizontal: 3,
       backgroundColor: 'white',
       marginBottom: 5,
 
     },
     inputContainer: {
       marginBottom: 10,
+      width: "100%"
     //   shadowColor: '#000',
     //   shadowOffset: {
     //     width: 0,
