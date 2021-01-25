@@ -59,8 +59,6 @@ export default class BarberShop {
                 barberShop.uid = fromID;
                 resolve(barberShop);
             }
-            
-            
         });
     }
     

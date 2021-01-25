@@ -12,11 +12,69 @@ import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 import { firebase } from '../src/firebase/config'
-import { CustomCamera } from '../components';
+import { Camera } from 'expo-camera';
+import Appointment from "../models/Appointment"
+import AppointmentPhoto from "../models/AppointmentPhoto"
 
 const { width, height } = Dimensions.get("screen")
 
 class SavePreferences extends React.Component {
+    state = {
+    serviceName: "",
+    notes: ""
+    }
+    
+    saveAppointment = () => {
+        const { navigation, route } = this.props;
+        
+        let frontImageURI = route.params.pickedImageFrontURI
+        let sideImageURI = route.params.pickedImageSideURI
+        let readImageURI = route.params.pickedImageRearURI
+
+        Appointment.createNew().then( (appointment) => {
+            appointment.barberUID = firebase.auth().currentUser.uid
+            
+            if (frontImageURI != null) {
+                AppointmentPhoto.createNew().then( (photo) => {
+                    photo.setAndUpdateImageURI(frontImageURI)
+                    photo.appointmentUID = appointment.uid
+                    photo.barberUID = appointment.barberUID
+                    photo.update()
+                    
+                    appointment.appointmentFrontPhotoUID = photo.uid
+                    appointment.update()
+                })
+            }
+            if (sideImageURI != null) {
+                AppointmentPhoto.createNew().then( (photo) => {
+                    photo.setAndUpdateImageURI(sideImageURI)
+                    photo.appointmentUID = appointment.uid
+                    photo.barberUID = appointment.barberUID
+                    photo.update()
+                    
+                    appointment.appointmentSidePhotoUID = photo.uid
+                    appointment.update()
+                })
+            }
+            if (readImageURI != null) {
+                AppointmentPhoto.createNew().then( (photo) => {
+                    photo.setAndUpdateImageURI(readImageURI)
+                    photo.appointmentUID = appointment.uid
+                    photo.barberUID = appointment.barberUID
+                    photo.update()
+                    
+                    appointment.appointmentRearPhotoUID = photo.uid
+                    appointment.update()
+                })
+            }
+            
+            appointment.serviceProvided = this.state.serviceName
+            appointment.notes = this.state.notes
+            appointment.update()
+        })
+        
+        navigation.pop(2)
+    }
     
     render() {
         const { navigation } = this.props;
@@ -28,22 +86,31 @@ class SavePreferences extends React.Component {
                     <Text style={styles.titletext}> Save Preferences? </Text>
                 </View>
                 <View style={styles.subbox}>
-                <Text style={styles.text}> Service </Text>
-                <CustomCamera></CustomCamera>
+                    <Text style={styles.text}> Service </Text>
                 </View>
                 
-                
+                <Block width={width * 0.8} style={{flex: 4}} >
+                    <Input placeholder="Service Name" onChangeText={(text) => { this.setState({ serviceName: text})}} />
+                </Block>
                 
                 <View style={styles.subbox}>
+                    <Text style={styles.text}> Notes for Appointment </Text>
+                </View>
+                
+                <Block width={width * 0.8} style={{flex: 4}} >
+                    <Input placeholder="Notes" onChangeText={(text) => { this.setState({ notes: text})}} />
+                </Block>
+                
+                <View style={styles.finalsubbox}>
                 </View>
                 
                 <View style={styles.subbox}>
-                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { alert('idk');}}>
-                    <Text> Save to Profile </Text>
-                    </TouchableOpacity>
-                    
                     <TouchableOpacity style={styles.buttoncancel} onPress={() => { navigation.goBack(null);}}>
-                    <Text> Back </Text>
+                        <Text> Back </Text>
+                    </TouchableOpacity>
+                
+                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { this.saveAppointment() }}>
+                        <Text> Save to Profile </Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -78,9 +145,15 @@ box: {
 },
     
 subbox: {
-    flex: 2,
+    flex:3,
     width: '95%',
     flexDirection:"row"
+},
+
+finalsubbox: {
+    flex: 2,
+    width: '95%',
+    flexDirection: "row"
 },
     
 boxtitle: {
@@ -104,11 +177,15 @@ titletext: {
 buttoncontinue: {
     alignItems: "center",
     backgroundColor: "skyblue",
+    justifyContent: 'center',
     borderRadius: 5,
-    padding: 10
+    padding: 10,
+    width: '50%'
 },
     
 buttoncancel: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: "center",
     backgroundColor: "white",
     borderColor: "skyblue",
