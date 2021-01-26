@@ -101,47 +101,6 @@ function ArticlesStack(props) {
   );
 }
 
-function ProfileStack(props, route) {
-  return (
-    <Stack.Navigator initialRouteName="Profile" mode="card" headerMode="screen">
-      <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              transparent
-              white
-              title="Profile"
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          cardStyle: { backgroundColor: "#FFFFFF" },
-          headerTransparent: true,
-        }}
-      />
-            <Stack.Screen
-        name="Pro"
-        component={Pro}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
 function HomeStack(props) {
   // const { fullName } = props.route.params.params;
   // console.log("full name is", fullName);
@@ -255,6 +214,24 @@ function HomeStack(props) {
 
     </Stack.Navigator>
   );
+}
+
+function SignedOut(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen
+            name="SignUp"
+            component={SignupScreen}
+              options={{
+                headerTransparent: true
+              }}
+      />
+      <Stack.Screen
+            name="SignIn"
+            component={AppStack}
+      />
+    </Stack.Navigator>
+  )
 }
 
 export default function OnboardingStack(props) {

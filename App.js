@@ -1,13 +1,6 @@
-import React, { useEffect } from 'react';
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
-import logo from './assets/logo.png';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions'
-import * as Sharing from 'expo-sharing';
-import * as Contacts from 'expo-contacts';
-import { Avatar } from 'react-native-elements';
-import uploadToAnonymousFilesAsync from 'anonymous-files';
-import { render } from 'react-dom';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import auth from '@react-native-firebase/auth'
 import { Block, GalioProvider } from "galio-framework";
 import { NavigationContainer } from "@react-navigation/native";
 import { enableScreens } from "react-native-screens";
@@ -17,16 +10,44 @@ import { Images, articles, argonTheme } from "./constants";
 
 
 export default function App() {
+  // from https://rnfirebase.io/auth/usage
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
 
-  return (
-    <NavigationContainer>
-          <GalioProvider theme={argonTheme}>
-            <Block flex>
-              <Screens />
-            </Block>
-          </GalioProvider>
-        </NavigationContainer>
-  );
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if(initializing)
+      setInitializing(false);
+  }
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+  if(initializing){
+    return null
+  }
+  if(user){
+    return ( // signed in
+      <NavigationContainer>
+            <GalioProvider theme={argonTheme}>
+              <Block flex>
+                <Screens />
+              </Block>
+            </GalioProvider>
+      </NavigationContainer>
+    )
+  }
+  else {
+    return ( // signed out
+      <NavigationContainer>
+            <GalioProvider theme={argonTheme}>
+              <Block flex>
+                <Screens />
+              </Block>
+            </GalioProvider>
+      </NavigationContainer>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

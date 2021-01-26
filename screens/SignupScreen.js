@@ -50,7 +50,7 @@ class SignupScreen extends React.Component {
                             return;
                         }
                         const { navigation } = this.props;
-                        navigation.navigate('App')
+                        navigation.navigate('SignIn')
                     })
                     .catch(error => {
                         alert(error)
