@@ -73,7 +73,7 @@ const Articles = ({navigation}) => {
   //   )
   // },[])
   const loadServices = (servicesMap) => {
-    console.log("LOADING SERVICES");
+    console.log("LOADING SERVICES in ARTICLES", servicesMap);
     var shopServices = [];
     for (var serviceType in servicesMap) {
       var serviceList = new ServiceList(serviceType, []);
@@ -83,6 +83,7 @@ const Articles = ({navigation}) => {
       shopServices.push(serviceList);
     }
     setServices(shopServices);
+    console.log("SERVICES ARE",services)
   };
   
   const [services, setServices] = React.useState([]);
@@ -270,7 +271,7 @@ const Articles = ({navigation}) => {
                         }}
                         color="#ffffff"
                       >
-                        Trieu's Barber Shop
+                       {shopInformation.shopName}
                       </Text>
 
                       <Text
@@ -509,7 +510,7 @@ const Articles = ({navigation}) => {
                   small
                   color="transparent"
                   onPress={() => {
-                    navigation.navigate('EditServices', {services: services, barberShop: shopInformation, onBackHandler: onBackHandler.bind(this) });
+                    navigation.navigate('EditServices', {services: services, barberShop: shopInformation, onBackHandler: onBackHandler.bind(this) }); // move onBackHandler to options not params
                     // setModalVisible(true);
                   }}
                   style={{

@@ -1,53 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
-import auth from '@react-native-firebase/auth'
+import { StyleSheet, SafeAreaView, FlatList, ActivityIndicator, View, Text } from 'react-native';
+import { firebase } from './src/firebase/config';
 import { Block, GalioProvider } from "galio-framework";
 import { NavigationContainer } from "@react-navigation/native";
 import { enableScreens } from "react-native-screens";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 enableScreens();
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
 
 
 export default function App() {
-  // from https://rnfirebase.io/auth/usage
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
-
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if(initializing)
-      setInitializing(false);
-  }
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, []);
-  if(initializing){
-    return null
-  }
-  if(user){
-    return ( // signed in
-      <NavigationContainer>
-            <GalioProvider theme={argonTheme}>
-              <Block flex>
-                <Screens />
-              </Block>
-            </GalioProvider>
-      </NavigationContainer>
-    )
-  }
-  else {
-    return ( // signed out
-      <NavigationContainer>
-            <GalioProvider theme={argonTheme}>
-              <Block flex>
-                <Screens />
-              </Block>
-            </GalioProvider>
-      </NavigationContainer>
-    )
-  }
+  return ( // signed in
+    <SafeAreaProvider>
+    <NavigationContainer>
+          <GalioProvider theme={argonTheme}>
+            <Block flex>
+              <Screens />
+            </Block>
+          </GalioProvider>
+    </NavigationContainer>
+    </SafeAreaProvider>
+  )
 }
 
 const styles = StyleSheet.create({

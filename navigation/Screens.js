@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Easing, Animated, Dimensions, TextInput } from "react-native";
+import { Easing, Animated, Dimensions, TextInput, Button } from "react-native";
 
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, HeaderBackButton } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Block } from "galio-framework";
@@ -17,7 +17,10 @@ import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
 import EditServices from "../screens/EditServices";
+import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
+import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
+
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -99,6 +102,14 @@ function ArticlesStack(props) {
           />
     </Stack.Navigator>
   );
+}
+
+function CreateShopStack(props){
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      
+    </Stack.Navigator>
+  )
 }
 
 function HomeStack(props) {
@@ -216,77 +227,92 @@ function HomeStack(props) {
   );
 }
 
-function SignedOut(props) {
-  return (
-    <Stack.Navigator mode="card" headerMode="screen">
-      <Stack.Screen
-            name="SignUp"
-            component={SignupScreen}
-              options={{
-                headerTransparent: true
-              }}
-      />
-      <Stack.Screen
-            name="SignIn"
-            component={AppStack}
-      />
-    </Stack.Navigator>
-  )
-}
 
-export default function OnboardingStack(props) {
-  const [isLoading, setLoading] = React.useState(false);
-  const [user, setUser] = useState(null);
-  if(isLoading){
-    return(
-      <></>
-    )
-  }
+
+// export default function OnboardingStack(props) {
+//   const [isLoading, setLoading] = React.useState(false);
+//   const [user, setUser] = useState(null);
+//   if(isLoading){
+//     return(
+//       <></>
+//     )
+//   }
   
-  // https://www.freecodecamp.org/news/react-native-firebase-tutorial/
+//   // https://www.freecodecamp.org/news/react-native-firebase-tutorial/
+//   useEffect(() => {
+//     const usersRef = firebase.firestore().collection('users');
+//     firebase.auth().onAuthStateChanged(user => {
+//       if (user) {
+//         usersRef
+//           .doc(user.uid)
+//           .get()
+//           .then((document) => {
+//             const userData = document.data()
+//             setLoading(false)
+//             setUser(userData)
+//           })
+//           .catch((error) => {
+//             setLoading(false)
+//           });
+//       } else {
+//         setLoading(false)
+//       }
+//     });
+//   }, []);
+
+//   return (
+//     <Stack.Navigator mode="card" headerMode="none">
+//       { user ? (
+//         <Stack.Screen name="App" component={AppStack} />
+//       ) : (
+//         <>
+//           <Stack.Screen
+//             name="SignupScreen"
+//             component={SignupScreen}
+//             option={{
+//               headerTransparent: true
+//             }}
+//           />
+//            <Stack.Screen name="App" component={AppStack} />
+//         </>
+//       )}
+//     </Stack.Navigator>
+//   );
+// }
+// function SignedOut(props) {
+//   return (
+//     <Stack.Navigator mode="card" headerMode="screen">
+//       <Stack.Screen
+//         name="SignUp"
+//         component={SignupScreen}
+//         options={{
+//           headerTransparent: true
+//         }}
+//       />
+//       <Stack.Screen name="App" component={AppStack} />
+//     </Stack.Navigator>
+//   )
+// }
+
+export default function AppStack(props) { // if this causes an error, try expo start -c to clean cache -> rebuild (requires new version for tab nav.)
+  
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if(initializing)
+      setInitializing(false);
+  }
   useEffect(() => {
-    const usersRef = firebase.firestore().collection('users');
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        usersRef
-          .doc(user.uid)
-          .get()
-          .then((document) => {
-            const userData = document.data()
-            setLoading(false)
-            setUser(userData)
-          })
-          .catch((error) => {
-            setLoading(false)
-          });
-      } else {
-        setLoading(false)
-      }
-    });
+    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
   }, []);
-
-  return (
-    <Stack.Navigator mode="card" headerMode="none">
-      { user ? (
-        <Stack.Screen name="App" component={AppStack} />
-      ) : (
-        <>
-          <Stack.Screen
-            name="SignupScreen"
-            component={SignupScreen}
-            option={{
-              headerTransparent: true
-            }}
-          />
-           <Stack.Screen name="App" component={AppStack} />
-        </>
-      )}
-    </Stack.Navigator>
-  );
-}
-
-function AppStack(props) { // if this causes an error, try expo start -c to clean cache -> rebuild (requires new version for tab nav.)
-  return (
+  if(initializing){
+    return null
+  }
+  if(user){
+    return (
       <Tab.Navigator>
         <Tab.Screen name="Home" component={ElementsStack} options ={{
           tabBarLabel: "Recent Cuts",
@@ -299,16 +325,6 @@ function AppStack(props) { // if this causes an error, try expo start -c to clea
           />
           ),
         }} />
-        {/* <Tab.Screen name="Profile" component={ProfileStack} options ={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <Icon
-            name="shop"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
-          />
-          ), }}
-          /> */}
         <Tab.Screen name="Customers" component={HomeStack} options ={{
           tabBarLabel: "Customers",
           tabBarIcon: ({ focused, color, size }) => (
@@ -319,15 +335,6 @@ function AppStack(props) { // if this causes an error, try expo start -c to clea
             color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
           />
           ), }}/>
-        {/* <Tab.Screen name="Elements" component={ElementsStack} options ={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <Icon
-            name="shop"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
-          />
-          ), }}/> */}
         <Tab.Screen name="Articles" component={ArticlesStack} options ={{
           tabBarLabel: "My Shop",
           tabBarIcon: ({ focused, color, size }) => (
@@ -339,6 +346,100 @@ function AppStack(props) { // if this causes an error, try expo start -c to clea
           />
           ), }}/>
       </Tab.Navigator>
+    )
+  }
+  else {
+    return (
+      <Stack.Navigator mode="card" headerMode="screen" screenOptions={{
+        headerShown: false
+      }}>
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpStack}
+        />
+      </Stack.Navigator>
+    )
+  }
+
+  function SignUpStack(props){
+    return (
+      <Stack.Navigator mode="card" headerMode="screen">
+        <Stack.Screen
+          name="SignUp"
+          component={SignupScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="AddServices"
+          component={AddServices}
+          options={{
+            header: ({ navigation, scene }) => (
+              <Header
+                title=""
+                back
+                black
+                transparent
+                navigation={navigation}
+                scene={scene}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="CreateBarbershop"
+          component={CreateBarbershop}
+          options={{
+            header: ({ navigation, scene }) => (
+              <Header
+                title=""
+                back
+                black
+                transparent
+                navigation={navigation}
+                scene={scene}
+              />
+            ),
+          }}
+        />
+      </Stack.Navigator>
+    )
+  }
+  // return (
+  //     <Tab.Navigator>
+  //       <Tab.Screen name="Home" component={ElementsStack} options ={{
+  //         tabBarLabel: "Recent Cuts",
+  //         tabBarIcon: ({ focused, color, size }) => (
+  //           <Icon
+  //           name="cut"
+  //           family="Ionicon"
+  //           size= {size}
+  //           color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+  //         />
+  //         ),
+  //       }} />
+  //       <Tab.Screen name="Customers" component={HomeStack} options ={{
+  //         tabBarLabel: "Customers",
+  //         tabBarIcon: ({ focused, color, size }) => (
+  //           <Icon
+  //           name="people"
+  //           family="IonIcon"
+  //           size= {size}
+  //           color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+  //         />
+  //         ), }}/>
+  //       <Tab.Screen name="Articles" component={ArticlesStack} options ={{
+  //         tabBarLabel: "My Shop",
+  //         tabBarIcon: ({ focused, color, size }) => (
+  //           <Icon
+  //           name="store"
+  //           family="MaterialIcons"
+  //           size= {size}
+  //           color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+  //         />
+  //         ), }}/>
+  //     </Tab.Navigator>
     // <Tab.Navigator
     //   style={{ flex: 1 }}
     //   drawerContent={props => <CustomDrawerContent {...props} />}
@@ -374,6 +475,6 @@ function AppStack(props) { // if this causes an error, try expo start -c to clea
     //   <Tab.Screen name="Elements" component={ElementsStack} />
     //   <Tab.Screen name="Articles" component={ArticlesStack} />
     // </Tab.Navigator>
-  );
+
 }
 

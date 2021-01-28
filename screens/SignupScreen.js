@@ -14,26 +14,32 @@ import BarberShop from "../models/BarberShop";
 
 const { width, height } = Dimensions.get("screen");
 class SignupScreen extends React.Component {
+
+    constructor(props) {
+      super(props);
+      console.log("signupscreen props are ", props);
+    }
     state = {
         email: ""
     }
     
     signupPressed = () => {
-
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
-                const uid = response.user.uid
-                BarberShop.createNew(uid).then( (barberShop) => {
-                    barberShop.aboutDescription = "yo";
-                    barberShop.address = "1919191";
-                    barberShop.update();
+        const {navigation} = this.props;
+        navigation.navigate('AddServices', {email: this.state.email, password: this.state.password });
+        // firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
+        //         const uid = response.user.uid
+        //         BarberShop.createNew(uid).then( (barberShop) => {
+        //             barberShop.aboutDescription = "yo";
+        //             barberShop.address = "1919191";
+        //             barberShop.update();
                 
-                    const { navigation } = this.props;
-                    navigation.navigate("App");
-                }).catch((error) => {alert(error)});
-            })
-            .catch((error) => {
-                alert(error)
-        });
+        //             const { navigation } = this.props;
+        //             // navigation.navigate("App");
+        //         }).catch((error) => {alert(error)});
+        //     })
+        //     .catch((error) => {
+        //         alert(error)
+        // });
     }
     
     signinPressed = () => {
@@ -50,7 +56,7 @@ class SignupScreen extends React.Component {
                             return;
                         }
                         const { navigation } = this.props;
-                        navigation.navigate('SignIn')
+                        // navigation.navigate('App')
                     })
                     .catch(error => {
                         alert(error)

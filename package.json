@@ -54,6 +54,7 @@
     "react-native-material-textfield": "^0.16.1",
     "react-native-modal": "^11.6.1",
     "react-native-modal-dropdown": "git+https://github.com/siemiatj/react-native-modal-dropdown.git",
+    "react-native-multistep-wizard": "0.0.1",
     "react-native-reanimated": "~1.13.0",
     "react-native-screens": "~2.15.0",
     "react-native-svg": "12.1.0",

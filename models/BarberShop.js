@@ -64,7 +64,7 @@ export default class BarberShop {
 
     updateAboutDescription(description) {
         this.aboutDescription = description
-        this.update();
+        // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
                 resolve(success);
