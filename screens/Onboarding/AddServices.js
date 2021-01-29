@@ -31,7 +31,7 @@ class AddServices extends React.Component {
   constructor(props) {
     super(props);
     console.log("PROPS ARE", props);
-    let bShop = new BarberShop();
+    //let bShop = new BarberShop();
     //bShop.services = {"hello": [{price: '$25', serviceName: 'Fresh cutz'}]};
     this.state = {
       loading: false,
@@ -40,7 +40,7 @@ class AddServices extends React.Component {
       serviceField: null,
       modalVisible: false,
       serviceModified: null,
-      barberShop: bShop, // this should be passed in as a prop;
+      barberShop: this.props.route.params.barberShop, // this should be passed in as a prop;
       changeMade: false,
     };
     // this.state.barberShop.services = { "Haircuts": [] }
@@ -54,7 +54,7 @@ class AddServices extends React.Component {
     //     services: {"hello": [2,2,3]}
     //   }
     // }));
-    console.log("barbershop services are", this.state.barberShop);
+    //console.log("barbershop services are", this.state.barberShop);
     // this.loadServices(this.state.barberShop.services)
   }
   componentDidMount() {
@@ -648,7 +648,17 @@ class AddServices extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                console.log("SKIP!");
+
+                this.setState({ loading: true });
+                 setTimeout(() => {
+                  this.setState({ loading: false });
+                  const {navigation} = this.props;
+                  navigation.navigate('CreateBarbershop', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
+                  // barberShop.email = email;
+                  // barberShop.shopName = name;
+                  // barberShop.address = address;
+                  // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                }, 300);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -664,6 +674,19 @@ class AddServices extends React.Component {
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
                 console.log("pressed CONTINUE!");
+                this.setState({ loading: true });
+                setTimeout(() => {
+                 this.setState({ loading: false });
+                 const {navigation} = this.props;
+                 var shop = {...this.state.barberShop};
+                 shop.services = this.state.services; 
+                 /// need to save the services! not sure if above will work, probably need to convert back to firestore form;
+                 navigation.navigate('CreateBarbershop', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
+                 // barberShop.email = email;
+                 // barberShop.shopName = name;
+                 // barberShop.address = address;
+                 // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+               }, 300);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>
