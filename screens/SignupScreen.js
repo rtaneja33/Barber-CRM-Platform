@@ -25,7 +25,7 @@ class SignupScreen extends React.Component {
     
     signupPressed = () => {
         const {navigation} = this.props;
-        navigation.navigate('AddServices', {email: this.state.email, password: this.state.password });
+        navigation.navigate('CreateBarbershop', {email: this.state.email, password: this.state.password });
         // firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((response) => {
         //         const uid = response.user.uid
         //         BarberShop.createNew(uid).then( (barberShop) => {

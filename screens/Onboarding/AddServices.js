@@ -446,9 +446,10 @@ class AddServices extends React.Component {
           <Text bold size={28} style={styles.title}>
             Add Services
           </Text>
-          <ScrollView flex={1} showsVerticalScrollIndicator={false}>
-            <Block flex row style={{ paddingHorizontal: theme.SIZES.BASE }}>
-              <Block center>
+          <ScrollView showsVerticalScrollIndicator={true} contentContainerStyle={{paddingBottom: 50, flexGrow: 1}}>
+            <Block row style={{ paddingHorizontal: theme.SIZES.BASE}}>
+              <Block> 
+              {/* removed center */}
               {/* <Button color="default" onPress={function(){console.log("PRESSED!");}}>Hello</Button> */}
                 <Button color="default" style={styles.button} onPress={()=>{
                   this.setModalVisible(true);
@@ -465,7 +466,7 @@ class AddServices extends React.Component {
                   Add Service Category
                 </Button>
               </Block>
-              <Block center>
+              <Block>
                 <Button
                   color="secondary"
                   textStyle={{
@@ -498,15 +499,8 @@ class AddServices extends React.Component {
                 </Button>
               </Block>
             </Block>
-            <View style={styles.modal}>
-              {this.renderModal(this.state.serviceField)}
-            </View>
             <Block flex style={styles.accordionCard}>
-              {/* <Block row space="between">
-                  <Text bold size={18} style={styles.title}>
-                    Services
-                  </Text>
-                </Block> */}
+             <Text>Hello</Text>
               <Block
                 style={{
                   paddingBottom: -HeaderHeight * 2,
@@ -517,6 +511,9 @@ class AddServices extends React.Component {
                 </View>
               </Block>
             </Block>
+            <View style={styles.modal}>
+              {this.renderModal(this.state.serviceField)}
+            </View>
             <FlashMessage
               statusBarHeight={1}
               position="top"
@@ -525,6 +522,23 @@ class AddServices extends React.Component {
             {/* </View> */}
           </ScrollView>
         </Block>
+        <View style={styles.bottom}>
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            right: 25,
+            top: 25,
+            zIndex: 0,
+            color: "#00000080",
+          }}
+          hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+          onPress={() => {
+            console.log("pressed CONTINUE!");
+          }}
+        >
+          <Text style = {{color: 'white', fontWeight: 'bold'}}>CONTINUE</Text>
+        </TouchableOpacity>
+        </View>
       </Block>
     );
   }
@@ -550,7 +564,6 @@ const styles = StyleSheet.create({
   disabled: {
     marginBottom: theme.SIZES.BASE,
     backgroundColor: "#ccc",
-    
     color: "red",
   },
   screen: {
@@ -559,9 +572,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   accordionCard: {
+    justifyContent: 'flex-start',
     marginHorizontal: 8,
     padding: theme.SIZES.BASE,
-    marginTop: 7,
+    marginTop: 0,
     borderRadius: 6,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
@@ -634,6 +648,15 @@ const styles = StyleSheet.create({
   spinnerTextStyles: {
     color: "#FFF",
   },
+  bottom: {
+    flex: 1,
+    position: 'absolute',
+    bottom: 0,
+    justifyContent: 'flex-end',
+    width: width,
+    height: height/9,
+    backgroundColor: argonTheme.COLORS.HEADER
+  }
 });
 
 export default AddServices;

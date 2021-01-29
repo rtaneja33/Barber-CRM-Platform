@@ -28,7 +28,7 @@ class CreateBarbershop extends React.Component {
       phone: "",
       email: this.props.route.params,
       password: this.props.route.params,
-      barberShopSoFar: null,
+      barberShop: null,
     };
   }
 
@@ -78,13 +78,13 @@ class CreateBarbershop extends React.Component {
       // <Text style={{ textAlign: "right" }}>{duration}</Text>
       // </View>;
 
-      <Block flex style={styles.centeredView}>
+      <Block flex>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block>
+        <Block style={styles.centeredView}>
           <Text bold size={28} style={styles.title}>
             Create My Shop
           </Text>
@@ -95,15 +95,24 @@ class CreateBarbershop extends React.Component {
             {/* <View> */}
             <OnboardingForm
               action={(address, email, name) => {
-                this.setState({ loading: true });
-                this.onRegister(address, email, name)
-                    .then((updated) => {
-                        console.log("updated is", updated);
-                        this.setState({ loading: false })
-                    })
-                    .catch((err) => {
-                        this.setState({ loading: false })
-                    });
+                 this.setState({ loading: true });
+                 setTimeout(() => {
+                  this.setState({ loading: false });
+                  const {navigation} = this.props;
+                  var barberShop = new BarberShop();
+                  barberShop.email = email;
+                  barberShop.shopName = name;
+                  barberShop.address = address;
+                  navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                }, 300);
+                // this.onRegister(address, email, name)
+                //     .then((updated) => {
+                //         console.log("updated is", updated);
+                //         this.setState({ loading: false })
+                //     })
+                //     .catch((err) => {
+                //         this.setState({ loading: false })
+                //     });
                 // shopInformation
                 //   .updateAboutDescription(description)
                 //   .then((updated) => {
@@ -180,6 +189,7 @@ const styles = StyleSheet.create({
     color: argonTheme.COLORS.HEADER,
     textAlign: "left",
   },
+  
 });
 
 export default CreateBarbershop;
