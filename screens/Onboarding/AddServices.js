@@ -473,7 +473,12 @@ class AddServices extends React.Component {
                     fontSize: 12,
                     fontWeight: "700",
                   }}
-                  style={styles.button}
+                  disabled={this.state.services.length < 1}
+                  style={
+                    this.state.services.length < 1 ?
+                      styles.disabled :
+                      styles.button
+                  }
                   onPress={()=>{
                     this.setModalVisible(true);
                     // this.setServiceModified("Something");
@@ -541,6 +546,12 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: theme.SIZES.BASE,
+  },
+  disabled: {
+    marginBottom: theme.SIZES.BASE,
+    backgroundColor: "#ccc",
+    
+    color: "red",
   },
   screen: {
     flex: 1,

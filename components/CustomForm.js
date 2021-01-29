@@ -105,6 +105,8 @@ const CustomForm = ({
   return (
     <View style={styles.container}>
       {dropdownItems && dropdownItems.length > 0 ? (
+         <View style={styles.inputContainer}>
+        <Text style={styles.label}>Service Category* </Text>
         <DropDownPicker
           items={dropdownItems}
           containerStyle={{ width: "100%", marginBottom: 30 }}
@@ -112,7 +114,7 @@ const CustomForm = ({
           itemStyle={{
             justifyContent: "flex-start",
           }}
-          // dropDownStyle={{backgroundColor: 'blue'}}
+          dropDownStyle={{backgroundColor: 'white'}}
           // activeItemStyle={{backgroundColor: 'black'}}
           activeLabelStyle={{
             color: argonTheme.COLORS.HEADER,
@@ -124,6 +126,7 @@ const CustomForm = ({
           }}
           onChangeItem={item => {setDropdownValue(item.label); console.log("now dropdownVal is", dropdownValue, "change item was", item.label)}}
         />
+        </View>
       ) : (
         <></>
       )}
@@ -190,6 +193,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     height: 17.5,
   },
+  label: {
+    color: argonTheme.COLORS.HEADER,
+    fontWeight: 'bold',
+    marginBottom: 3,
+},
+inputContainer: {
+  width: "100%",
+  zIndex: 10,
+}
 });
 
 export default CustomForm;
