@@ -33,7 +33,7 @@ class AddServices extends React.Component {
     super(props);
     console.log("PROPS ARE", props);
     let bShop = new BarberShop();
-    bShop.services = {"hello": [{price: '$25', serviceName: 'Fresh cutz'}]};
+    //bShop.services = {"hello": [{price: '$25', serviceName: 'Fresh cutz'}]};
     this.state = {
       loading: false,
       services: [],
@@ -117,7 +117,7 @@ class AddServices extends React.Component {
     this.setState((prevState) => {
       return {
         ...prevState,
-        modalVisible: !prevState.modalVisible,
+        modalVisible: false,
       };
     });
   };
@@ -216,6 +216,65 @@ class AddServices extends React.Component {
     }, 300);
   };
 
+  addServiceCategory = (result) => {
+    this.setState({ loading: true, changeMade: true });
+    // var oldCategory = this.state.serviceModified;
+    var newServiceCategory = new ServiceList();
+    newServiceCategory.serviceType = result;
+    newServiceCategory.services = [];
+    var updatedServices = this.state.services.concat(newServiceCategory);
+    this.setState({ services: updatedServices})
+    const timer = setTimeout(() => {
+      this.setState({ loading: false });
+      this.closeModal();
+      showMessage({
+        message: "Service Category has been added!",
+        type: "success",
+        icon: "success",
+      });
+    }, 300);
+  }
+
+  addServiceName = (price, nameOfService, serviceCategory) => {
+    // var oldCategory = this.state.serviceModified;
+    // let newServiceObj = {
+    //   price: price,
+    //   serviceName: nameOfService,
+    
+    // };
+    console.log("in add service name received price of", price, "name of service", nameOfService, "category", serviceCategory)
+    if(!price || !nameOfService || !serviceCategory || price.length <1 || nameOfService.length<1 || serviceCategory.length<1){
+      const timer = setTimeout(() => {
+        this.setState({ loading: false });
+        this.closeModal();
+        showMessage({
+          message: "An error occurred. Please try again.",
+          type: "danger",
+          icon: "danger",
+        });
+      }, 300);
+      return;
+    }
+    let newServiceObj = new Service(nameOfService, price);
+    this.setState({ loading: true, changeMade: true });
+    var tempArr = this.state.services;
+    tempArr.map((obj) => {
+      if (obj.serviceType === serviceCategory) {
+        console.log("pushing new service obj, obj.serviceType")
+        obj.services.push(newServiceObj);
+      }
+    });   
+    const timer = setTimeout(() => {
+      this.setState({ loading: false });
+      this.closeModal();
+      showMessage({
+        message: "Service Name has been added!",
+        type: "success",
+        icon: "success",
+      });
+    }, 300);
+  }
+
   renderModal = (serviceField = null) => {
     {
       // console.log(serviceField);
@@ -224,6 +283,29 @@ class AddServices extends React.Component {
         return <></>;
       }
       const categoryModal = Object.keys(serviceField)[0];
+      var modalTitle = ""; 
+      var dropdownItems = [];
+      switch(categoryModal){
+        case "serviceType":
+          modalTitle = "Edit Category";
+          break;
+        case "addServiceType":
+          modalTitle = "Add Category"
+          break;
+        case "serviceName": 
+          modalTitle = "Edit Service"
+          break;
+        case "addServiceName":
+          modalTitle = "Add Service";
+          this.state.services.map((category) => {
+            console.log("ADD CATEGORY, serviceField keys are", category.serviceType);
+            dropdownItems.push({ label: category.serviceType, value: category.serviceType});
+          });
+          break;
+        default:
+          this.submitServiceItem(result, nameOfService); //maybe to error handling here
+          break;
+      }
       // const categoryModal =
       //   Object.keys(serviceField).length > 0 &&
       //   Object.keys(serviceField)[0] === "serviceType";
@@ -278,31 +360,35 @@ class AddServices extends React.Component {
                     }}
                   />
                 </TouchableOpacity>
-                <Text style={styles.modalText}>Edit Services</Text>
+                <Text style={styles.modalText}>
+                  { modalTitle }
+                </Text>
                 <ScrollView
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={styles.child}
                 >
                   <View style={{ marginTop: 30 }}>
                     <CustomForm
-                      action={(result, nameOfService) => {
+                      action={(result, serviceCategory) => {
                         console.log(
                           "service item in editservices",
                           result,
-                          nameOfService
+                          serviceCategory
                         );
                         switch(categoryModal){
                           case "serviceType":
-                            this.submitServiceCategory(result);
+                            this.submitServiceCategory(result['serviceType']);
                             break;
                           case "addServiceType":
-                            this.addServiceCategory(result);
+                            this.addServiceCategory(result['addServiceType']);
                             break;
                           case "serviceName": 
-                            this.submitServiceItem(result, nameOfService);
+                            this.submitServiceItem(result['price'], result['serviceName']);
                             break;
+                          case "addServiceName":
+                            this.addServiceName(result['addServicePrice'], result['addServiceName'], serviceCategory);
                           default:
-                            this.submitServiceItem(result, nameOfService); //maybe to error handling here
+                            this.submitServiceItem(result['price'], result['serviceName']); //maybe to error handling here
                             break;
                         }
                       }}
@@ -311,6 +397,7 @@ class AddServices extends React.Component {
                       closeModalText={
                         categoryModal==="serviceType" ? "Delete Category" : "Delete Service"
                       }
+                      dropdownItems = {dropdownItems}
                       fields={serviceField}
                       deleteButton={
                         categoryModal=== "serviceType" ?
@@ -387,6 +474,20 @@ class AddServices extends React.Component {
                     fontWeight: "700",
                   }}
                   style={styles.button}
+                  onPress={()=>{
+                    this.setModalVisible(true);
+                    // this.setServiceModified("Something");
+                    this.setServiceField({ 
+                      addServiceName: {
+                        label: 'Service Name*',
+                        validators: [validateContent],
+                      },
+                      addServicePrice: {
+                        label: 'Price',
+                        validators: [],
+                      },
+                    });
+                  }}
                 >
                   Add Service
                 </Button>
