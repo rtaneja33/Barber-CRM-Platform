@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { firebase } from "../../src/firebase/config";
-import { Block, Text, theme} from "galio-framework";
+import { Block, Text, theme } from "galio-framework";
 import { argonTheme, tabs, Service, ServiceList } from "../../constants";
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
@@ -20,8 +20,7 @@ import Modal from "react-native-modal";
 import { Accordian, renderSeparator } from "../../components/";
 import { HeaderHeight } from "../../constants/utils";
 import CustomForm from "../../components/CustomForm";
-import { validateContent } from '../../constants/utils';
-
+import { validateContent } from "../../constants/utils";
 
 import FlashMessage, {
   showMessage,
@@ -55,12 +54,11 @@ class AddServices extends React.Component {
     //     services: {"hello": [2,2,3]}
     //   }
     // }));
-    console.log("barbershop services are",this.state.barberShop)
+    console.log("barbershop services are", this.state.barberShop);
     // this.loadServices(this.state.barberShop.services)
   }
-  componentDidMount(){
-      this.loadServices(this.state.barberShop.services)
-
+  componentDidMount() {
+    this.loadServices(this.state.barberShop.services);
   }
 
   loadServices = (servicesMap) => {
@@ -72,18 +70,18 @@ class AddServices extends React.Component {
         serviceList.services.push(new Service(item.serviceName, item.price));
       });
       shopServices.push(serviceList);
-    };
+    }
     console.log("shopServices are", shopServices);
     this.setState({ services: shopServices });
-    console.log("this.state is", this.state)
+    console.log("this.state is", this.state);
     // setServices(shopServices);
     console.log("SERVICES ARE", this.state.barberShop.services);
   };
   renderAccordions = (services) => {
     // this.loadServices(this.state.barberShop.services)
-    console.log("IN RENDER ACCORDIONS I GOT", services)
-    console.log("this.services is",this.state.services);
-    console.log("this.barbershop.services", this.state.barberShop.services)
+    console.log("IN RENDER ACCORDIONS I GOT", services);
+    console.log("this.services is", this.state.services);
+    console.log("this.barbershop.services", this.state.barberShop.services);
     const items = [];
     services.map((item) => {
       items.push(
@@ -223,7 +221,7 @@ class AddServices extends React.Component {
     newServiceCategory.serviceType = result;
     newServiceCategory.services = [];
     var updatedServices = this.state.services.concat(newServiceCategory);
-    this.setState({ services: updatedServices})
+    this.setState({ services: updatedServices });
     const timer = setTimeout(() => {
       this.setState({ loading: false });
       this.closeModal();
@@ -233,17 +231,31 @@ class AddServices extends React.Component {
         icon: "success",
       });
     }, 300);
-  }
+  };
 
   addServiceName = (price, nameOfService, serviceCategory) => {
     // var oldCategory = this.state.serviceModified;
     // let newServiceObj = {
     //   price: price,
     //   serviceName: nameOfService,
-    
+
     // };
-    console.log("in add service name received price of", price, "name of service", nameOfService, "category", serviceCategory)
-    if(!price || !nameOfService || !serviceCategory || price.length <1 || nameOfService.length<1 || serviceCategory.length<1){
+    console.log(
+      "in add service name received price of",
+      price,
+      "name of service",
+      nameOfService,
+      "category",
+      serviceCategory
+    );
+    if (
+      !price ||
+      !nameOfService ||
+      !serviceCategory ||
+      price.length < 1 ||
+      nameOfService.length < 1 ||
+      serviceCategory.length < 1
+    ) {
       const timer = setTimeout(() => {
         this.setState({ loading: false });
         this.closeModal();
@@ -260,10 +272,10 @@ class AddServices extends React.Component {
     var tempArr = this.state.services;
     tempArr.map((obj) => {
       if (obj.serviceType === serviceCategory) {
-        console.log("pushing new service obj, obj.serviceType")
+        console.log("pushing new service obj, obj.serviceType");
         obj.services.push(newServiceObj);
       }
-    });   
+    });
     const timer = setTimeout(() => {
       this.setState({ loading: false });
       this.closeModal();
@@ -273,33 +285,39 @@ class AddServices extends React.Component {
         icon: "success",
       });
     }, 300);
-  }
+  };
 
   renderModal = (serviceField = null) => {
     {
       // console.log(serviceField);
       console.log("this.state.loading in rendermodal is", this.state.loading);
-      if(!serviceField || Object.keys(serviceField).length <= 0){
+      if (!serviceField || Object.keys(serviceField).length <= 0) {
         return <></>;
       }
       const categoryModal = Object.keys(serviceField)[0];
-      var modalTitle = ""; 
+      var modalTitle = "";
       var dropdownItems = [];
-      switch(categoryModal){
+      switch (categoryModal) {
         case "serviceType":
           modalTitle = "Edit Category";
           break;
         case "addServiceType":
-          modalTitle = "Add Category"
+          modalTitle = "Add Category";
           break;
-        case "serviceName": 
-          modalTitle = "Edit Service"
+        case "serviceName":
+          modalTitle = "Edit Service";
           break;
         case "addServiceName":
           modalTitle = "Add Service";
           this.state.services.map((category) => {
-            console.log("ADD CATEGORY, serviceField keys are", category.serviceType);
-            dropdownItems.push({ label: category.serviceType, value: category.serviceType});
+            console.log(
+              "ADD CATEGORY, serviceField keys are",
+              category.serviceType
+            );
+            dropdownItems.push({
+              label: category.serviceType,
+              value: category.serviceType,
+            });
           });
           break;
         default:
@@ -360,9 +378,7 @@ class AddServices extends React.Component {
                     }}
                   />
                 </TouchableOpacity>
-                <Text style={styles.modalText}>
-                  { modalTitle }
-                </Text>
+                <Text style={styles.modalText}>{modalTitle}</Text>
                 <ScrollView
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={styles.child}
@@ -375,38 +391,52 @@ class AddServices extends React.Component {
                           result,
                           serviceCategory
                         );
-                        switch(categoryModal){
+                        switch (categoryModal) {
                           case "serviceType":
-                            this.submitServiceCategory(result['serviceType']);
+                            this.submitServiceCategory(result["serviceType"]);
                             break;
                           case "addServiceType":
-                            this.addServiceCategory(result['addServiceType']);
+                            this.addServiceCategory(result["addServiceType"]);
                             break;
-                          case "serviceName": 
-                            this.submitServiceItem(result['price'], result['serviceName']);
+                          case "serviceName":
+                            this.submitServiceItem(
+                              result["price"],
+                              result["serviceName"]
+                            );
                             break;
                           case "addServiceName":
-                            this.addServiceName(result['addServicePrice'], result['addServiceName'], serviceCategory);
+                            this.addServiceName(
+                              result["addServicePrice"],
+                              result["addServiceName"],
+                              serviceCategory
+                            );
                           default:
-                            this.submitServiceItem(result['price'], result['serviceName']); //maybe to error handling here
+                            this.submitServiceItem(
+                              result["price"],
+                              result["serviceName"]
+                            ); //maybe to error handling here
                             break;
                         }
                       }}
                       afterSubmit={() => console.log("afterSubmit!")}
                       buttonText="Save Changes"
                       closeModalText={
-                        categoryModal==="serviceType" ? "Delete Category" : "Delete Service"
+                        categoryModal === "serviceType"
+                          ? "Delete Category"
+                          : "Delete Service"
                       }
-                      dropdownItems = {dropdownItems}
+                      dropdownItems={dropdownItems}
                       fields={serviceField}
                       deleteButton={
-                        categoryModal=== "serviceType" ?
-                        (result) => {this.deleteServiceCategory()} :
-                        (
-                          categoryModal === "serviceName" ?
-                          (result) => {this.deleteServiceItem()} : 
-                          undefined
-                        )    
+                        categoryModal === "serviceType"
+                          ? (result) => {
+                              this.deleteServiceCategory();
+                            }
+                          : categoryModal === "serviceName"
+                          ? (result) => {
+                              this.deleteServiceItem();
+                            }
+                          : undefined
                       }
                       // fields={{
                       //   email: {
@@ -446,61 +476,150 @@ class AddServices extends React.Component {
           <Text bold size={28} style={styles.title}>
             Add Services
           </Text>
-          <ScrollView showsVerticalScrollIndicator={true} contentContainerStyle={{paddingBottom: 50, flexGrow: 1}}>
-            <Block row style={{ paddingHorizontal: theme.SIZES.BASE}}>
-              <Block> 
+          <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+            <Block>
               {/* removed center */}
               {/* <Button color="default" onPress={function(){console.log("PRESSED!");}}>Hello</Button> */}
-                <Button color="default" style={styles.button} onPress={()=>{
+              <Button
+                color="default"
+                style={styles.button}
+                onPress={() => {
                   this.setModalVisible(true);
                   // this.setServiceModified("Something");
-                  this.setServiceField({ 
+                  this.setServiceField({
                     addServiceType: {
-                      label: 'Service Category*',
+                      label: "Service Category*",
                       validators: [validateContent],
-                    }
+                    },
                   });
-                  console.log("pressed") 
-                }
-                }>
-                  Add Service Category
-                </Button>
-              </Block>
-              <Block>
-                <Button
-                  color="secondary"
-                  textStyle={{
-                    color: "black",
-                    fontSize: 12,
-                    fontWeight: "700",
-                  }}
-                  disabled={this.state.services.length < 1}
-                  style={
-                    this.state.services.length < 1 ?
-                      styles.disabled :
-                      styles.button
-                  }
-                  onPress={()=>{
-                    this.setModalVisible(true);
-                    // this.setServiceModified("Something");
-                    this.setServiceField({ 
-                      addServiceName: {
-                        label: 'Service Name*',
-                        validators: [validateContent],
-                      },
-                      addServicePrice: {
-                        label: 'Price',
-                        validators: [],
-                      },
-                    });
-                  }}
-                >
-                  Add Service
-                </Button>
-              </Block>
+                  console.log("pressed");
+                }}
+              >
+                <Block column center>
+                  <Icon
+                    name="grid"
+                    family="entypo"
+                    size={30}
+                    color={"white"}
+                    style={{ marginTop: 2, marginRight: 5 }}
+                  />
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      color: "white",
+                      fontWeight: "800",
+                      fontSize: 14,
+                      textAlign: 'center'
+                    }}
+                    // textStyle={{
+                    //   color: "black",
+                    //   fontSize: 12,
+                    //   fontWeight: "700",
+                    // }}
+                  >Add Category</Text>
+                </Block>
+              </Button>
+              {/* <Button
+                color="default"
+                style={styles.button}
+                onPress={() => {
+                  this.setModalVisible(true);
+                  // this.setServiceModified("Something");
+                  this.setServiceField({
+                    addServiceType: {
+                      label: "Service Category*",
+                      validators: [validateContent],
+                    },
+                  });
+                  console.log("pressed");
+                }}
+              >
+                Add Service Category
+              </Button> */}
             </Block>
+            <Block>
+              <Button
+                color="secondary"
+                disabled={this.state.services.length < 1}
+                style={
+                  this.state.services.length < 1
+                    ? styles.disabled
+                    : styles.button
+                }
+                onPress={() => {
+                  this.setModalVisible(true);
+                  // this.setServiceModified("Something");
+                  this.setServiceField({
+                    addServiceName: {
+                      label: "Service Name*",
+                      validators: [validateContent],
+                    },
+                    addServicePrice: {
+                      label: "Price",
+                      validators: [],
+                    },
+                  });
+                }}
+              >
+                <Block column center style={this.state.services.length < 1 ? {opacity:0.5} : {opacity: 1.0}}>
+                  <Icon
+                    name="edit"
+                    family="FontAwesome5"
+                    size={30}
+                    color={this.state.services.length < 1 ? 'white' : argonTheme.COLORS.HEADER}
+                    style={{ marginTop: 2, marginRight: 5 }}
+                  />
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      color: this.state.services.length < 1 ? 'white' : argonTheme.COLORS.HEADER,
+                      fontWeight: "800",
+                      fontSize: 14,
+                    }}
+                    // textStyle={{
+                    //   color: "black",
+                    //   fontSize: 12,
+                    //   fontWeight: "700",
+                    // }}
+                  >Add Service</Text>
+                </Block>
+              </Button>
+              {/* <Button
+                color="secondary"
+                disabled={this.state.services.length < 1}
+                style={
+                  this.state.services.length < 1
+                    ? styles.disabled
+                    : styles.button
+                }
+                onPress={() => {
+                  this.setModalVisible(true);
+                  // this.setServiceModified("Something");
+                  this.setServiceField({
+                    addServiceName: {
+                      label: "Service Name*",
+                      validators: [validateContent],
+                    },
+                    addServicePrice: {
+                      label: "Price",
+                      validators: [],
+                    },
+                  });
+                }}
+              >
+                Add Service
+              </Button> */}
+            </Block>
+          </Block>
+          <ScrollView
+            ref={(ref) => (this.scrollView = ref)}
+            onContentSizeChange={() => {
+              this.scrollView.scrollToEnd(true);
+            }}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
+          >
             <Block flex style={styles.accordionCard}>
-             <Text>Hello</Text>
               <Block
                 style={{
                   paddingBottom: -HeaderHeight * 2,
@@ -514,31 +633,50 @@ class AddServices extends React.Component {
             <View style={styles.modal}>
               {this.renderModal(this.state.serviceField)}
             </View>
-            <FlashMessage
-              statusBarHeight={1}
-              position="top"
-              style={{ elevation: 10 }}
-            />
             {/* </View> */}
           </ScrollView>
         </Block>
         <View style={styles.bottom}>
-        <TouchableOpacity
-          style={{
-            position: "absolute",
-            right: 25,
-            top: 25,
-            zIndex: 0,
-            color: "#00000080",
-          }}
-          hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
-          onPress={() => {
-            console.log("pressed CONTINUE!");
-          }}
-        >
-          <Text style = {{color: 'white', fontWeight: 'bold'}}>CONTINUE</Text>
-        </TouchableOpacity>
+          <Block flex row>
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                left: 25,
+                top: 25,
+                zIndex: 0,
+                color: "#00000080",
+              }}
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                console.log("SKIP!");
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                right: 25,
+                top: 25,
+                zIndex: 0,
+                color: "#00000080",
+              }}
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                console.log("pressed CONTINUE!");
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>
+                CONTINUE
+              </Text>
+            </TouchableOpacity>
+          </Block>
         </View>
+        <FlashMessage
+          statusBarHeight={1}
+          position="top"
+          style={{ elevation: 10 }}
+        />
       </Block>
     );
   }
@@ -560,11 +698,13 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: theme.SIZES.BASE,
+    height: 65,
   },
   disabled: {
     marginBottom: theme.SIZES.BASE,
     backgroundColor: "#ccc",
     color: "red",
+    height: 65,
   },
   screen: {
     flex: 1,
@@ -572,7 +712,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   accordionCard: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     marginHorizontal: 8,
     padding: theme.SIZES.BASE,
     marginTop: 0,
@@ -650,13 +790,13 @@ const styles = StyleSheet.create({
   },
   bottom: {
     flex: 1,
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     width: width,
-    height: height/9,
-    backgroundColor: argonTheme.COLORS.HEADER
-  }
+    height: height / 9,
+    backgroundColor: argonTheme.COLORS.HEADER,
+  },
 });
 
 export default AddServices;
