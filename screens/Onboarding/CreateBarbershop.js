@@ -26,8 +26,8 @@ class CreateBarbershop extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      email: this.props.route.params,
-      password: this.props.route.params,
+      email: this.props.route.params.email,
+      password: this.props.route.params.password,
       barberShop: null,
     };
   }

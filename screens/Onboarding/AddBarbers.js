@@ -26,13 +26,13 @@ class AddBarbers extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      email: this.props.route.params,
-      barberShop: this.props.route.params,
-      password: this.props.route.params,
+      email: this.props.route.params.email,
+      barberShop: this.props.route.params.barberShop,
+      password: this.props.route.params.password,
     };
   }
 
-  onRegister = (address, shopEmail, name) => {
+  onRegister = (isSkipped) => {
     console.log("IN ON REGISTER");
     const { email, password } = this.props.route.params;
     // try {
@@ -44,9 +44,14 @@ class AddBarbers extends React.Component {
           const uid = response.user.uid;
           return BarberShop.createNew(uid)
             .then((barberShop) => {
-              barberShop.email = shopEmail;
-              barberShop.shopName = name;
-              barberShop.address = address;
+              barberShop.email = this.state.barberShop.email;
+              barberShop.services = this.state.barberShop.services; // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
+              barberShop.shopName = this.state.barberShop.shopName;
+              barberShop.address= this.state.barberShop.address;
+              if(!isSkipped){
+                barberShop.baberIDs = this.state.barberShop.baberIDs;
+              }
+              //can add more fields here when add barbers complete, or about description etc.! 
               // barberShop.update()
               return barberShop
                 .update()
@@ -55,6 +60,7 @@ class AddBarbers extends React.Component {
                   resolve(updated);
                 })
                 .catch((err) => {
+                  console.log("ERROR UPDATING ROHAN ERROR", err);
                   alert("error updating info", err);
                 });
             })
@@ -100,8 +106,9 @@ class AddBarbers extends React.Component {
                 this.setState({ loading: true });
                  setTimeout(() => {
                   this.setState({ loading: false });
-                  const {navigation} = this.props;
-                  navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
+                  this.onRegister(true);
+                  // const {navigation} = this.props;
+                  // navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
                   // barberShop.email = email;
                   // barberShop.shopName = name;
                   // barberShop.address = address;
@@ -121,17 +128,20 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
+                console.log("EMAIL AND PASSWORD ARE", this.state.email, this.state.password)
+                console.log("addbarbers- this.props is", this.props);
+                this.onRegister(false);
                 console.log("pressed CONTINUE!");
-                this.setState({ loading: true });
-                setTimeout(() => {
-                 this.setState({ loading: false });
-                 const {navigation} = this.props;
-                 var shop = {...this.state.barberShop};
-                 shop.services = this.state.services; 
-                 this.setState({barberShop: shop})
-                 console.log("and this.state.barbershop.services looks like", this.state.barberShop.services)
-                 navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
-               }, 300);
+              //   this.setState({ loading: true });
+              //   setTimeout(() => {
+              //    this.setState({ loading: false });
+              //    const {navigation} = this.props;
+              //    var shop = {...this.state.barberShop};
+              //    shop.services = this.state.services; 
+              //    this.setState({barberShop: shop})
+              //    console.log("and this.state.barbershop.services looks like", this.state.barberShop.services)
+              //    navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
+              //  }, 300);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>

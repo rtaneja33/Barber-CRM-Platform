@@ -674,6 +674,7 @@ class AddServices extends React.Component {
                  shop.services = this.state.services; 
                  this.setState({barberShop: shop})
                  console.log("and this.state.barbershop.services looks like", this.state.barberShop.services)
+                 console.log("ADDSERVICESROHAN this.state.email is", this.state.email, "this.state.password", this.state.password);
                  navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
                }, 300);
               }}
