@@ -28,6 +28,7 @@ import CustomDrawerContent from "./Menu";
 import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import { useEffect } from "react";
+import AddBarbers from '../screens/Onboarding/AddBarbers';
 
 const { width } = Dimensions.get("screen");
 
@@ -372,6 +373,22 @@ export default function AppStack(props) { // if this causes an error, try expo s
           }}
         />
         <Stack.Screen
+          name="CreateBarbershop"
+          component={CreateBarbershop}
+          options={{
+            header: ({ navigation, scene }) => (
+              <Header
+                title=""
+                back
+                black
+                transparent
+                navigation={navigation}
+                scene={scene}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
           name="AddServices"
           component={AddServices}
           options={{
@@ -387,9 +404,9 @@ export default function AppStack(props) { // if this causes an error, try expo s
             ),
           }}
         />
-        <Stack.Screen
-          name="CreateBarbershop"
-          component={CreateBarbershop}
+         <Stack.Screen
+          name="AddBarbers"
+          component={AddBarbers}
           options={{
             header: ({ navigation, scene }) => (
               <Header

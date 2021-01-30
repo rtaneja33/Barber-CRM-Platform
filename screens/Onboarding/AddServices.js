@@ -36,7 +36,8 @@ class AddServices extends React.Component {
     this.state = {
       loading: false,
       services: [],
-
+      email: this.props.route.params.email,
+      password: this.props.route.params.password,
       serviceField: null,
       modalVisible: false,
       serviceModified: null,
@@ -57,26 +58,26 @@ class AddServices extends React.Component {
     //console.log("barbershop services are", this.state.barberShop);
     // this.loadServices(this.state.barberShop.services)
   }
-  componentDidMount() {
-    this.loadServices(this.state.barberShop.services);
-  }
+  // componentDidMount() {
+  //   this.loadServices(this.state.barberShop.services);
+  // }
 
-  loadServices = (servicesMap) => {
-    console.log("in add services we are loading services", servicesMap);
-    var shopServices = [];
-    for (var serviceType in servicesMap) {
-      var serviceList = new ServiceList(serviceType, []);
-      servicesMap[serviceType].map((item) => {
-        serviceList.services.push(new Service(item.serviceName, item.price));
-      });
-      shopServices.push(serviceList);
-    }
-    console.log("shopServices are", shopServices);
-    this.setState({ services: shopServices });
-    console.log("this.state is", this.state);
-    // setServices(shopServices);
-    console.log("SERVICES ARE", this.state.barberShop.services);
-  };
+  // loadServices = (servicesMap) => {
+  //   console.log("in add services we are loading services", servicesMap);
+  //   var shopServices = [];
+  //   for (var serviceType in servicesMap) {
+  //     var serviceList = new ServiceList(serviceType, []);
+  //     servicesMap[serviceType].map((item) => {
+  //       serviceList.services.push(new Service(item.serviceName, item.price));
+  //     });
+  //     shopServices.push(serviceList);
+  //   }
+  //   console.log("shopServices are", shopServices);
+  //   this.setState({ services: shopServices });
+  //   console.log("this.state is", this.state);
+  //   // setServices(shopServices);
+  //   console.log("SERVICES ARE", this.state.barberShop.services);
+  // };
   renderAccordions = (services) => {
     // this.loadServices(this.state.barberShop.services)
     console.log("IN RENDER ACCORDIONS I GOT", services);
@@ -648,17 +649,8 @@ class AddServices extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-
-                this.setState({ loading: true });
-                 setTimeout(() => {
-                  this.setState({ loading: false });
-                  const {navigation} = this.props;
-                  navigation.navigate('CreateBarbershop', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
-                  // barberShop.email = email;
-                  // barberShop.shopName = name;
-                  // barberShop.address = address;
-                  // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
-                }, 300);
+                const {navigation} = this.props;
+                navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -680,12 +672,9 @@ class AddServices extends React.Component {
                  const {navigation} = this.props;
                  var shop = {...this.state.barberShop};
                  shop.services = this.state.services; 
-                 /// need to save the services! not sure if above will work, probably need to convert back to firestore form;
-                 navigation.navigate('CreateBarbershop', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
-                 // barberShop.email = email;
-                 // barberShop.shopName = name;
-                 // barberShop.address = address;
-                 // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                 this.setState({barberShop: shop})
+                 console.log("and this.state.barbershop.services looks like", this.state.barberShop.services)
+                 navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
                }, 300);
               }}
             >
