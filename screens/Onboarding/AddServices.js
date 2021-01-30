@@ -31,8 +31,6 @@ class AddServices extends React.Component {
   constructor(props) {
     super(props);
     console.log("PROPS ARE", props);
-    //let bShop = new BarberShop();
-    //bShop.services = {"hello": [{price: '$25', serviceName: 'Fresh cutz'}]};
     this.state = {
       loading: false,
       services: [],
@@ -44,45 +42,8 @@ class AddServices extends React.Component {
       barberShop: this.props.route.params.barberShop, // this should be passed in as a prop;
       changeMade: false,
     };
-    // this.state.barberShop.services = { "Haircuts": [] }
-    // this.setState(({barberShop}) => ({barberShop: {
-    //   ...barberShop,
-    //   services: {"hello": [1,2,3]},
-    // }}));
-    // this.setState(prevState => ({
-    //   barberShop: {
-    //     ...prevState.barberShop,
-    //     services: {"hello": [2,2,3]}
-    //   }
-    // }));
-    //console.log("barbershop services are", this.state.barberShop);
-    // this.loadServices(this.state.barberShop.services)
   }
-  // componentDidMount() {
-  //   this.loadServices(this.state.barberShop.services);
-  // }
-
-  // loadServices = (servicesMap) => {
-  //   console.log("in add services we are loading services", servicesMap);
-  //   var shopServices = [];
-  //   for (var serviceType in servicesMap) {
-  //     var serviceList = new ServiceList(serviceType, []);
-  //     servicesMap[serviceType].map((item) => {
-  //       serviceList.services.push(new Service(item.serviceName, item.price));
-  //     });
-  //     shopServices.push(serviceList);
-  //   }
-  //   console.log("shopServices are", shopServices);
-  //   this.setState({ services: shopServices });
-  //   console.log("this.state is", this.state);
-  //   // setServices(shopServices);
-  //   console.log("SERVICES ARE", this.state.barberShop.services);
-  // };
   renderAccordions = (services) => {
-    // this.loadServices(this.state.barberShop.services)
-    console.log("IN RENDER ACCORDIONS I GOT", services);
-    console.log("this.services is", this.state.services);
-    console.log("this.barbershop.services", this.state.barberShop.services);
     const items = [];
     services.map((item) => {
       items.push(
@@ -96,7 +57,6 @@ class AddServices extends React.Component {
         />
       );
     });
-    console.log("Accordian items are", items);
     return items;
   };
   setModalVisible = (visible) => {
@@ -108,7 +68,6 @@ class AddServices extends React.Component {
   };
 
   setServiceModified = (oldKey) => {
-    console.log("SET SERVICE MODIFIED, PASSED IN ", oldKey);
     this.setState({ serviceModified: oldKey });
   };
 
@@ -142,14 +101,7 @@ class AddServices extends React.Component {
   };
 
   submitServiceItem = (price, nameOfService) => {
-    console.log(
-      "for service item, new price is",
-      price,
-      "and new service is",
-      nameOfService
-    );
     let serviceLocation = { ...this.state.serviceModified };
-    // let newServiceObj = new Service(nameOfService, price);
     let newServiceObj = {
       price: price,
       serviceName: nameOfService,
@@ -235,20 +187,6 @@ class AddServices extends React.Component {
   };
 
   addServiceName = (price, nameOfService, serviceCategory) => {
-    // var oldCategory = this.state.serviceModified;
-    // let newServiceObj = {
-    //   price: price,
-    //   serviceName: nameOfService,
-
-    // };
-    console.log(
-      "in add service name received price of",
-      price,
-      "name of service",
-      nameOfService,
-      "category",
-      serviceCategory
-    );
     if (
       !price ||
       !nameOfService ||
@@ -290,8 +228,6 @@ class AddServices extends React.Component {
 
   renderModal = (serviceField = null) => {
     {
-      // console.log(serviceField);
-      console.log("this.state.loading in rendermodal is", this.state.loading);
       if (!serviceField || Object.keys(serviceField).length <= 0) {
         return <></>;
       }
@@ -361,7 +297,6 @@ class AddServices extends React.Component {
                   }}
                   hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
                   onPress={() => {
-                    console.log("pressed close");
                     this.setState((prevState) => {
                       return {
                         ...prevState,
@@ -387,11 +322,6 @@ class AddServices extends React.Component {
                   <View style={{ marginTop: 30 }}>
                     <CustomForm
                       action={(result, serviceCategory) => {
-                        console.log(
-                          "service item in editservices",
-                          result,
-                          serviceCategory
-                        );
                         switch (categoryModal) {
                           case "serviceType":
                             this.submitServiceCategory(result["serviceType"]);
@@ -479,8 +409,6 @@ class AddServices extends React.Component {
           </Text>
           <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
             <Block>
-              {/* removed center */}
-              {/* <Button color="default" onPress={function(){console.log("PRESSED!");}}>Hello</Button> */}
               <Button
                 color="default"
                 style={styles.button}
@@ -493,7 +421,6 @@ class AddServices extends React.Component {
                       validators: [validateContent],
                     },
                   });
-                  console.log("pressed");
                 }}
               >
                 <Block column center>
@@ -673,8 +600,6 @@ class AddServices extends React.Component {
                  var shop = {...this.state.barberShop};
                  shop.services = this.state.services; 
                  this.setState({barberShop: shop})
-                 console.log("and this.state.barbershop.services looks like", this.state.barberShop.services)
-                 console.log("ADDSERVICESROHAN this.state.email is", this.state.email, "this.state.password", this.state.password);
                  navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
                }, 300);
               }}

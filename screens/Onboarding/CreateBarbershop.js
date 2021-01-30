@@ -71,13 +71,6 @@ class CreateBarbershop extends React.Component {
 
   render() {
     return (
-      // <View style={{ flexDirection: "row" }}>
-      // <Text numberOfLines={1} style={{ flex: 1, textAlign: "left" }}>
-      //     {title}
-      // </Text>
-      // <Text style={{ textAlign: "right" }}>{duration}</Text>
-      // </View>;
-
       <Block flex>
         <Spinner
           // textContent={"Loading..."}
@@ -105,24 +98,6 @@ class CreateBarbershop extends React.Component {
                   barberShop.address = address;
                   navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
                 }, 300);
-                // this.onRegister(address, email, name)
-                //     .then((updated) => {
-                //         console.log("updated is", updated);
-                //         this.setState({ loading: false })
-                //     })
-                //     .catch((err) => {
-                //         this.setState({ loading: false })
-                //     });
-                // shopInformation
-                //   .updateAboutDescription(description)
-                //   .then((updated) => {
-                //     setModalVisible(!modalVisible);
-                //     setSpinner();
-                //   })
-                //   .catch((err) => {
-                //     setSpinner(false);
-                //     console.log("An error occurred with updating about", err);
-                //   });
               }}
               afterSubmit={() => console.log("afterSubmit!")}
               buttonText="Create Account"
@@ -148,29 +123,12 @@ class CreateBarbershop extends React.Component {
                     backgroundColor: "transparent",
                   },
                 },
-                // shopAbout: {
-                //   label: "About Description",
-                //   validators: [],
-                //   inputProps: {
-                //     multiline: true,
-                //     backgroundColor: 'transparent'
-                //   },
-                // },
               }}
             ></OnboardingForm>
             {/* </View> */}
           </ScrollView>
         </Block>
       </Block>
-      //     <Block flex>
-      //     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, width }}>
-      //     <Block flex>
-      //         <Text bold style={styles.title}>
-      //         Create your Barbershop
-      //         </Text>
-      //     </Block>
-      //     </ScrollView>
-      //   </Block>
     );
   }
 }
