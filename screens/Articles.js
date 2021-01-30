@@ -72,18 +72,44 @@ const Articles = ({navigation}) => {
   //   }
   //   )
   // },[])
+
+  const toFirestore=(services)=>{
+    var firestoreServices = []
+    services.map((serviceList)=>{
+      var firestoreObj = { serviceType: serviceList.serviceType, services: []}
+      serviceList.services.map((serviceObj) =>{
+        firestoreObj.services.push({price: serviceObj.price, serviceName: serviceObj.serviceName})
+      })
+      firestoreServices.push(firestoreObj)
+    })
+    console.log("returning firestoreServices from toFirestore: ", firestoreServices)
+    return firestoreServices
+  }
+
   const loadServices = (servicesMap) => {
     console.log("LOADING SERVICES in ARTICLES", servicesMap);
-    var shopServices = [];
-    for (var serviceType in servicesMap) {
-      var serviceList = new ServiceList(serviceType, []);
-      servicesMap[serviceType].map((item) => {
-        serviceList.services.push(new Service(item.serviceName, item.price));
-      });
-      shopServices.push(serviceList);
-    }
-    setServices(shopServices);
-    console.log("SERVICES ARE",services)
+    var fromFirestore = []
+    servicesMap.map((serviceList)=>{
+      var customList = new ServiceList();
+      customList.serviceType = serviceList.serviceType;
+      var localServices = []
+      serviceList.services.map((serv)=>{
+        localServices.push(new Service(serv.serviceName, serv.price))
+      })
+      customList.services = localServices
+      fromFirestore.push(customList);
+      setServices(fromFirestore);
+    })
+    // var shopServices = [];
+    // for (var serviceType in servicesMap) {
+    //   var serviceList = new ServiceList(serviceType, []);
+    //   servicesMap[serviceType].map((item) => {
+    //     serviceList.services.push(new Service(item.serviceName, item.price));
+    //   });
+    //   shopServices.push(serviceList);
+    // }
+    // setServices(shopServices);
+    // console.log("SERVICES ARE",services)
   };
   
   const [services, setServices] = React.useState([]);

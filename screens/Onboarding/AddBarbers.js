@@ -32,6 +32,19 @@ class AddBarbers extends React.Component {
     };
   }
 
+  toFirestore(services){
+    var firestoreServices = []
+    services.map((serviceList)=>{
+      var firestoreObj = { serviceType: serviceList.serviceType, services: []}
+      serviceList.services.map((serviceObj) =>{
+        firestoreObj.services.push({price: serviceObj.price, serviceName: serviceObj.serviceName})
+      })
+      firestoreServices.push(firestoreObj)
+    })
+    console.log("returning firestoreServices from toFirestore: ", firestoreServices)
+    return firestoreServices
+  }
+
   onRegister = (isSkipped) => {
     console.log("IN ON REGISTER");
     const { email, password } = this.props.route.params;
@@ -45,7 +58,7 @@ class AddBarbers extends React.Component {
           return BarberShop.createNew(uid)
             .then((barberShop) => {
               barberShop.email = this.state.barberShop.email;
-              barberShop.services = this.state.barberShop.services; // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
+              barberShop.services = this.toFirestore(this.state.barberShop.services); // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
               barberShop.shopName = this.state.barberShop.shopName;
               barberShop.address= this.state.barberShop.address;
               if(!isSkipped){
@@ -65,6 +78,7 @@ class AddBarbers extends React.Component {
                 });
             })
             .catch((error) => {
+              console.log("the create shop  error is", error)
               alert("Error occured with creating Barbershop", error);
             });
         })
