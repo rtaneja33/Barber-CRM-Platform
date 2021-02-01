@@ -369,21 +369,6 @@ class AddServices extends React.Component {
                             }
                           : undefined
                       }
-                      // fields={{
-                      //   email: {
-                      //     label: 'Email',
-                      //     validators: [validateContent],
-                      //     inputProps: {
-                      //       keyboardType: 'email-address',
-                      //     },
-                      //   },
-                      //   password: {
-                      //     label: 'Password',
-                      //     inputProps: {
-                      //       secureTextEntry: true,
-                      //     },
-                      //   },
-                      // }}
                     ></CustomForm>
                   </View>
                 </ScrollView>
@@ -439,31 +424,9 @@ class AddServices extends React.Component {
                       fontSize: 14,
                       textAlign: 'center'
                     }}
-                    // textStyle={{
-                    //   color: "black",
-                    //   fontSize: 12,
-                    //   fontWeight: "700",
-                    // }}
                   >Add Category</Text>
                 </Block>
               </Button>
-              {/* <Button
-                color="default"
-                style={styles.button}
-                onPress={() => {
-                  this.setModalVisible(true);
-                  // this.setServiceModified("Something");
-                  this.setServiceField({
-                    addServiceType: {
-                      label: "Service Category*",
-                      validators: [validateContent],
-                    },
-                  });
-                  console.log("pressed");
-                }}
-              >
-                Add Service Category
-              </Button> */}
             </Block>
             <Block>
               <Button
@@ -504,39 +467,9 @@ class AddServices extends React.Component {
                       fontWeight: "800",
                       fontSize: 14,
                     }}
-                    // textStyle={{
-                    //   color: "black",
-                    //   fontSize: 12,
-                    //   fontWeight: "700",
-                    // }}
                   >Add Service</Text>
                 </Block>
               </Button>
-              {/* <Button
-                color="secondary"
-                disabled={this.state.services.length < 1}
-                style={
-                  this.state.services.length < 1
-                    ? styles.disabled
-                    : styles.button
-                }
-                onPress={() => {
-                  this.setModalVisible(true);
-                  // this.setServiceModified("Something");
-                  this.setServiceField({
-                    addServiceName: {
-                      label: "Service Name*",
-                      validators: [validateContent],
-                    },
-                    addServicePrice: {
-                      label: "Price",
-                      validators: [],
-                    },
-                  });
-                }}
-              >
-                Add Service
-              </Button> */}
             </Block>
           </Block>
           <ScrollView
