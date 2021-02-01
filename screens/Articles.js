@@ -189,7 +189,7 @@ const Articles = ({navigation}) => {
                     <CustomForm
                       action={(description) => {
                           setSpinner(true);
-                          shopInformation.updateAboutDescription(description)
+                          shopInformation.updateAboutDescription(description['About'])
                             .then((updated) => {
                               setModalVisible(!modalVisible)
                               setSpinner();

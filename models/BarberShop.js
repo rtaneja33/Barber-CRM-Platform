@@ -91,10 +91,16 @@ export default class BarberShop {
     }
 
     updateServiceItem(serviceCategory, serviceIndex, newServiceObject) { 
-        console.log("in service item update method now")
-        //console.log("IN BARBERSHOP API, received serviceCategory of", serviceCategory, "serviceIndex of", serviceIndex,"serviceObject of", newServiceObject);
-        console.log("this.services[servicecategory[",this.services[serviceCategory]);
-        this.services[serviceCategory][serviceIndex] = {...newServiceObject};
+        // console.log("in service item update method now")
+        // console.log("IN BARBERSHOP API, received serviceCategory of", serviceCategory, "serviceIndex of", serviceIndex,"serviceObject of", newServiceObject);
+        // console.log("IN BARBERSHOP METHOD, this.sercices is", this.services)
+        // console.log("this.services[servicecategory[",this.services[serviceCategory]);
+        this.services.map((obj) => {
+            if(obj.serviceType === serviceCategory){
+                obj.services[serviceIndex] = {...newServiceObject};
+            }
+        })
+        //this.services[serviceCategory][serviceIndex] = {...newServiceObject};
         this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
@@ -122,9 +128,13 @@ export default class BarberShop {
     }
 
    updateServiceCategory(oldKey, updatedKey) { 
-        // console.log("IN BARBERSHOP API, received oldKey of", oldKey, "oldObjectWithoutKey of", oldObjectWithoutKey,"updatedKey of", updatedKey);
+        //console.log("IN BARBERSHOP API - updateServiceCategory, received oldKey of", oldKey, "oldObjectWithoutKey of", oldObjectWithoutKey,"updatedKey of", updatedKey);
         this.services[updatedKey] = this.services[oldKey];
-        delete this.services[oldKey];
+        this.services.map((obj)=>{
+            if(obj.serviceType === oldKey){
+                obj.serviceType = updatedKey;
+            }
+        })
         this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
@@ -143,6 +153,7 @@ export default class BarberShop {
             firebase.firestore().collection('BarberShops').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
+                    console.log("hello rohan, data is", data);
                     barberShop.uid = id
                     barberShop.aboutDescription = data["aboutDescription"]
                     barberShop.address = data["address"]

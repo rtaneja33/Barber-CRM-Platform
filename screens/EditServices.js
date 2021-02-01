@@ -115,6 +115,7 @@ class EditServices extends React.Component {
 
   renderAccordions = (services) => {
     const items = [];
+    console.log("in render accordions, services passed in is", services)
     services.map((item) => {
       items.push(
         <Accordian
@@ -146,7 +147,7 @@ class EditServices extends React.Component {
     this.setState((prevState) => {
       return {
         ...prevState,
-        modalVisible: !prevState.modalVisible,
+        modalVisible: false,
       };
     });
   };
@@ -187,7 +188,7 @@ class EditServices extends React.Component {
       });
   };
 
-  submitServiceItem = (price, nameOfService) => {
+  updateServiceItem = (price, nameOfService) => {
     console.log(
       "for service item, new price is",
       price,
@@ -201,6 +202,7 @@ class EditServices extends React.Component {
       serviceName: nameOfService,
     };
     this.setState({ loading: true, changeMade: true });
+    console.log("this.state.barberShop is", this.state.barberShop)
     this.state.barberShop
       .updateServiceItem(
         serviceLocation.serviceCategory,
@@ -266,7 +268,7 @@ class EditServices extends React.Component {
       });
   };
 
-  submitServiceCategory = (result) => {
+  updateServiceCategory = (result) => {
     this.setState({ loading: true, changeMade: true });
     this.state.barberShop
       .updateServiceCategory(this.state.serviceModified, result)
@@ -335,7 +337,8 @@ class EditServices extends React.Component {
           });
           break;
         default:
-          this.submitServiceItem(result, nameOfService); //maybe to error handling here
+          modalTitle = "NO IDEA";
+          //this.updateServiceItem(result, nameOfService); //maybe to error handling here
           break;
       }
       // const categoryModal =
@@ -401,13 +404,15 @@ class EditServices extends React.Component {
                       action={(result, serviceCategory) => {
                         switch (categoryModal) {
                           case "serviceType":
-                            this.submitServiceCategory(result["serviceType"]);
+                            this.updateServiceCategory(result["serviceType"]);
                             break;
                           case "addServiceType":
                             this.addServiceCategory(result["addServiceType"]);
                             break;
                           case "serviceName":
-                            this.submitServiceItem(
+                            console.log("this.state currently is", this.state)
+                            console.log("result of action is", result)
+                            this.updateServiceItem(
                               result["price"],
                               result["serviceName"]
                             );
@@ -419,7 +424,7 @@ class EditServices extends React.Component {
                               serviceCategory
                             );
                           default:
-                            this.submitServiceItem(
+                            this.updateServiceItem(
                               result["price"],
                               result["serviceName"]
                             ); //maybe to error handling here
@@ -459,6 +464,7 @@ class EditServices extends React.Component {
 
   render() {
     return (
+      <Block flex>
       <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
@@ -568,7 +574,7 @@ class EditServices extends React.Component {
             this.scrollView.scrollToEnd(true);
           }}
           showsVerticalScrollIndicator={true}
-          contentContainerStyle={{ paddingBottom: 100, flexGrow: 1, width: width }}
+          contentContainerStyle={{ paddingBottom: 20, flexGrow: 1, width: width }}
         >
           {/* <Block flex style={styles.profileCard}>
           <Block row space="between">
@@ -592,7 +598,8 @@ class EditServices extends React.Component {
             {this.renderModal(this.state.serviceField)}
           </View>
         </ScrollView>
-        <FlashMessage
+      </Block>
+      <FlashMessage
             statusBarHeight={1}
             position="top"
             style={{ elevation: 10 }}
@@ -640,6 +647,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 22,
   },
+
   modalView: {
     margin: 20,
     backgroundColor: "white",
