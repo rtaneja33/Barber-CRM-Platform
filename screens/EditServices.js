@@ -231,9 +231,11 @@ class EditServices extends React.Component {
 
   renderModal = (serviceField = null) => {
     {
-      // console.log(serviceField);
+      console.log(serviceField);
       console.log("this.state.loading in rendermodal is", this.state.loading);
-      if (!serviceField) return <></>;
+      console.log("IN RENDER MODAL, serviceField is", serviceField);
+      if (!serviceField) return <></>; 
+      console.log("IN RENDER MODAL, serviceField is", serviceField);
       const categoryModal =
         Object.keys(serviceField).length > 0 &&
         Object.keys(serviceField)[0] === "serviceType";

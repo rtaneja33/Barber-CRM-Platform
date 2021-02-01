@@ -5,7 +5,7 @@ import { Block, Text, Button as GaButton, theme } from "galio-framework";
 // Argon themed components
 import { argonTheme, tabs } from "../constants/";
 import { Button, Select, Icon, Input, Header, Switch } from "../components/";
-
+import { firebase } from "../src/firebase/config"
 const { width } = Dimensions.get("screen");
 
 class Elements extends React.Component {
@@ -16,7 +16,14 @@ class Elements extends React.Component {
 
   toggleSwitch = switchId =>
     this.setState({ [switchId]: !this.state[switchId] });
-
+  signOutUser = async () => {
+    try {
+        await firebase.auth().signOut();
+        // navigate('SignedOut');
+    } catch (e) {
+      console.log("error logging out: ", e);
+    }
+  }
   renderButtons = () => {
     return (
       <Block flex>
@@ -25,8 +32,8 @@ class Elements extends React.Component {
         </Text>
         <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
           <Block center>
-            <Button color="default" style={styles.button}>
-              DEFAULT
+            <Button color="default" style={styles.button} onPress={()=>{this.signOutUser()}}>
+              LOG OUT
             </Button>
           </Block>
           <Block center>

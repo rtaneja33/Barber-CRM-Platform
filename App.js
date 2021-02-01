@@ -1,32 +1,28 @@
-import React, { useEffect } from 'react';
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, Platform, TextInput, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
-import logo from './assets/logo.png';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions'
-import * as Sharing from 'expo-sharing';
-import * as Contacts from 'expo-contacts';
-import { Avatar } from 'react-native-elements';
-import uploadToAnonymousFilesAsync from 'anonymous-files';
-import { render } from 'react-dom';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, SafeAreaView, FlatList, ActivityIndicator, View, Text } from 'react-native';
+import { firebase } from './src/firebase/config';
 import { Block, GalioProvider } from "galio-framework";
 import { NavigationContainer } from "@react-navigation/native";
 import { enableScreens } from "react-native-screens";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 enableScreens();
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
 
 
 export default function App() {
-
-  return (
+  return ( // signed in
+    <SafeAreaProvider>
     <NavigationContainer>
           <GalioProvider theme={argonTheme}>
             <Block flex>
               <Screens />
             </Block>
           </GalioProvider>
-        </NavigationContainer>
-  );
+    </NavigationContainer>
+    </SafeAreaProvider>
+  )
 }
 
 const styles = StyleSheet.create({
