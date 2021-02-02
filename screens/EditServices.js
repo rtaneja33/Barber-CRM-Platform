@@ -52,20 +52,51 @@ class EditServices extends React.Component {
   addServiceCategory = (result) => {
     this.setState({ loading: true, changeMade: true });
     // var oldCategory = this.state.serviceModified;
+    
     var newServiceCategory = new ServiceList();
     newServiceCategory.serviceType = result;
     newServiceCategory.services = [];
-    var updatedServices = this.state.services.concat(newServiceCategory);
-    this.setState({ services: updatedServices });
-    const timer = setTimeout(() => {
-      this.setState({ loading: false });
-      this.closeModal();
-      showMessage({
-        message: "Service Category has been added!",
-        type: "success",
-        icon: "success",
+    console.log("newservcat", newServiceCategory)
+    const newCat = Object.assign({}, newServiceCategory)
+    console.log("NEWCAT ISSS", newCat)
+    this.state.barberShop
+      .addServiceCategory(newCat)
+      .then((updated) => {
+        if (updated) {
+          var updatedServices = this.state.services.concat(newServiceCategory);
+          this.setState({ services: updatedServices });
+          setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "Service Category has been added!",
+              type: "success",
+              icon: "success",
+            });
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "An error occured. Please try again later.",
+              type: "danger",
+              icon: "danger",
+            });
+          }, 300);
+          //throw new Error("COULD NOT UPDATE");
+          console.log("error occured with adding service category");
+        }
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        console.log("edit services", err);
+        console.log("An error occurred with updating");
       });
-    }, 300);
+
+
+
+
   };
   addServiceName = (price, nameOfService, serviceCategory) => {
     if (

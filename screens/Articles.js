@@ -56,7 +56,9 @@ const Articles = ({navigation}) => {
   const onBackHandler = (changeMade)=>{
     if(changeMade) { // change was made in editServices
       setSpinner(true);
+
       BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+        console.log("REFRESHED RO, SHOP INFO IS", shopInfo)
         setShopInformation(shopInfo);
         loadServices(shopInfo.services);
         setSpinner(false);

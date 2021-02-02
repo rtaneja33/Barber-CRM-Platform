@@ -78,7 +78,7 @@ export default class BarberShop {
     
     deleteServiceItem(serviceCategory, serviceIndex) { 
         this.services[serviceCategory].splice(serviceIndex, 1);
-        this.update();
+        // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
                 resolve(success);
@@ -100,8 +100,7 @@ export default class BarberShop {
                 obj.services[serviceIndex] = {...newServiceObject};
             }
         })
-        //this.services[serviceCategory][serviceIndex] = {...newServiceObject};
-        this.update();
+        // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
                 resolve(success);
@@ -113,9 +112,27 @@ export default class BarberShop {
         })
     }
 
+    addServiceCategory(newServiceCategory) {
+        console.log("ADDSERVICECATEGORY",newServiceCategory);
+        let newCategory = Object.assign({}, newServiceCategory)
+        this.services.push(newServiceCategory);
+        // console.log("this",this)
+        // this.update();
+        console.log("AFTER PUSHING", newServiceCategory, "this.services is", this.services)
+        return new Promise((resolve, reject) => {
+            this.update().then(success => {
+                resolve(success);
+            })
+            .catch((err)=> {
+                console.log("error adding cat:", err);
+                reject(err);
+            })
+        })
+    }
+
     deleteServiceCategory(oldKey) { 
         delete this.services[oldKey];
-        this.update();
+        // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
                 resolve(success);
