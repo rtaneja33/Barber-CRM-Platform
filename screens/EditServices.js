@@ -51,8 +51,6 @@ class EditServices extends React.Component {
 
   addServiceCategory = (result) => {
     this.setState({ loading: true, changeMade: true });
-    // var oldCategory = this.state.serviceModified;
-    
     var newServiceCategory = new ServiceList();
     newServiceCategory.serviceType = result;
     newServiceCategory.services = [];
@@ -93,11 +91,8 @@ class EditServices extends React.Component {
         console.log("edit services", err);
         console.log("An error occurred with updating");
       });
-
-
-
-
   };
+
   addServiceName = (price, nameOfService, serviceCategory) => {
     if (
       !price ||
@@ -118,24 +113,54 @@ class EditServices extends React.Component {
       }, 300);
       return;
     }
-    let newServiceObj = new Service(nameOfService, price);
+
+    let newServiceObj = {
+      price: price,
+      serviceName: nameOfService,
+    };
     this.setState({ loading: true, changeMade: true });
-    var tempArr = this.state.services;
-    tempArr.map((obj) => {
-      if (obj.serviceType === serviceCategory) {
-        console.log("pushing new service obj, obj.serviceType");
-        obj.services.push(newServiceObj);
-      }
-    });
-    const timer = setTimeout(() => {
-      this.setState({ loading: false });
-      this.closeModal();
-      showMessage({
-        message: "Service Name has been added!",
-        type: "success",
-        icon: "success",
+    this.state.barberShop
+      .addServiceItem(
+        serviceCategory, 
+        newServiceObj
+      )
+      .then((updated) => {
+        if (updated) {
+          let newServiceObj = new Service(nameOfService, price);
+          this.setState({ loading: true, changeMade: true });
+          var tempArr = this.state.services;
+          tempArr.map((obj) => {
+            if (obj.serviceType === serviceCategory) {
+              console.log("pushing new service obj, obj.serviceType");
+              obj.services.push(newServiceObj);
+            }
+          });
+          const timer = setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "Service Name has been added!",
+              type: "success",
+              icon: "success",
+            });
+          }, 300);
+        } else {
+          const timer = setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "An error occurred. Please try again!",
+              type: "danger",
+              icon: "danger",
+            });
+          }, 300);
+          throw new Error("COULD NOT ADD ITEM");
+        }
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        console.log("An error occurred with adding", err);
       });
-    }, 300);
   };
 
   componentWillUnmount() {

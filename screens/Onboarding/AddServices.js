@@ -209,12 +209,16 @@ class AddServices extends React.Component {
     let newServiceObj = new Service(nameOfService, price);
     this.setState({ loading: true, changeMade: true });
     var tempArr = this.state.services;
-    tempArr.map((obj) => {
+    for (let obj of tempArr){
       if (obj.serviceType === serviceCategory) {
-        console.log("pushing new service obj, obj.serviceType");
+        console.log("pushing new service obj",obj.serviceType);
         obj.services.push(newServiceObj);
+        break;
       }
-    });
+    }
+    // tempArr.map((obj) => {
+      
+    // });
     const timer = setTimeout(() => {
       this.setState({ loading: false });
       this.closeModal();

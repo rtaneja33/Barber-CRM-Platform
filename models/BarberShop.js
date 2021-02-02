@@ -111,14 +111,29 @@ export default class BarberShop {
             })
         })
     }
+    addServiceItem(serviceCategory, serviceItem) {
+        // console.log("ADDSERVICECATEGORY",newServiceCategory);
+        // let newCategory = Object.assign({}, newServiceCategory)
+        this.services.map((obj)=>{
+            if(obj.serviceType === serviceCategory){
+                obj.services.push(serviceItem);
+            }
+        })
+        return new Promise((resolve, reject) => {
+            this.update().then(success => {
+                resolve(success);
+            })
+            .catch((err)=> {
+                console.log("error adding service item:", err);
+                reject(err);
+            })
+        })
+    }
 
     addServiceCategory(newServiceCategory) {
         console.log("ADDSERVICECATEGORY",newServiceCategory);
         let newCategory = Object.assign({}, newServiceCategory)
         this.services.push(newServiceCategory);
-        // console.log("this",this)
-        // this.update();
-        console.log("AFTER PUSHING", newServiceCategory, "this.services is", this.services)
         return new Promise((resolve, reject) => {
             this.update().then(success => {
                 resolve(success);
