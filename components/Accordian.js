@@ -114,6 +114,7 @@ class Accordian extends React.Component{
               </Block>
             ): 
             ( 
+              this.props.services.length > 0 &&
             <Icon
               name={this.state.expanded ? 'nav-down' : 'nav-right'}
               family="ArgonExtra"
@@ -127,7 +128,8 @@ class Accordian extends React.Component{
       </TouchableOpacity>
       <View style={styles.parentHr}/>
         {
-            this.state.expanded &&
+            this.state.expanded && 
+            this.props.services.length > 0 &&
             
             <View style={styles.child}>
                 <FlatList

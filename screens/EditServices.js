@@ -5,6 +5,7 @@ import {
   ImageBackground,
   View,
   TouchableOpacity,
+  ScrollView,
   TouchableHighlight,
 } from "react-native";
 import Icon from "../components/Icon";
@@ -18,7 +19,11 @@ const { width, height } = Dimensions.get("screen");
 import { firebase } from "../src/firebase/config";
 import BarberShop from "../models/BarberShop";
 import Spinner from "react-native-loading-spinner-overlay";
-import FlashMessage, {showMessage, hideMessage} from "react-native-flash-message";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
+import { Button } from "../components/";
 
 import {
   Images,
@@ -28,7 +33,6 @@ import {
   articles,
   argonTheme,
 } from "../constants";
-import { ScrollView } from "react-native-gesture-handler";
 
 class EditServices extends React.Component {
   constructor(props) {
@@ -45,14 +49,129 @@ class EditServices extends React.Component {
     };
   }
 
-  componentWillUnmount(){
-    if(this.props.route.params.onBackHandler){
-        this.props.route.params.onBackHandler(this.state.changeMade)
+  addServiceCategory = (result) => {
+    this.setState({ loading: true, changeMade: true });
+    var newServiceCategory = new ServiceList();
+    newServiceCategory.serviceType = result;
+    newServiceCategory.services = [];
+    console.log("newservcat", newServiceCategory)
+    const newCat = Object.assign({}, newServiceCategory)
+    console.log("NEWCAT ISSS", newCat)
+    this.state.barberShop
+      .addServiceCategory(newCat)
+      .then((updated) => {
+        if (updated) {
+          var updatedServices = this.state.services.concat(newServiceCategory);
+          this.setState({ services: updatedServices });
+          setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "Service Category has been added!",
+              type: "success",
+              icon: "success",
+            });
+          }, 300);
+        } else {
+          setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "An error occured. Please try again later.",
+              type: "danger",
+              icon: "danger",
+            });
+          }, 300);
+          //throw new Error("COULD NOT UPDATE");
+          console.log("error occured with adding service category");
+        }
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        console.log("edit services", err);
+        console.log("An error occurred with updating");
+      });
+  };
+
+  addServiceName = (price, nameOfService, serviceCategory) => {
+    if (
+      !price ||
+      !nameOfService ||
+      !serviceCategory ||
+      price.length < 1 ||
+      nameOfService.length < 1 ||
+      serviceCategory.length < 1
+    ) {
+      const timer = setTimeout(() => {
+        this.setState({ loading: false });
+        this.closeModal();
+        showMessage({
+          message: "An error occurred. Please try again.",
+          type: "danger",
+          icon: "danger",
+        });
+      }, 300);
+      return;
+    }
+
+    let newServiceObj = {
+      price: price,
+      serviceName: nameOfService,
+    };
+    this.setState({ loading: true, changeMade: true });
+    this.state.barberShop
+      .addServiceItem(
+        serviceCategory, 
+        newServiceObj
+      )
+      .then((updated) => {
+        if (updated) {
+          let newServiceObj = new Service(nameOfService, price);
+          this.setState({ loading: true, changeMade: true });
+          var tempArr = this.state.services;
+          tempArr.map((obj) => {
+            if (obj.serviceType === serviceCategory) {
+              console.log("pushing new service obj, obj.serviceType");
+              obj.services.push(newServiceObj);
+            }
+          });
+          const timer = setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "Service Name has been added!",
+              type: "success",
+              icon: "success",
+            });
+          }, 300);
+        } else {
+          const timer = setTimeout(() => {
+            this.setState({ loading: false });
+            this.closeModal();
+            showMessage({
+              message: "An error occurred. Please try again!",
+              type: "danger",
+              icon: "danger",
+            });
+          }, 300);
+          throw new Error("COULD NOT ADD ITEM");
+        }
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        console.log("An error occurred with adding", err);
+      });
+  };
+
+  componentWillUnmount() {
+    if (this.props.route.params.onBackHandler) {
+      this.props.route.params.onBackHandler(this.state.changeMade);
     }
   }
 
   renderAccordions = (services) => {
     const items = [];
+    console.log("in render accordions, services passed in is", services)
     services.map((item) => {
       items.push(
         <Accordian
@@ -82,83 +201,96 @@ class EditServices extends React.Component {
 
   closeModal = () => {
     this.setState((prevState) => {
-        return {
-          ...prevState,
-          modalVisible: !prevState.modalVisible,
-        };
+      return {
+        ...prevState,
+        modalVisible: false,
+      };
     });
-  }
+  };
 
   deleteServiceItem = () => {
     this.setState({ loading: true, changeMade: true });
-    let serviceLocation = {...this.state.serviceModified};
-    console.log("serviceLocation is",serviceLocation )
+    let serviceLocation = { ...this.state.serviceModified };
+    console.log("serviceLocation is", serviceLocation);
     this.state.barberShop
-      .deleteServiceItem(serviceLocation.serviceCategory, serviceLocation.serviceIndex)
-      .then((updated) => {
-        if (updated) {
-            var tempArr = this.state.services;
-            tempArr.map((obj) => {
-                if(obj.serviceType === serviceLocation.serviceCategory) {
-                    obj.services.splice(serviceLocation.serviceIndex, 1)
-                }
-            })
-        } else {
-          throw new Error("COULD NOT DELETE CATEGORY");
-        }
-        const timer = setTimeout(() => {
-            this.setState({loading: false})
-            this.closeModal();
-            showMessage({
-                message: "Service Item has been deleted!",
-                type: "danger",
-                icon: "success"
-            });
-        }, 300);
-      })
-      .catch((err) => {
-        this.setState({loading: false})
-        console.log("An error occurred with deleting service item", err);
-      });
-  };
-
-  submitServiceItem = (price, nameOfService) => {
-    console.log("for service item, new price is", price, "and new service is", nameOfService);
-    let serviceLocation = {...this.state.serviceModified};
-    // let newServiceObj = new Service(nameOfService, price);
-    let newServiceObj = {
-        price: price,
-        serviceName: nameOfService,
-    }
-    this.setState({ loading: true,changeMade: true });
-    this.state.barberShop
-      .updateServiceItem(serviceLocation.serviceCategory, serviceLocation.serviceIndex, newServiceObj)
+      .deleteServiceItem(
+        serviceLocation.serviceCategory,
+        serviceLocation.serviceIndex
+      )
       .then((updated) => {
         if (updated) {
           var tempArr = this.state.services;
           tempArr.map((obj) => {
-              if(obj.serviceType === serviceLocation.serviceCategory) {
-                  obj.services[serviceLocation.serviceIndex] = newServiceObj
-              }
-          })
+            if (obj.serviceType === serviceLocation.serviceCategory) {
+              obj.services.splice(serviceLocation.serviceIndex, 1);
+            }
+          });
+        } else {
+          throw new Error("COULD NOT DELETE CATEGORY");
+        }
+        const timer = setTimeout(() => {
+          this.setState({ loading: false });
+          this.closeModal();
+          showMessage({
+            message: "Service Item has been deleted!",
+            type: "danger",
+            icon: "success",
+          });
+        }, 300);
+      })
+      .catch((err) => {
+        this.setState({ loading: false });
+        console.log("An error occurred with deleting service item", err);
+      });
+  };
+
+  updateServiceItem = (price, nameOfService) => {
+    console.log(
+      "for service item, new price is",
+      price,
+      "and new service is",
+      nameOfService
+    );
+    let serviceLocation = { ...this.state.serviceModified };
+    // let newServiceObj = new Service(nameOfService, price);
+    let newServiceObj = {
+      price: price,
+      serviceName: nameOfService,
+    };
+    this.setState({ loading: true, changeMade: true });
+    console.log("this.state.barberShop is", this.state.barberShop)
+    this.state.barberShop
+      .updateServiceItem(
+        serviceLocation.serviceCategory,
+        serviceLocation.serviceIndex,
+        newServiceObj
+      )
+      .then((updated) => {
+        if (updated) {
+          var tempArr = this.state.services;
+          tempArr.map((obj) => {
+            if (obj.serviceType === serviceLocation.serviceCategory) {
+              obj.services[serviceLocation.serviceIndex] = newServiceObj;
+            }
+          });
         } else {
           throw new Error("COULD NOT UPDATE");
         }
         const timer = setTimeout(() => {
-            this.setState({loading: false})
-            this.closeModal();
-            showMessage({
-                message: "Service has been updated!",
-                type: "success",
-                icon: "success"
-            });
+          this.setState({ loading: false });
+          this.closeModal();
+          showMessage({
+            message: "Service has been updated!",
+            type: "success",
+            icon: "success",
+          });
         }, 300);
       })
       .catch((err) => {
-        this.setState({loading: false})
-        console.log("An error occurred with updating",err);
+        this.setState({ loading: false });
+        console.log("An error occurred with updating", err);
       });
-  }
+  };
 
   deleteServiceCategory = () => {
     this.setState({ loading: true, changeMade: true });
@@ -167,32 +299,32 @@ class EditServices extends React.Component {
       .deleteServiceCategory(oldCategory)
       .then((updated) => {
         if (updated) {
-            this.setState((prevState) => ({
-                services: prevState.services.filter((obj)=>{
-                    return obj.serviceType !== oldCategory
-                })
-            }));
+          this.setState((prevState) => ({
+            services: prevState.services.filter((obj) => {
+              return obj.serviceType !== oldCategory;
+            }),
+          }));
         } else {
           throw new Error("COULD NOT DELETE CATEGORY");
         }
         const timer = setTimeout(() => {
-            this.setState({loading: false})
-            this.closeModal();
-            showMessage({
-                message: "Service Category has been deleted!",
-                type: "danger",
-                icon: "success"
-            });
+          this.setState({ loading: false });
+          this.closeModal();
+          showMessage({
+            message: "Service Category has been deleted!",
+            type: "danger",
+            icon: "success",
+          });
         }, 300);
       })
       .catch((err) => {
-        this.setState({loading: false})
+        this.setState({ loading: false });
         console.log("edit services", err);
         console.log("An error occurred with deleting");
       });
   };
 
-  submitServiceCategory = (result) => {
+  updateServiceCategory = (result) => {
     this.setState({ loading: true, changeMade: true });
     this.state.barberShop
       .updateServiceCategory(this.state.serviceModified, result)
@@ -213,17 +345,17 @@ class EditServices extends React.Component {
           throw new Error("COULD NOT UPDATE");
         }
         const timer = setTimeout(() => {
-            this.setState({loading: false})
-            this.closeModal();
-            showMessage({
-                message: "Service Category has been updated!",
-                type: "success",
-                icon: "success"
-            });
+          this.setState({ loading: false });
+          this.closeModal();
+          showMessage({
+            message: "Service Category has been updated!",
+            type: "success",
+            icon: "success",
+          });
         }, 300);
       })
       .catch((err) => {
-        this.setState({loading: false})
+        this.setState({ loading: false });
         console.log("edit services", err);
         console.log("An error occurred with updating");
       });
@@ -231,19 +363,48 @@ class EditServices extends React.Component {
 
   renderModal = (serviceField = null) => {
     {
-      console.log(serviceField);
-      console.log("this.state.loading in rendermodal is", this.state.loading);
-      console.log("IN RENDER MODAL, serviceField is", serviceField);
-      if (!serviceField) return <></>; 
-      console.log("IN RENDER MODAL, serviceField is", serviceField);
-      const categoryModal =
-        Object.keys(serviceField).length > 0 &&
-        Object.keys(serviceField)[0] === "serviceType";
+      if (!serviceField || Object.keys(serviceField).length <= 0) {
+        return <></>;
+      }
+      const categoryModal = Object.keys(serviceField)[0];
+      var modalTitle = "";
+      var dropdownItems = [];
+      switch (categoryModal) {
+        case "serviceType":
+          modalTitle = "Edit Category";
+          break;
+        case "addServiceType":
+          modalTitle = "Add Category";
+          break;
+        case "serviceName":
+          modalTitle = "Edit Service";
+          break;
+        case "addServiceName":
+          modalTitle = "Add Service";
+          this.state.services.map((category) => {
+            console.log(
+              "ADD CATEGORY, serviceField keys are",
+              category.serviceType
+            );
+            dropdownItems.push({
+              label: category.serviceType,
+              value: category.serviceType,
+            });
+          });
+          break;
+        default:
+          modalTitle = "NO IDEA";
+          //this.updateServiceItem(result, nameOfService); //maybe to error handling here
+          break;
+      }
+      // const categoryModal =
+      //   Object.keys(serviceField).length > 0 &&
+      //   Object.keys(serviceField)[0] === "serviceType";
       return (
         <View
           style={styles.centeredView}
-        //   renderToHardwareTextureAndroid
-        //   shouldRasterizeIOS
+          //   renderToHardwareTextureAndroid
+          //   shouldRasterizeIOS
         >
           <Modal
             animationType="fade"
@@ -258,15 +419,16 @@ class EditServices extends React.Component {
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
                 <Spinner
-                    // textContent={"Loading..."}
-                    textStyle={styles.spinnerTextStyles}
-                    visible={this.state.loading}
+                  // textContent={"Loading..."}
+                  textStyle={styles.spinnerTextStyles}
+                  visible={this.state.loading}
                 />
                 <TouchableOpacity
                   style={{
                     position: "absolute",
                     right: 23,
                     top: 23,
+                    zIndex: 0,
                     color: "#00000080",
                   }}
                   hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
@@ -288,47 +450,63 @@ class EditServices extends React.Component {
                     }}
                   />
                 </TouchableOpacity>
-                <Text style={styles.modalText}>Edit Services</Text>
+                <Text style={styles.modalText}>{modalTitle}</Text>
                 <ScrollView
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={styles.child}
                 >
                   <View style={{ marginTop: 30 }}>
                     <CustomForm
-                      action={(result, nameOfService) => {
-                          console.log("service item in editservices", result, nameOfService)
-                          categoryModal ?
-                            this.submitServiceCategory(result) :
-                            this.submitServiceItem(result, nameOfService);
+                      action={(result, serviceCategory) => {
+                        switch (categoryModal) {
+                          case "serviceType":
+                            this.updateServiceCategory(result["serviceType"]);
+                            break;
+                          case "addServiceType":
+                            this.addServiceCategory(result["addServiceType"]);
+                            break;
+                          case "serviceName":
+                            console.log("this.state currently is", this.state)
+                            console.log("result of action is", result)
+                            this.updateServiceItem(
+                              result["price"],
+                              result["serviceName"]
+                            );
+                            break;
+                          case "addServiceName":
+                            this.addServiceName(
+                              result["addServicePrice"],
+                              result["addServiceName"],
+                              serviceCategory
+                            );
+                          default:
+                            this.updateServiceItem(
+                              result["price"],
+                              result["serviceName"]
+                            ); //maybe to error handling here
+                            break;
+                        }
                       }}
                       afterSubmit={() => console.log("afterSubmit!")}
                       buttonText="Save Changes"
                       closeModalText={
-                        categoryModal ? "Delete Category" : "Delete Service"
+                        categoryModal === "serviceType"
+                          ? "Delete Category"
+                          : "Delete Service"
                       }
+                      dropdownItems={dropdownItems}
                       fields={serviceField}
-                      deleteButton={(result)=>{
-                        console.log("result in delete is", result);
-                        categoryModal ? 
-                            this.deleteServiceCategory():
-                            this.deleteServiceItem()
+                      deleteButton={
+                        categoryModal === "serviceType"
+                          ? (result) => {
+                              this.deleteServiceCategory();
+                            }
+                          : categoryModal === "serviceName"
+                          ? (result) => {
+                              this.deleteServiceItem();
+                            }
+                          : undefined
                       }
-                      }
-                      // fields={{
-                      //   email: {
-                      //     label: 'Email',
-                      //     validators: [validateContent],
-                      //     inputProps: {
-                      //       keyboardType: 'email-address',
-                      //     },
-                      //   },
-                      //   password: {
-                      //     label: 'Password',
-                      //     inputProps: {
-                      //       secureTextEntry: true,
-                      //     },
-                      //   },
-                      // }}
                     ></CustomForm>
                   </View>
                 </ScrollView>
@@ -341,31 +519,150 @@ class EditServices extends React.Component {
   };
 
   render() {
-    const { navigation } = this.props;
-    console.log("in render, loading is", this.state.loading)
     return (
-      <ScrollView flex={1}>
-        <View style={styles.modal}>
-          {this.renderModal(this.state.serviceField)}
-        </View>
-        <Block flex style={styles.profileCard}>
+      <Block flex>
+      <Block flex style={styles.centeredView}>
+        <Spinner
+          // textContent={"Loading..."}
+          textStyle={styles.spinnerTextStyles}
+          visible={this.state.loading}
+        />
+        <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+          <Block>
+            <Button
+              color="default"
+              style={styles.button}
+              onPress={() => {
+                this.setModalVisible(true);
+                // this.setServiceModified("Something");
+                this.setServiceField({
+                  addServiceType: {
+                    label: "Service Category*",
+                    validators: [validateContent],
+                  },
+                });
+              }}
+            >
+              <Block column center>
+                <Icon
+                  name="grid"
+                  family="entypo"
+                  size={30}
+                  color={"white"}
+                  style={{ marginTop: 2, marginRight: 5 }}
+                />
+                <Text
+                  style={{
+                    marginTop: 5,
+                    color: "white",
+                    fontWeight: "800",
+                    fontSize: 14,
+                    textAlign: "center",
+                  }}
+                >
+                  Add Category
+                </Text>
+              </Block>
+            </Button>
+          </Block>
+          <Block>
+            <Button
+              color="secondary"
+              disabled={this.state.services.length < 1}
+              style={
+                this.state.services.length < 1 ? styles.disabled : styles.button
+              }
+              onPress={() => {
+                this.setModalVisible(true);
+                // this.setServiceModified("Something");
+                this.setServiceField({
+                  addServiceName: {
+                    label: "Service Name*",
+                    validators: [validateContent],
+                  },
+                  addServicePrice: {
+                    label: "Price",
+                    validators: [],
+                  },
+                });
+              }}
+            >
+              <Block
+                column
+                center
+                style={
+                  this.state.services.length < 1
+                    ? { opacity: 0.5 }
+                    : { opacity: 1.0 }
+                }
+              >
+                <Icon
+                  name="edit"
+                  family="FontAwesome5"
+                  size={30}
+                  color={
+                    this.state.services.length < 1
+                      ? "white"
+                      : argonTheme.COLORS.HEADER
+                  }
+                  style={{ marginTop: 2, marginRight: 5 }}
+                />
+                <Text
+                  style={{
+                    marginTop: 5,
+                    color:
+                      this.state.services.length < 1
+                        ? "white"
+                        : argonTheme.COLORS.HEADER,
+                    fontWeight: "800",
+                    fontSize: 14,
+                  }}
+                >
+                  Add Service
+                </Text>
+              </Block>
+            </Button>
+          </Block>
+        </Block>
+        <ScrollView
+          ref={(ref) => (this.scrollView = ref)}
+          onContentSizeChange={() => {
+            this.scrollView.scrollToEnd(true);
+          }}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={{ paddingBottom: 20, flexGrow: 1, width: width }}
+        >
+          {/* <Block flex style={styles.profileCard}>
           <Block row space="between">
             <Text bold size={18} style={styles.title}>
               Services
             </Text>
+          </Block> */}
+          <Block flex style={styles.accordionCard}>
+            <Block
+              style={{
+                paddingBottom: -HeaderHeight * 2,
+              }}
+            >
+              <View style={styles.accordion}>
+                {this.renderAccordions(this.state.services)}
+              </View>
+            </Block>
           </Block>
-          <Block
-            style={{
-              paddingBottom: -HeaderHeight * 2,
-            }}
-          >
-            <View style={styles.accordion}>
-              {this.renderAccordions(this.state.services)}
-            </View>
-          </Block>
-        </Block>
-      <FlashMessage statusBarHeight={1} position="top" style={{elevation:10}} /> 
-      </ScrollView>
+          {/* </Block> */}
+          <View style={styles.modal}>
+            {this.renderModal(this.state.serviceField)}
+          </View>
+        </ScrollView>
+      </Block>
+      <FlashMessage
+            statusBarHeight={1}
+            position="top"
+            style={{ elevation: 10 }}
+            hideOnPress
+
+          />
+      </Block>
     );
   }
 }
@@ -406,6 +703,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 22,
   },
+
   modalView: {
     margin: 20,
     backgroundColor: "white",
@@ -446,6 +744,25 @@ const styles = StyleSheet.create({
   },
   child: {
     width: "100%",
+  },
+  button: {
+    marginBottom: theme.SIZES.BASE,
+    height: 65,
+  },
+  disabled: {
+    marginBottom: theme.SIZES.BASE,
+    backgroundColor: "#ccc",
+    color: "red",
+    height: 65,
+  },
+  accordionCard: {
+    justifyContent: "flex-start",
+    marginHorizontal: 8,
+    padding: theme.SIZES.BASE,
+    marginTop: 0,
+    borderRadius: 6,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
   },
 });
 
