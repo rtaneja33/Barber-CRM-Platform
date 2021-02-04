@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   ImageBackground,
@@ -8,24 +8,133 @@ import {
   View,
   TouchableOpacity
 } from "react-native";
-import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
-import { Images, argonTheme } from "../constants";
-import { firebase } from '../src/firebase/config'
-import { Camera } from 'expo-camera';
 import Appointment from "../models/Appointment"
 import AppointmentPhoto from "../models/AppointmentPhoto"
+import { SectionGrid } from 'react-native-super-grid';
+const { width, height } = Dimensions.get("screen");
+import Spinner from "react-native-loading-spinner-overlay";
+import { firebase } from "../src/firebase/config";
+import BarberShops from "../models/BarberShop";
+import { Block, Text, theme } from "galio-framework";
+import { HeaderHeight } from "../constants/utils";
+import { argonTheme } from '../constants';
+import CheckBox from '@react-native-community/checkbox';
+import { SelectItem } from '@ui-kitten/components';
+const SavePreferences = ({navigation, route}) => {
+    // state = {
+    // serviceName: "",
+    // notes: ""
+    // }
+    const [shopInformation, setShopInformation] = useState({});
+    const [spinner, setSpinner] = React.useState(true);
+    const [sections, setSections] = React.useState([]);
 
-const { width, height } = Dimensions.get("screen")
-
-class SavePreferences extends React.Component {
-    state = {
-    serviceName: "",
-    notes: ""
-    }
+    useEffect(() => {
+        console.log("making api call");
+        setSpinner(true);
     
-    saveAppointment = () => {
-        const { navigation, route } = this.props;
+        BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+          setShopInformation(shopInfo);
+          createSections(shopInfo);
+          //console.log("shop info is", shopInfo)
+        //   loadServices(shopInfo.services);
+          
+        }).catch((err)=>{console.log("ERROR OCCURRED",err); setSpinner(false)});
+      }, []);
+    
+    const selectItem = (item, sectionTitle, index) => {
+        item.isSelect = !item.isSelect;
+        // console.log("selectItem",item, "index is",index)
+        // console.log("item section is", sectionTitle)
+        // console.log("right now sections looks like", sections)
+        var localSections = [...sections];
+        // var localSections = sections
+        console.log("localSections are", localSections)
+        localSections.map((section) => {
+            if(section.title === sectionTitle){
+                section.data[index].isSelect = !section.data[index].isSelect;
+            }
+        })
+        console.log("setting sections in selectItem...");
+        setSections(localSections);
+        //console.log("updated sections are now", sections);
+    }
+    const createSections = (shopInformation) => {
+        if(!shopInformation || !shopInformation.services){
+            return;
+        }
+        console.log("CALLING CREATE SECTIONS.....")
+        var localSections = []
+        //console.log("shopinformation is", shopInformation);
+        shopInformation.services.map((servObj) => {
+            console.log("mapping service Obj")
+            var sectionData = []
+            servObj.services.map((servItem) => {
+                sectionData.push({itemName: servItem.serviceName, isSelect: false})
+            })
+            localSections.push({title: servObj.serviceType, data: sectionData })
+        })
+        console.log("setting sections in createSections...");
+        setSections(localSections);
+        setSpinner(false);
+        //console.log("sections are", sections)
+    }
+    const renderServices = () => { 
+        //console.log("IN RENDER SERVICES, shopInfo is", shopInformation)
+        if(!shopInformation){
+            console.log("No shp info exists");
+            console.log(shopInformation)
+            return (<></>)
+        }
+        else if (!shopInformation['services']){
+            console.log("shop info exists, but there's no services");
+            console.log(shopInformation)
+            return (
+                <Text>There was an error loading your services :/</Text>
+            )
+        }
+        else if (shopInformation['services'].length <1){
+            console.log("NO SERVICES LENGTH IS 0");
+            console.log(shopInformation) 
+            return (
+                
+                <Text>You have no services saved. Please add this in My Shop.</Text>
+            )
+        }
+        else{
+            // console.log("HERE! shopInfo is", shopInformation);
+            console.log("NEW SECTIONS ARE", sections)
+            return ( 
+                <SectionGrid 
+                itemDimension={130}
+                sections={sections}
+                renderItem = {({ item, section, index }) => (
+                    <TouchableOpacity onPress={()=>{ console.log("tapped", item.itemName); selectItem(item, section, index); console.log(item.itemName, "selected?", item.isSelect)}}>
+                    <View style={[item.isSelect ? styles.selected : styles.itemContainer,{ backgroundColor: argonTheme.COLORS.MUTED }]}>
+                        <Icon
+                            name= {item.isSelect ? "check-circle" : "radio-button-unchecked"}
+                            family="MaterialIcons"
+                            size={50}
+                            color= "white"
+                        />
+                        <Text style={[styles.itemName, {marginTop: 5}]}>{item.itemName}</Text>
+                    </View>
+                    </TouchableOpacity>)
+                  }
+                renderSectionHeader={({ section }) => (
+                    <View style={[styles.sectionContainer, { backgroundColor: argonTheme.COLORS.HEADER }]}>
+                        <Text style={{ fontSize: 20, color:'white', fontWeight: 'bold' }}>{section.title}</Text>
+                    </View>
+                )}
+                />
+            )
+        }
+
+        
+    }
+    const saveAppointment = () => {
+        // const { navigation, route } = this.props;
         
         let frontImageURI = route.params.pickedImageFrontURI
         let sideImageURI = route.params.pickedImageSideURI
@@ -76,20 +185,22 @@ class SavePreferences extends React.Component {
         navigation.pop(2)
     }
     
-    render() {
-        const { navigation } = this.props;
-
-        return (
+    return (
         <View style={styles.screen}>
+            <Spinner
+                visible={spinner}
+                textContent={"Loading..."}
+                textStyle={styles.spinnerTextStyles}
+            />
             <View style={styles.box}>
                 <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Save Preferences? </Text>
                 </View>
-                <View style={styles.subbox}>
-                    <Text style={styles.text}> Service </Text>
+                <View style={styles.subbox2}> 
+                {renderServices()}
                 </View>
                 
-                <Block width={width * 0.8} style={{flex: 4}} >
+                {/* <Block width={width * 0.8} style={{flex: 4}} >
                     <Input placeholder="Service Name" onChangeText={(text) => { this.setState({ serviceName: text})}} />
                 </Block>
                 
@@ -102,21 +213,19 @@ class SavePreferences extends React.Component {
                 </Block>
                 
                 <View style={styles.finalsubbox}>
-                </View>
+                </View> */}
                 
                 <View style={styles.subbox}>
                     <TouchableOpacity style={styles.buttoncancel} onPress={() => { navigation.goBack(null);}}>
                         <Text> Back </Text>
                     </TouchableOpacity>
-                
-                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { this.saveAppointment() }}>
+                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { saveAppointment() }}>
                         <Text> Save to Profile </Text>
                     </TouchableOpacity>
                 </View>
             </View>
           </View>
         );
-    }
 }
 
 const styles = StyleSheet.create({
@@ -126,9 +235,13 @@ screen: {
     justifyContent: 'center',
     backgroundColor: '#CDECFF',
 },
-    
+subbox2: {
+    flex:6,
+    width: '95%',
+    flexDirection:"row",
+}
+    ,
 box: {
-    width: '90%',
     height: '95%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -143,9 +256,38 @@ box: {
     elevation: 1,
     backgroundColor: '#ffffff',
 },
-    
+sectionContainer: {
+    flex:1,
+    padding: 10,
+},
+itemContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    padding: 10,
+    height: 150,
+  },
+selected: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    padding: 10,
+    height: 150,
+    borderColor: argonTheme.COLORS.HEADER,
+    borderWidth: 5,
+},
+  itemName: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  itemCode: {
+    fontWeight: '600',
+    fontSize: 12,
+    color: '#fff',
+  },
 subbox: {
-    flex:3,
+    flex:1,
     width: '95%',
     flexDirection:"row"
 },

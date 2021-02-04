@@ -185,7 +185,6 @@ export default class BarberShop {
             firebase.firestore().collection('BarberShops').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
-                    console.log("hello rohan, data is", data);
                     barberShop.uid = id
                     barberShop.aboutDescription = data["aboutDescription"]
                     barberShop.address = data["address"]
