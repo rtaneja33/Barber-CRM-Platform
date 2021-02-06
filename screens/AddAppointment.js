@@ -75,7 +75,6 @@ class AddAppointment extends React.Component {
     
     render() {
         const { navigation } = this.props;
-        
         return (
         <View style={styles.screen}>
             <View style={styles.box}>

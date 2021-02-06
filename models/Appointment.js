@@ -9,7 +9,7 @@ export default class Appointment {
     appointmentSidePhotoUID = ""
     appointmentRearPhotoUID = ""
     notes = ""
-    serviceProvided = ""
+    serviceProvided = []
     approvedByCustomer = false
     privateNotes = false
     

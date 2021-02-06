@@ -133,6 +133,21 @@ const SavePreferences = ({navigation, route}) => {
 
         
     }
+    const saveServices = () => {
+        let savedServices = {}
+        sections.map((obj)=>{
+           let serviceType = obj.title
+           obj.data.map((service)=>{
+               if(service.isSelect){
+                savedServices[serviceType] ? 
+                    savedServices[serviceType].push(service.itemName):
+                    savedServices[serviceType] = [service.itemName]
+               }
+           })
+        })
+        return savedServices
+    }
+
     const saveAppointment = () => {
         // const { navigation, route } = this.props;
         
@@ -142,7 +157,7 @@ const SavePreferences = ({navigation, route}) => {
 
         Appointment.createNew().then( (appointment) => {
             appointment.barberUID = firebase.auth().currentUser.uid
-            
+            appointment.serviceProvided = saveServices()
             if (frontImageURI != null) {
                 AppointmentPhoto.createNew().then( (photo) => {
                     photo.setAndUpdateImageURI(frontImageURI)
@@ -177,8 +192,8 @@ const SavePreferences = ({navigation, route}) => {
                 })
             }
             
-            appointment.serviceProvided = this.state.serviceName
-            appointment.notes = this.state.notes
+           // appointment.serviceProvided = this.state.serviceName
+            appointment.notes = "SERVICES SAVED" // notes
             appointment.update()
         })
         
@@ -186,12 +201,18 @@ const SavePreferences = ({navigation, route}) => {
     }
     
     return (
-        <View style={styles.screen}>
+        <Block flex style={styles.centeredView}>
+        <Spinner
+            visible={spinner}
+            textContent={"Loading..."}
+            textStyle={styles.spinnerTextStyles}
+        />
+        {/* <View style={styles.screen}>
             <Spinner
                 visible={spinner}
                 textContent={"Loading..."}
                 textStyle={styles.spinnerTextStyles}
-            />
+            /> */}
             <View style={styles.box}>
                 <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Save Preferences? </Text>
@@ -199,32 +220,44 @@ const SavePreferences = ({navigation, route}) => {
                 <View style={styles.subbox2}> 
                 {renderServices()}
                 </View>
-                
-                {/* <Block width={width * 0.8} style={{flex: 4}} >
-                    <Input placeholder="Service Name" onChangeText={(text) => { this.setState({ serviceName: text})}} />
-                </Block>
-                
-                <View style={styles.subbox}>
-                    <Text style={styles.text}> Notes for Appointment </Text>
-                </View>
-                
-                <Block width={width * 0.8} style={{flex: 4}} >
-                    <Input placeholder="Notes" onChangeText={(text) => { this.setState({ notes: text})}} />
-                </Block>
-                
-                <View style={styles.finalsubbox}>
-                </View> */}
-                
-                <View style={styles.subbox}>
-                    <TouchableOpacity style={styles.buttoncancel} onPress={() => { navigation.goBack(null);}}>
-                        <Text> Back </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttoncontinue} onPress={() => { saveAppointment() }}>
-                        <Text> Save to Profile </Text>
-                    </TouchableOpacity>
-                </View>
             </View>
-          </View>
+            <View style={styles.bottom}>
+          <Block flex row>
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                left: 25,
+                top: 25,
+                zIndex: 0,
+                color: "#00000080",
+              }}
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                navigation.goBack(null);
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>BACK</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                right: 25,
+                top: 25,
+                zIndex: 0,
+                color: "#00000080",
+              }}
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                saveAppointment()
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>
+                CONTINUE
+              </Text>
+            </TouchableOpacity>
+          </Block>
+        </View>
+          </Block>
         );
 }
 
@@ -324,7 +357,21 @@ buttoncontinue: {
     padding: 10,
     width: '50%'
 },
-    
+centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  bottom: {
+    flex: 1,
+    position: "absolute",
+    bottom: 0,
+    justifyContent: "flex-end",
+    width: width,
+    height: height / 9,
+    backgroundColor: argonTheme.COLORS.HEADER,
+  },
 buttoncancel: {
     flex: 1,
     justifyContent: 'center',

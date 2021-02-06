@@ -29,6 +29,8 @@ import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import { useEffect } from "react";
 import AddBarbers from '../screens/Onboarding/AddBarbers';
+import { FalsyText } from '@ui-kitten/components/devsupport';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const { width } = Dimensions.get("screen");
 
@@ -117,6 +119,8 @@ function HomeStack(props) {
   // const { fullName } = props.route.params.params;
   // console.log("full name is", fullName);
   // console.log("in profile stack");
+
+  // navigation.setOptions({tabBarVisible: false});
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
@@ -305,6 +309,14 @@ export default function AppStack(props) { // if this causes an error, try expo s
     if(initializing)
       setInitializing(false);
   }
+  function getTabBarVisibility(route){
+    const routeName = getFocusedRouteNameFromRoute(route)
+    if(routeName === 'My Customers'){
+      return true;
+    }
+    return false;
+  }
+
   useEffect(() => {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
@@ -326,8 +338,9 @@ export default function AppStack(props) { // if this causes an error, try expo s
           />
           ),
         }} />
-        <Tab.Screen name="Customers" component={HomeStack} options ={{
+        <Tab.Screen name="Customers" component={HomeStack} options ={({route})=> ({
           tabBarLabel: "Customers",
+          tabBarVisible: getTabBarVisibility(route),
           tabBarIcon: ({ focused, color, size }) => (
             <Icon
             name="people"
@@ -335,7 +348,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
             size= {size}
             color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
           />
-          ), }}/>
+          ), })}/>
         <Tab.Screen name="Articles" component={ArticlesStack} options ={{
           tabBarLabel: "My Shop",
           tabBarIcon: ({ focused, color, size }) => (
