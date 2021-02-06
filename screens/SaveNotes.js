@@ -1,153 +1,276 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  TextInput,
-  View,
-  SafeAreaView,
+  ImageBackground,
   Dimensions,
-  ScrollView,
+  StatusBar,
+  KeyboardAvoidingView,
+  View,
+  TouchableOpacity
 } from "react-native";
-import { firebase } from "../../src/firebase/config";
-import { Block, Button as GaButton, theme, Text } from "galio-framework";
-import { argonTheme, tabs } from "../../constants";
-import OnboardingForm from "../../components/OnboardingForm";
-import { validateContent } from "../../constants/utils";
+import { Button, Icon, Input } from "../components";
+import CustomForm from "../components/CustomForm";
+import Appointment from "../models/Appointment"
+import AppointmentPhoto from "../models/AppointmentPhoto"
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
-import BarberShop from "../../models/BarberShop";
+import { firebase } from "../src/firebase/config";
+import BarberShops from "../models/BarberShop";
+import { Block, Text, theme } from "galio-framework";
+import { HeaderHeight } from "../constants/utils";
+import { argonTheme } from '../constants';
+import {TextInput, DefaultTheme} from 'react-native-paper';
 
-// import firebase from "react-native-firebase";
+const SaveNotes = ({navigation, route}) => {
+    // state = {
+    // serviceName: "",
+    // notes: ""
+    // }
+    // const inputTheme = {
+    //     ...DefaultTheme,
+    //     colors: {
+    //         ...DefaultTheme.colors,
+    //         primary: argonTheme.COLORS.HEADER,
+    //         accent: 'blue'
+    //     },
+    //     backgroundColor: 'blue'
+    // }
+    const [spinner, setSpinner] = React.useState(true);
+    const [text,setText] = React.useState('')
+    useEffect(() => {
+        // console.log("appointment is", appointment);
+        setSpinner(false);
+      }, []);
 
-class SaveNotes extends React.Component {
-  constructor(props) {
-    super(props);
-    console.log("PROPS ARE", props);
-    this.state = {
-      loading: false,
-      fullname: "",
-      phone: "",
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
-      barberShop: null,
-    };
-  }
+    const saveAppointmentDumb = () => {
+        console.log("save apt");
+        console.log("received apt,", apt);
+    }
 
-  //   const timer = setTimeout(() => {
-  //     this.setState({loading: false})
-  // },);
-
-  onRegister = (address, shopEmail, name) => {
-    console.log("IN ON REGISTER");
-    const { email, password } = this.props.route.params;
-    // try {
-    return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((response) => {
-          const uid = response.user.uid;
-          return BarberShop.createNew(uid)
-            .then((barberShop) => {
-              barberShop.email = shopEmail;
-              barberShop.shopName = name;
-              barberShop.address = address;
-              // barberShop.update()
-              return barberShop
-                .update()
-                .then((updated) => {
-                  console.log("RESPONSE FROM UPDATE IS", updated);
-                  resolve(updated);
+    const saveAppointment = () => {
+        // const { navigation, route } = this.props;
+        setSpinner(true);
+        const {apt} = route.params;
+        console.log("route.params are", route.params)
+        console.log("apt is", apt)
+        let frontImageURI = apt.appointmentFrontPhotoUID
+        let sideImageURI = apt.appointmentSidePhotoUID
+        let readImageURI = apt.appointmentRearPhotoUID
+        
+        Appointment.createNew().then( (appointment) => {
+            appointment.barberUID = apt.barberUID
+            appointment.serviceProvided = apt.serviceProvided
+            if (frontImageURI != null) {
+                AppointmentPhoto.createNew().then( (photo) => {
+                    photo.setAndUpdateImageURI(frontImageURI)
+                    photo.appointmentUID = appointment.uid
+                    photo.barberUID = appointment.barberUID
+                    photo.update()
+                    
+                    appointment.appointmentFrontPhotoUID = photo.uid
                 })
-                .catch((err) => {
-                  alert("error updating info", err);
-                });
+            }
+            if (sideImageURI != null) {
+                AppointmentPhoto.createNew().then( (photo) => {
+                    photo.setAndUpdateImageURI(sideImageURI)
+                    photo.appointmentUID = appointment.uid
+                    photo.barberUID = appointment.barberUID
+                    photo.update()
+                    
+                    appointment.appointmentSidePhotoUID = photo.uid
+                })
+            }
+            if (readImageURI != null) {
+                AppointmentPhoto.createNew().then( (photo) => {
+                    photo.setAndUpdateImageURI(readImageURI)
+                    photo.appointmentUID = appointment.uid
+                    photo.barberUID = appointment.barberUID
+                    photo.update()
+                    
+                    appointment.appointmentRearPhotoUID = photo.uid
+                })
+            }
+            
+           // appointment.serviceProvided = this.state.serviceName
+            appointment.notes = text // notes
+            appointment.update().then(success => {
+                console.log("success??", success)
+                setSpinner(false);
+                navigation.pop(3);
+            }).catch((err)=> {
+                alert("An error occurred. ")
+                console.log("error saving appointment", err);
             })
-            .catch((error) => {
-              alert("Error occured with creating Barbershop", error);
-            });
         })
-    }).catch((err)=> {alert(err); reject(err);});
-  };
-
-  render() {
+        
+        //navigation.pop(3);
+    }
+    
     return (
-      <Block flex>
+        <Block flex style={styles.centeredView}>
         <Spinner
-          // textContent={"Loading..."}
-          textStyle={styles.spinnerTextStyles}
-          visible={this.state.loading}
+            visible={spinner}
+            textContent={"Loading..."}
+            textStyle={styles.spinnerTextStyles}
         />
-        <Block style={styles.centeredView}>
-          <Text bold size={28} style={styles.title}>
-            Create My Shop
-          </Text>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            // contentContainerStyle={styles.child}
-          >
-            {/* <View> */}
-            <OnboardingForm
-              action={(address, email, name) => {
-                 this.setState({ loading: true });
-                 setTimeout(() => {
-                  this.setState({ loading: false });
-                  const {navigation} = this.props;
-                  var barberShop = new BarberShop();
-                  barberShop.email = email;
-                  barberShop.shopName = name;
-                  barberShop.address = address;
-                  navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
-                }, 300);
+        {/* <View style={styles.screen}>
+            <Spinner
+                visible={spinner}
+                textContent={"Loading..."}
+                textStyle={styles.spinnerTextStyles}
+            /> */}
+            <View flex style={styles.box}>
+                <View style={styles.boxtitle}>
+                    <Text style={styles.titletext}> Save Notes? </Text>
+                </View>
+                <View style={styles.subbox2}> 
+                <TextInput
+                        blurOnSubmit={true}
+                        label = "Appointment Notes"
+                        placeholder = "Add Appointment Notes?"
+                        mode='outlined'
+                        clearButtonMode='always'
+                        maxLength = {100}
+                        multiline
+                        numberOfLines = {2}
+                        value={text}
+                        theme={{ colors: { primary: argonTheme.COLORS.BARBERBLUE,underlineColor:'transparent',}}}
+                        onChangeText={text=>setText(text)}
+                    />
+                </View>
+            </View>
+        <View style={styles.bottom}>
+          <Block flex row>
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                left: 25,
+                top: 25,
+                zIndex: 0,
+                color: "#00000080",
               }}
-              afterSubmit={() => console.log("afterSubmit!")}
-              buttonText="Create Account"
-              fields={{
-                shopName: {
-                  label: "Shop Name*",
-                  validators: [validateContent],
-                  inputProps: {
-                    backgroundColor: "transparent",
-                  },
-                },
-                shopEmail: {
-                  label: "Shop Email*",
-                  validators: [validateContent],
-                  inputProps: {
-                    backgroundColor: "transparent",
-                  },
-                },
-                shopAddress: {
-                  label: "Shop Address*",
-                  validators: [validateContent],
-                  inputProps: {
-                    backgroundColor: "transparent",
-                  },
-                },
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                navigation.goBack(null);
               }}
-            ></OnboardingForm>
-            {/* </View> */}
-          </ScrollView>
-        </Block>
-      </Block>
-    );
-  }
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>BACK</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                right: 25,
+                top: 25,
+                zIndex: 0,
+                color: "#00000080",
+              }}
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                saveAppointment()
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "bold" }}>
+                SAVE
+              </Text>
+            </TouchableOpacity>
+          </Block>
+        </View>
+          </Block>
+        );
 }
 
 const styles = StyleSheet.create({
-  child: {
-    width: "100%",
+screen: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#CDECFF',
+},
+subbox2: {
+    flex:6,
+    width: '100%',
+    paddingHorizontal: 20,
+    alignContent: 'center',
+}
+    ,
+box: {
+    height: '95%',
+    width: '95%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    shadowColor: "white",
+    shadowOffset: {
+        width: 0,
+        height: 0,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 1,
+    backgroundColor: '#ffffff',
+},
+subbox: {
+    flex:1,
+    width: '95%',
+    //flexDirection:"row"
+},
+finalsubbox: {
+    flex: 2,
+    width: '95%',
+    //flexDirection: "row"
+},
+boxtitle: {
+    flex: 1,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    alignItems: 'center'
+},
+    
+text: {
+    fontSize: 16,
+    fontWeight: 'bold'
+},
+    
+titletext: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    textAlign: 'center'
+},
+    
+buttoncontinue: {
+    alignItems: "center",
+    backgroundColor: "skyblue",
+    justifyContent: 'center',
+    borderRadius: 5,
+    padding: 10,
+    width: '50%'
+},
+centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   },
-  centeredView: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
+  bottom: {
+    flex: 1,
+    position: "absolute",
+    bottom: 0,
+    justifyContent: "flex-end",
+    width: width,
+    height: height / 9,
+    backgroundColor: argonTheme.COLORS.HEADER,
   },
-  title: {
-    paddingBottom: argonTheme.SIZES.BASE,
-    paddingHorizontal: 15,
-    color: argonTheme.COLORS.HEADER,
-    textAlign: "left",
-  },
-  
+buttoncancel: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: "center",
+    backgroundColor: "white",
+    borderColor: "skyblue",
+    borderWidth: 2,
+    borderRadius: 5,
+    padding: 10
+},
 });
 
 export default SaveNotes;
+

@@ -31,6 +31,7 @@ import { useEffect } from "react";
 import AddBarbers from '../screens/Onboarding/AddBarbers';
 import { FalsyText } from '@ui-kitten/components/devsupport';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import SaveNotes from '../screens/SaveNotes';
 
 const { width } = Dimensions.get("screen");
 
@@ -107,13 +108,13 @@ function ArticlesStack(props) {
   );
 }
 
-function CreateShopStack(props){
-  return (
-    <Stack.Navigator mode="card" headerMode="screen">
+// function CreateShopStack(props){
+//   return (
+//     <Stack.Navigator mode="card" headerMode="screen">
       
-    </Stack.Navigator>
-  )
-}
+//     </Stack.Navigator>
+//   )
+// }
 
 function HomeStack(props) {
   // const { fullName } = props.route.params.params;
@@ -137,23 +138,6 @@ function HomeStack(props) {
             />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" },
-        }}
-      />
-      <Stack.Screen
-        name="Pro"
-        component={SignupScreen}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
         }}
       />
       <Stack.Screen
@@ -209,6 +193,23 @@ function HomeStack(props) {
                 ),
                 headerTransparent: true
               }}
+          />
+          <Stack.Screen
+            name="SaveNotes"
+            component={SaveNotes}
+            options={{
+              header: ({ navigation, scene }) => (
+                <Header
+                  title=""
+                  back
+                  white
+                  transparent
+                  navigation={navigation}
+                  scene={scene}
+                />
+              ),
+              headerTransparent: true
+            }}
           />
           <Stack.Screen
             name="CustomCamera"

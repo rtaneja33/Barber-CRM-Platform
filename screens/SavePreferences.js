@@ -29,7 +29,7 @@ const SavePreferences = ({navigation, route}) => {
     const [shopInformation, setShopInformation] = useState({});
     const [spinner, setSpinner] = React.useState(true);
     const [sections, setSections] = React.useState([]);
-
+    const [appointment, setAppointment] = React.useState({});
     useEffect(() => {
         console.log("making api call");
         setSpinner(true);
@@ -148,56 +148,22 @@ const SavePreferences = ({navigation, route}) => {
         return savedServices
     }
 
-    const saveAppointment = () => {
+    const saveAppointmentSoFar = () => {
         // const { navigation, route } = this.props;
         
         let frontImageURI = route.params.pickedImageFrontURI
         let sideImageURI = route.params.pickedImageSideURI
-        let readImageURI = route.params.pickedImageRearURI
-
-        Appointment.createNew().then( (appointment) => {
-            appointment.barberUID = firebase.auth().currentUser.uid
-            appointment.serviceProvided = saveServices()
-            if (frontImageURI != null) {
-                AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(frontImageURI)
-                    photo.appointmentUID = appointment.uid
-                    photo.barberUID = appointment.barberUID
-                    photo.update()
-                    
-                    appointment.appointmentFrontPhotoUID = photo.uid
-                    appointment.update()
-                })
-            }
-            if (sideImageURI != null) {
-                AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(sideImageURI)
-                    photo.appointmentUID = appointment.uid
-                    photo.barberUID = appointment.barberUID
-                    photo.update()
-                    
-                    appointment.appointmentSidePhotoUID = photo.uid
-                    appointment.update()
-                })
-            }
-            if (readImageURI != null) {
-                AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(readImageURI)
-                    photo.appointmentUID = appointment.uid
-                    photo.barberUID = appointment.barberUID
-                    photo.update()
-                    
-                    appointment.appointmentRearPhotoUID = photo.uid
-                    appointment.update()
-                })
-            }
-            
-           // appointment.serviceProvided = this.state.serviceName
-            appointment.notes = "SERVICES SAVED" // notes
-            appointment.update()
-        })
+        let rearImageURI = route.params.pickedImageRearURI
+        let apt = new Appointment();
+        apt.barberUID = firebase.auth().currentUser.uid;
+        apt.serviceProvided = saveServices()
+        apt.appointmentFrontPhotoUID = frontImageURI;
+        apt.appointmentSidePhotoUID = sideImageURI;
+        apt.appointmentRearPhotoUID = rearImageURI;
         
-        navigation.pop(2)
+        setAppointment(apt);
+        navigation.navigate('SaveNotes', {apt: apt});
+        // navigation.pop(2)
     }
     
     return (
@@ -248,7 +214,7 @@ const SavePreferences = ({navigation, route}) => {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                saveAppointment()
+                saveAppointmentSoFar()
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>
