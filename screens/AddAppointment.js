@@ -27,8 +27,8 @@ class AddAppointment extends React.Component {
     
     reset = () => {
       this.setState({
-      pickedImageFront: null,
-      userPhoneNumber: ""
+          pickedImageFront: null,
+          userPhoneNumber: ""
       });
     }
     
@@ -115,7 +115,7 @@ class AddAppointment extends React.Component {
                     <Text> Cancel </Text>
                     </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.buttoncontinue} onPress={() => { navigation.navigate('SavePreferences', {pickedImageFrontURI: this.state.pickedImageFrontURI, pickedImageSideURI: this.state.pickedImageSideURI, pickedImageRearURI: this.state.pickedImageRearURI}); }}>
+                <TouchableOpacity style={styles.buttoncontinue} onPress={() => { navigation.navigate('SavePreferences', {pickedImageFrontURI: this.state.pickedImageFrontURI, pickedImageSideURI: this.state.pickedImageSideURI, pickedImageRearURI: this.state.pickedImageRearURI, phoneNumber: this.props.route.params.phoneNumber}); }}>
                     <Text> Continue </Text>
                     </TouchableOpacity>
                 </View>

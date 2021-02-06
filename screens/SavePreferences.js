@@ -30,9 +30,11 @@ class SavePreferences extends React.Component {
         let frontImageURI = route.params.pickedImageFrontURI
         let sideImageURI = route.params.pickedImageSideURI
         let readImageURI = route.params.pickedImageRearURI
+        let phoneNumber = route.params.phoneNumber
 
         Appointment.createNew().then( (appointment) => {
             appointment.barberUID = firebase.auth().currentUser.uid
+            appointment.customerPhoneNumber = phoneNumber
             
             if (frontImageURI != null) {
                 AppointmentPhoto.createNew().then( (photo) => {

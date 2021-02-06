@@ -6,7 +6,8 @@ import {
   Image,
   ImageBackground,
   Platform,
-  View
+  View,
+  FlatList
 } from "react-native";
 import { Button as GaButton, Block, Text, theme } from "galio-framework";
 import { Button } from "../components";
@@ -14,57 +15,103 @@ import { Images, argonTheme } from "../constants";
 import Icon from "../components/Icon";
 import { HeaderHeight } from "../constants/utils";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import { firebase } from '../src/firebase/config'
 
+import AppointmentPhoto from "../models/AppointmentPhoto"
+
+const BASE_SIZE = theme.SIZES.BASE;
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
 class Profile extends React.Component {
-  renderAlbum = () => {
-    const { navigation } = this.props;
+    state = {
+        appointments: []
+    };
+    
+    componentWillMount() {
+        this.loadAppointments()
+    }
+    
+    async loadAppointments() {
+        const { fullName, phoneNumber } = this.props.route.params;
+        
+        const references = await firebase.firestore().collection('Appointments').where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,'')).get();
+        
+        
+        references.forEach(document => {
+            let data = document.data();
+            
+            var appointmentsToAdd = this.state.appointments
+            
+            if (data["appointmentFrontPhotoUID"] != "") {
+                const photo = AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(photo => {
+                   const url = photo.photoURL
+                    
+                    data["frontPhotoURL"] = url;
+                    appointmentsToAdd.push(data);
+                    this.setState({
+                        appointments: appointmentsToAdd
+                    })
+                });
+            } else {
+                appointmentsToAdd.push(data);
+                this.setState({
+                    appointments: appointmentsToAdd
+                })
+                console.log("HEY!")
+                console.log(this.state.appointments)
+            }
+        });
+        
+        
+    }
+    
+  renderAppointments = () => {
+      const { navigation } = this.props;
+          
+      const renderItem = ({item}) => (
+        <View style={{minHeight:70, padding:5}}>
 
-    return (
-      <Block
-        flex
-        style={[styles.group, { paddingBottom: theme.SIZES.BASE * 5 }]}
-      >
-        <Text bold size={16} style={styles.title}>
-          Customer Photos
-        </Text>
-        <Block style={{ marginHorizontal: theme.SIZES.BASE * 2 }}>
-          <Block flex right>
-            <Text
-              size={12}
-              color={theme.COLORS.PRIMARY}
-              onPress={() => navigation.navigate("Home")}
-            >
-              View All
-            </Text>
+          <Block row center shadow space="between" style={styles.card} key="test">
+            <Block flex>
+              <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.serviceProvided}</Text>
+              <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{item.notes}</Text>
+              {item.frontPhotoURL != null ? (
+                 <Image style={styles.image} source={{uri: item.frontPhotoURL}} />
+              ) :
+              <View>
+              <Text>No image yet</Text>
+              </View>
+            }
+                                   
+            </Block>
           </Block>
-          <Block
-            row
-            space="between"
-            style={{ marginTop: theme.SIZES.BASE, flexWrap: "wrap" }}
-          >
-            {Images.Viewed.map((img, index) => (
-              <Block key={`viewed-${img}`} style={styles.shadow}>
-                <Image
-                  resizeMode="cover"
-                  source={{ uri: img }}
-                  style={styles.albumThumb}
-                />
+
+        </View>
+      );
+          
+      return (
+          <View>
+              <Block row space="between">
+                <Text bold size={18} style={styles.title}>
+                  Appointments
+                </Text>
               </Block>
-            ))}
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
+              <FlatList
+                data={this.state.appointments}
+                renderItem={renderItem}
+                keyExtractor={(item, index)=> index.toString()}
+              />
+          </View>
+        );
+    };
 
   render() {
     console.log("before finding fullname");
     console.log(this.props);
     const { fullName, phoneNumber } = this.props.route.params;
+    const { navigation } = this.props;
     console.log("PHONE NUMBER IS", phoneNumber)
     console.log("IN RENDER PROFILE, full name is", fullName);
     return (
@@ -141,7 +188,7 @@ class Profile extends React.Component {
                 </Block>
                 <Block center>
                       <Button 
-                        style={styles.button}
+                        style={styles.button}  onPress={() => navigation.navigate('AddAppointment', {phoneNumber: phoneNumber})}
                       >
                         Add Appointment Photos
                       </Button>
@@ -258,12 +305,8 @@ class Profile extends React.Component {
                   </Block> */}
                 </Block>
               </Block>
-              <Block flex center>
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                >
-                  {this.renderAlbum()}
-                </ScrollView>
+            <Block flex={1} style={styles.profileCard}>
+                  {this.renderAppointments()}
               </Block>
 
             </ScrollView>
@@ -371,6 +414,28 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: thumbMeasure,
     height: thumbMeasure
+  },
+  profileCard: {
+    // position: "relative",
+    marginHorizontal: 8,
+    padding: theme.SIZES.BASE,
+    marginTop: 7,
+    borderRadius: 6,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    backgroundColor: theme.COLORS.WHITE,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 0 },
+    //ios
+    shadowRadius: 8,
+    shadowOpacity: 0.15,
+    zIndex: 2,
+    //android
+    elevation: 3,
+  },
+  image: {
+    flex: 1
+    //resizeMode: 'contain',
   }
 });
 

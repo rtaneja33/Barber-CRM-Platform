@@ -60,7 +60,7 @@ export default class AppointmentPhoto {
         
         var appointmentPhoto = new AppointmentPhoto();
         return new Promise(resolve => {
-            firebase.firestore().collection('AppointmentPhotos').doc(id).get().then(querySnapshot => {
+            firebase.firestore().collection('AppointmentPhotos').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
                     appointmentPhoto.uid = documentSnapshot.documentID
