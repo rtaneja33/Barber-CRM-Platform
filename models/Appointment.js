@@ -4,22 +4,28 @@ export default class Appointment {
     
     uid = ""
     barberUID = ""
-    customerUID = ""
+    customerPhoneNumber = ""
     appointmentFrontPhotoUID = ""
     appointmentSidePhotoUID = ""
     appointmentRearPhotoUID = ""
     notes = ""
-    serviceProvided = ""
+    serviceProvided = []
     approvedByCustomer = false
     privateNotes = false
     
+    verifyPhoneNumber() {
+        this.customerPhoneNumber = this.customerPhoneNumber.replace(/\D/g,'');
+    }
+    
     update() {
+        this.verifyPhoneNumber()
+        
         var appointmentRef = firebase.firestore().collection('Appointments').doc(this.uid);
         
         return new Promise(resolve => {
             appointmentRef.update({
                 barberUID: this.barberUID,
-                customerUID: this.customerUID,
+                customerPhoneNumber: this.customerPhoneNumber,
                 appointmentFrontPhotoUID: this.appointmentFrontPhotoUID,
                 appointmentSidePhotoUID: this.appointmentSidePhotoUID,
                 appointmentRearPhotoUID: this.appointmentRearPhotoUID,
@@ -39,7 +45,7 @@ export default class Appointment {
             if (fromID == "") {
                 firebase.firestore().collection('Appointments').add({
                     barberUID: appointment.barberUID,
-                    customerUID: appointment.customerUID,
+                    customerPhoneNumber: appointment.customerPhoneNumber,
                     appointmentFrontPhotoUID: appointment.appointmentFrontPhotoUID,
                     appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
                     appointmentRearPhotoUID: appointment.appointmentRearPhotoUID,
@@ -54,7 +60,7 @@ export default class Appointment {
             } else {
                 firebase.firestore().collection('Appointments').doc(fromID).set({
                     barberUID: appointment.barberUID,
-                    customerUID: appointment.customerUID,
+                    customerPhoneNumber: appointment.customerPhoneNumber,
                     appointmentFrontPhotoUID: appointment.appointmentFrontPhotoUID,
                     appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
                     appointmentRearPhotoUID: appointment.appointmentRearPhotoUID,
@@ -79,7 +85,7 @@ export default class Appointment {
                     let data = documentSnapshot.data();
                     appointment.uid = documentSnapshot.documentID
                     appointment.barberUID = data["barberUID"]
-                    appointment.customerUID = data["customerUID"]
+                    appointment.customerPhoneNumber = data["customerPhoneNumber"]
                     appointment.appointmentFrontPhotoUID = data["appointmentFrontPhotoUID"]
                     appointment.appointmentSidePhotoUID = data["appointmentSidePhotoUID"]
                     appointment.appointmentRearPhotoUID = data["appointmentRearPhotoUID"]
@@ -93,7 +99,6 @@ export default class Appointment {
                     resolve(null);
                 }
             });
-            
         });
     }
 }

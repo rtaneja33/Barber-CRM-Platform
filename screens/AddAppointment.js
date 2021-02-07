@@ -19,16 +19,18 @@ const { width, height } = Dimensions.get("screen");
 
 class AddAppointment extends React.Component {
     state = {
-    pickedImageFrontURI: null,
-    pickedImageSideURI: null,
-    pickedImageRearURI: null,
+    pickedImageFront: null,
+    pickedImageSide: null,
+    pickedImageRear: null,
     userPhoneNumber: ""
     }
     
     reset = () => {
       this.setState({
-      pickedImageFront: null,
-      userPhoneNumber: ""
+          pickedImageFront: null,
+          pickedImageSide: null,
+          pickedImageRear: null,
+          userPhoneNumber: ""
       });
     }
     
@@ -39,43 +41,42 @@ class AddAppointment extends React.Component {
     
     renderImageOrTakePicture = (picType) => {
         if (picType == "Front") {
-            if (this.state.pickedImageFrontURI == null) {
+            if (this.state.pickedImageFront == null) {
                 return (
                         <View style={{alignItems: "center"}}>
                             <Icon size={25} color={'white'} name={"plus"} family="AntDesign" />
                         </View>
                 )
             } else {
-                return ( <Image style={styles.image} source={{uri: this.state.pickedImageFrontURI}} /> )
+                return ( <Image style={styles.image} source={{uri: this.state.pickedImageFront.uri}} /> )
             }
         }
         if (picType == "Side") {
-            if (this.state.pickedImageSideURI == null) {
+            if (this.state.pickedImageSide == null) {
                 return (
                         <View style={{alignItems: "center"}}>
                             <Icon size={25} color={'white'} name={"plus"} family="AntDesign" />
                         </View>
                 )
             } else {
-                return ( <Image style={styles.image} source={{uri: this.state.pickedImageSideURI}} /> )
+                return ( <Image style={styles.image} source={{uri: this.state.pickedImageSide.uri}} /> )
             }
         }
         if (picType == "Rear") {
-            if (this.state.pickedImageRearURI == null) {
+            if (this.state.pickedImageRear == null) {
                 return (
                         <View style={{alignItems: "center"}}>
                             <Icon size={25} color={'white'} name={"plus"} family="AntDesign" />
                         </View>
                 )
             } else {
-                return ( <Image style={styles.image} source={{uri: this.state.pickedImageRearURI}} /> )
+                return ( <Image style={styles.image} source={{uri: this.state.pickedImageRear.uri}} /> )
             }
         }
     }
     
     render() {
         const { navigation } = this.props;
-        
         return (
         <View style={styles.screen}>
             <View style={styles.box}>
@@ -115,7 +116,7 @@ class AddAppointment extends React.Component {
                     <Text> Cancel </Text>
                     </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.buttoncontinue} onPress={() => { navigation.navigate('SavePreferences', {pickedImageFrontURI: this.state.pickedImageFrontURI, pickedImageSideURI: this.state.pickedImageSideURI, pickedImageRearURI: this.state.pickedImageRearURI}); }}>
+                <TouchableOpacity style={styles.buttoncontinue} onPress={() => { navigation.navigate('SavePreferences', {pickedImageFront: this.state.pickedImageFront, pickedImageSide: this.state.pickedImageSide, pickedImageRear: this.state.pickedImageRear, phoneNumber: this.props.route.params.phoneNumber}); }}>
                     <Text> Continue </Text>
                     </TouchableOpacity>
                 </View>

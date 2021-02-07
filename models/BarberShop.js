@@ -7,7 +7,7 @@ export default class BarberShop {
     address = ""
     email = ""
     shopName = ""
-    baberIDs = []
+    barberIDs = []
     admin = ""
     services = {}
     
@@ -19,7 +19,7 @@ export default class BarberShop {
                 address: this.address,
                 email: this.email,
                 shopName: this.shopName,
-                baberIDs: this.baberIDs,
+                barberIDs: this.barberIDs,
                 admin: this.admin,
                 services: this.services,
             })
@@ -38,7 +38,7 @@ export default class BarberShop {
                     address: barberShop.address,
                     email: barberShop.email,
                     shopName: barberShop.shopName,
-                    baberIDs: barberShop.baberIDs,
+                    barberIDs: barberShop.barberIDs,
                     admin: barberShop.admin,
                     services: barberShop.services,
                 }).then( (docRef) => {
@@ -51,7 +51,7 @@ export default class BarberShop {
                     address: barberShop.address,
                     email: barberShop.email,
                     shopName: barberShop.shopName,
-                    baberIDs: barberShop.baberIDs,
+                    barberIDs: barberShop.barberIDs,
                     admin: barberShop.admin,
                     services: barberShop.services,
                 })
@@ -185,13 +185,12 @@ export default class BarberShop {
             firebase.firestore().collection('BarberShops').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
-                    console.log("hello rohan, data is", data);
                     barberShop.uid = id
                     barberShop.aboutDescription = data["aboutDescription"]
                     barberShop.address = data["address"]
                     barberShop.email = data["email"]
                     barberShop.shopName = data["shopName"]
-                    barberShop.baberIDs = data["baberIDs"]
+                    barberShop.barberIDs = data["barberIDs"]
                     barberShop.admin = data["admin"]
                     barberShop.services = data["services"]
                     

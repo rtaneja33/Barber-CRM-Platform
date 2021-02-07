@@ -12,7 +12,7 @@ const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 const PlusButton = ({isWhite, style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => navigation.navigate('AddAppointment')}>
+  <TouchableOpacity style={[styles.button, style]} onPress={() => console.log("Add Customer?")}>
     <Icon
       family="AntDesign"
       size={16}
