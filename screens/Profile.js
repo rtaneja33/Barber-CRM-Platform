@@ -184,7 +184,7 @@ class Profile extends React.Component {
                 </Block>
                 <Block center>
                       <Button 
-                        style={styles.button}  onPress={() => navigation.navigate('AddAppointment', {phoneNumber: phoneNumber})}
+                        style={styles.button}  onPress={() => navigation.navigate('FrontCamera', {phoneNumber: phoneNumber})}
                       >
                         Add Appointment Photos
                       </Button>

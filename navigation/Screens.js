@@ -32,7 +32,9 @@ import AddBarbers from '../screens/Onboarding/AddBarbers';
 import { FalsyText } from '@ui-kitten/components/devsupport';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import SaveNotes from '../screens/SaveNotes';
-
+import FrontCamera from '../components/AppointmentPhotos/FrontCamera';
+import SideCamera from '../components/AppointmentPhotos/SideCamera';
+import RearCamera from '../components/AppointmentPhotos/RearCamera';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -212,6 +214,57 @@ function HomeStack(props) {
             }}
           />
           <Stack.Screen
+            name="FrontCamera"
+            component={FrontCamera}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title=""
+                    back
+                    white
+                    transparent
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+                headerTransparent: true
+              }}
+          />
+          <Stack.Screen
+            name="SideCamera"
+            component={SideCamera}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title=""
+                    back
+                    white
+                    transparent
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+                headerTransparent: true
+              }}
+          />
+          <Stack.Screen
+            name="RearCamera"
+            component={RearCamera}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title=""
+                    back
+                    white
+                    transparent
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+                headerTransparent: true
+              }}
+          />
+          {/* <Stack.Screen
             name="CustomCamera"
             component={CustomCamera}
               options={{
@@ -227,7 +280,7 @@ function HomeStack(props) {
                 ),
                 headerTransparent: true
               }}
-          />
+          /> */}
 
     </Stack.Navigator>
   );
