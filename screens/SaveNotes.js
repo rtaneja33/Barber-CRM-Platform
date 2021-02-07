@@ -113,13 +113,7 @@ const SaveNotes = ({navigation, route}) => {
             textContent={"Loading..."}
             textStyle={styles.spinnerTextStyles}
         />
-        {/* <View style={styles.screen}>
-            <Spinner
-                visible={spinner}
-                textContent={"Loading..."}
-                textStyle={styles.spinnerTextStyles}
-            /> */}
-            <View flex style={styles.box}>
+            <View style={styles.box}>
                 <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Save Notes? </Text>
                 </View>
@@ -132,7 +126,6 @@ const SaveNotes = ({navigation, route}) => {
                         clearButtonMode='always'
                         maxLength = {100}
                         multiline
-                        numberOfLines = {2}
                         value={text}
                         theme={{ colors: { primary: argonTheme.COLORS.BARBERBLUE,underlineColor:'transparent',}}}
                         onChangeText={text=>setText(text)}
