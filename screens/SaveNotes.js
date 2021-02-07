@@ -60,6 +60,10 @@ const SaveNotes = ({navigation, route}) => {
         Appointment.createNew().then( (appointment) => {
             appointment.barberUID = apt.barberUID
             appointment.serviceProvided = apt.serviceProvided
+            appointment.customerPhoneNumber = apt.customerPhoneNumber;
+            appointment.appointmentFrontPhotoUID = null;
+            appointment.appointmentRearPhotoUID = null;
+            appointment.appointmentSidePhotoUID = null;
             if (frontImageURI != null) {
                 AppointmentPhoto.createNew().then( (photo) => {
                     photo.setAndUpdateImageURI(frontImageURI)
