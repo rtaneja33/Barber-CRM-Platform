@@ -13,7 +13,7 @@ import { Camera } from 'expo-camera';
 
 class CustomCamera extends PureComponent {
     state = {
-        imageURI: "",
+        image: "",
         flash: 'off'
     }
     
@@ -26,7 +26,7 @@ class CustomCamera extends PureComponent {
               const options = {quality: 1, base64: true, flashMode: this.state.flash};
               this.camera.takePictureAsync(options).then(photo => {
                   this.setState({
-                      imageURI: photo.uri
+                      image: photo
                   })
               });
           }
@@ -34,7 +34,7 @@ class CustomCamera extends PureComponent {
     
     retake = () => {
         this.setState({
-            imageURI: ""
+            image: ""
         })
     }
     
@@ -44,17 +44,17 @@ class CustomCamera extends PureComponent {
         let parent = route.params.parent
         if (route.params.title == "Front View") {
             parent.setState({
-                pickedImageFrontURI: this.state.imageURI
+                pickedImageFront: this.state.image
             })
         }
         if (route.params.title == "Side View") {
             parent.setState({
-                pickedImageSideURI: this.state.imageURI
+                pickedImageSide: this.state.image
             })
         }
         if (route.params.title == "Rear View") {
             parent.setState({
-                pickedImageRearURI: this.state.imageURI
+                pickedImageRear: this.state.image
             })
         }
         
@@ -84,7 +84,7 @@ class CustomCamera extends PureComponent {
     render() {
         const { route } = this.props;
         
-        if (this.state.imageURI == "") {
+        if (this.state.image == "") {
             return (
                     <Camera flashMode={this.state.flash} style={styles.screen} type={Camera.Constants.Type.back} ref={(ref) => { this.camera = ref }}>
                         <View style={styles.icons}>
@@ -107,7 +107,7 @@ class CustomCamera extends PureComponent {
             
             return (
                 <View style={ styles.container }>
-                    <ImageBackground source={{uri: this.state.imageURI}} style={styles.backgroundImage}>
+                    <ImageBackground source={{uri: this.state.image.uri}} style={styles.backgroundImage}>
                         <View style={styles.bottomViewLeft}>
                             <TouchableOpacity onPress={ this.retake } >
                                 <Text> Retake </Text>

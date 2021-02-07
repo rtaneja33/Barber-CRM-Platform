@@ -27,18 +27,18 @@ class SavePreferences extends React.Component {
     saveAppointment = () => {
         const { navigation, route } = this.props;
         
-        let frontImageURI = route.params.pickedImageFrontURI
-        let sideImageURI = route.params.pickedImageSideURI
-        let readImageURI = route.params.pickedImageRearURI
+        let frontImage = route.params.pickedImageFront
+        let sideImage = route.params.pickedImageSide
+        let readImage = route.params.pickedImageRear
         let phoneNumber = route.params.phoneNumber
 
         Appointment.createNew().then( (appointment) => {
             appointment.barberUID = firebase.auth().currentUser.uid
             appointment.customerPhoneNumber = phoneNumber
             
-            if (frontImageURI != null) {
+            if (frontImage != null) {
                 AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(frontImageURI)
+                    photo.setAndUpdateImage(frontImage)
                     photo.appointmentUID = appointment.uid
                     photo.barberUID = appointment.barberUID
                     photo.update()
@@ -47,9 +47,9 @@ class SavePreferences extends React.Component {
                     appointment.update()
                 })
             }
-            if (sideImageURI != null) {
+            if (sideImage != null) {
                 AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(sideImageURI)
+                    photo.setAndUpdateImage(sideImage)
                     photo.appointmentUID = appointment.uid
                     photo.barberUID = appointment.barberUID
                     photo.update()
@@ -58,9 +58,9 @@ class SavePreferences extends React.Component {
                     appointment.update()
                 })
             }
-            if (readImageURI != null) {
+            if (readImage != null) {
                 AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(readImageURI)
+                    photo.setAndUpdateImage(readImage)
                     photo.appointmentUID = appointment.uid
                     photo.barberUID = appointment.barberUID
                     photo.update()

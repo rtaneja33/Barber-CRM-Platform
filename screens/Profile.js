@@ -59,12 +59,8 @@ class Profile extends React.Component {
                 this.setState({
                     appointments: appointmentsToAdd
                 })
-                console.log("HEY!")
-                console.log(this.state.appointments)
             }
         });
-        
-        
     }
     
   renderAppointments = () => {
