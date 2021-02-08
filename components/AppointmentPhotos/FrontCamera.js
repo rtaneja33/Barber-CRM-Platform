@@ -15,16 +15,19 @@ import { Camera } from "expo-camera";
 import Appointment from "../../models/Appointment";
 
 class FrontCamera extends PureComponent {
-  state = {
-    image: "",
-    flash: "off",
-  };
+  
 
   constructor(props) {
     super(props);
+    this.state = {
+        image: "",
+        flash: "off",
+        pressedIn: false,
+      };
   }
 
   takePicture = () => {
+    
     if (this.camera) {
       const options = { quality: 1, base64: true, flashMode: this.state.flash };
       this.camera.takePictureAsync(options).then((photo) => {
@@ -72,9 +75,22 @@ class FrontCamera extends PureComponent {
     }
   };
 
+//   buttonStyles = {
+//     backgroundColor:  this.state.pressedIn ? 'red' : 'blue'
+//   }
+
+  handlePressIn = () => {
+      console.log("pressed in!")
+    //   this.setState({ pressedIn: true })
+      this.setState({ pressedIn: true })
+    //   console.log("set buttonSTyle", this.state.buttonStyle)
+  }
+  handlePressOut = () => {
+      this.setState({pressedIn: false})
+  }
   render() {
     const { route } = this.props;
-
+    console.log("RERENDERING")
     if (this.state.image == "") {
       return (
         <Camera
@@ -101,12 +117,15 @@ class FrontCamera extends PureComponent {
           <View style={styles.boxtitle}>
             <Text style={styles.titletext}> Front Camera </Text>
           </View>
-          <View style={styles.bottomView}>
+          
+          <View style={[styles.bottomView]}>
             <TouchableOpacity
-              style={styles.buttoncontinue}
-              onPress={this.takePicture}
+                hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
+                onPressIn={this.handlePressIn}
+                onPressOut = {this.handlePressOut}
+                onPress={this.takePicture}
             >
-              <Text> Take picture </Text>
+                 <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
             </TouchableOpacity>
           </View>
         </Camera>
@@ -163,6 +182,27 @@ const styles = StyleSheet.create({
     right: "10%",
   },
   bottomView: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 5,
+    borderColor: '#FFF',
+    marginBottom: 15,
+    bottom: "10%"
+  },
+  embeddedBottomView: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 55,
+    height: 55,
+    borderRadius: 35,
+    borderColor: '#FFF',
+    zIndex: 10,
+  },
+  takePictureView: {
     backgroundColor: "#EE5407",
     justifyContent: "center",
     alignItems: "center",
