@@ -6,11 +6,11 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Text,
   ImageBackground,
 } from "react-native";
 import { firebase } from "../../src/firebase/config";
-
+import { Block, Text} from "galio-framework";
+import { Button } from "../../components";
 import { Camera } from "expo-camera";
 import Appointment from "../../models/Appointment";
 
@@ -138,15 +138,36 @@ class FrontCamera extends PureComponent {
             style={styles.backgroundImage}
           >
             <View style={styles.bottomViewLeft}>
-              <TouchableOpacity onPress={this.retake}>
-                <Text> Retake </Text>
-              </TouchableOpacity>
+            <Button style={{ backgroundColor: 'transparent' }} onPress={this.retake}>
+            <Block column center>
+                <Icon
+                name="undo"
+                family="EvilIcons"
+                size={30}
+                color={"white"}
+                style={{ marginTop: 2, marginRight: 5 }}
+                />
+                <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Retake</Text>
+            </Block>
+            </Button>
             </View>
 
             <View style={styles.bottomViewRight}>
-              <TouchableOpacity onPress={this.confirm}>
+            <Button style={{ backgroundColor: 'transparent' }} onPress={this.confirm}>
+            <Block column center>
+                <Icon
+                name="arrow-right"
+                family="EvilIcons"
+                size={30}
+                color={"white"}
+                style={{ marginTop: 2, marginRight: 5 }}
+                />
+                <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Confirm</Text>
+            </Block>
+            </Button>
+              {/* <TouchableOpacity onPress={this.confirm}>
                 <Text> Confirm </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </ImageBackground>
         </View>
@@ -212,7 +233,7 @@ const styles = StyleSheet.create({
     bottom: "5%",
   },
   bottomViewLeft: {
-    backgroundColor: "#EE5407",
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -222,7 +243,7 @@ const styles = StyleSheet.create({
     left: "5%",
   },
   bottomViewRight: {
-    backgroundColor: "#EE5407",
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
