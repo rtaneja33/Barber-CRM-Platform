@@ -47,6 +47,54 @@ const SaveNotes = ({navigation, route}) => {
         console.log("received apt,", apt);
     }
 
+    const saveFrontPhoto = async (frontImageURI, appointment) => {
+        if (frontImageURI != null) {
+            await AppointmentPhoto.createNew().then( (photo) => {
+                console.log("PHOTO IS", photo);
+                console.log("FRONT IMAGE URI", frontImageURI)
+                photo.setAndUpdateImage(frontImageURI)
+                photo.appointmentUID = appointment.uid
+                photo.barberUID = appointment.barberUID
+                photo.update()
+                
+                appointment.appointmentFrontPhotoUID = photo.uid
+                console.log("photo.uid is", photo.uid)
+                console.log("SETTING APPOINTMENT FRONT PHOTO to", appointment.appointmentFrontPhotoUID);
+                console.log("appointment is", appointment)
+            })
+        }
+    }
+
+    const saveSidePhoto = async (sideImageURI, appointment) => {
+        if (sideImageURI != null) {
+            await AppointmentPhoto.createNew().then( (photo) => {
+                photo.setAndUpdateImage(sideImageURI)
+                photo.appointmentUID = appointment.uid
+                photo.barberUID = appointment.barberUID
+                photo.update()
+                
+                appointment.appointmentSidePhotoUID = photo.uid
+                console.log("SETTING APPOINTMENT SIDE PHOTO to", appointment.appointmentSidePhotoUID);
+                console.log("appointment is", appointment)
+            })
+        }
+    }
+
+    const saveRearPhoto = async (readImageURI, appointment) => {
+        if (readImageURI != null) {
+            await AppointmentPhoto.createNew().then( (photo) => {
+                photo.setAndUpdateImage(readImageURI)
+                photo.appointmentUID = appointment.uid
+                photo.barberUID = appointment.barberUID
+                photo.update()
+                
+                appointment.appointmentRearPhotoUID = photo.uid
+                console.log("SETTING APPOINTMENT REAR PHOTO to", appointment.appointmentRearPhotoUID);
+                console.log("appointment is", appointment)
+            })
+        }
+    }
+
     const saveAppointment = () => {
         // const { navigation, route } = this.props;
         setSpinner(true);
@@ -61,50 +109,57 @@ const SaveNotes = ({navigation, route}) => {
             appointment.barberUID = apt.barberUID
             appointment.serviceProvided = apt.serviceProvided
             appointment.customerPhoneNumber = apt.customerPhoneNumber;
-            appointment.appointmentFrontPhotoUID = null;
-            appointment.appointmentRearPhotoUID = null;
-            appointment.appointmentSidePhotoUID = null;
-            if (frontImageURI != null) {
-                AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(frontImageURI)
-                    photo.appointmentUID = appointment.uid
-                    photo.barberUID = appointment.barberUID
-                    photo.update()
-                    
-                    appointment.appointmentFrontPhotoUID = photo.uid
+            Promise.all([ saveFrontPhoto(frontImageURI, appointment), saveSidePhoto(sideImageURI, appointment), saveRearPhoto(readImageURI, appointment) ])
+                .then((responses)=>{
+                    console.log("responses are", responses);
+                    console.log("appointment is", appointment);
+                    appointment.notes = text // notes
+                    appointment.update().then(success => {
+                        console.log("success??", success)
+                        setSpinner(false);
+                        navigation.pop(5);
+                    }).catch((err)=> {
+                        alert("An error occurred. ")
+                        console.log("error saving appointment", err);
+                    })
                 })
-            }
-            if (sideImageURI != null) {
-                AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(sideImageURI)
-                    photo.appointmentUID = appointment.uid
-                    photo.barberUID = appointment.barberUID
-                    photo.update()
+            // if (frontImageURI != null) {
+            //     AppointmentPhoto.createNew().then( (photo) => {
+            //         console.log("PHOTO IS", photo);
+            //         console.log("FRONT IMAGE URI", frontImageURI)
+            //         photo.setAndUpdateImage(frontImageURI)
+            //         photo.appointmentUID = appointment.uid
+            //         photo.barberUID = appointment.barberUID
+            //         photo.update()
                     
-                    appointment.appointmentSidePhotoUID = photo.uid
-                })
-            }
-            if (readImageURI != null) {
-                AppointmentPhoto.createNew().then( (photo) => {
-                    photo.setAndUpdateImageURI(readImageURI)
-                    photo.appointmentUID = appointment.uid
-                    photo.barberUID = appointment.barberUID
-                    photo.update()
+            //         appointment.appointmentFrontPhotoUID = photo.uid
+            //         console.log("photo.uid is", photo.uid)
+            //         console.log("SETTING APPOINTMENT FRONT PHOTO to", appointment.appointmentFrontPhotoUID);
+            //         console.log("appointment is", appointment)
+            //     })
+            // }
+            // if (sideImageURI != null) {
+            //     AppointmentPhoto.createNew().then( (photo) => {
+            //         photo.setAndUpdateImage(sideImageURI)
+            //         photo.appointmentUID = appointment.uid
+            //         photo.barberUID = appointment.barberUID
+            //         photo.update()
                     
-                    appointment.appointmentRearPhotoUID = photo.uid
-                })
-            }
+            //         appointment.appointmentSidePhotoUID = photo.uid
+            //     })
+            // }
+            // if (readImageURI != null) {
+            //     AppointmentPhoto.createNew().then( (photo) => {
+            //         photo.setAndUpdateImage(readImageURI)
+            //         photo.appointmentUID = appointment.uid
+            //         photo.barberUID = appointment.barberUID
+            //         photo.update()
+                    
+            //         appointment.appointmentRearPhotoUID = photo.uid
+            //     })
+            // }
             
            // appointment.serviceProvided = this.state.serviceName
-            appointment.notes = text // notes
-            appointment.update().then(success => {
-                console.log("success??", success)
-                setSpinner(false);
-                navigation.pop(3);
-            }).catch((err)=> {
-                alert("An error occurred. ")
-                console.log("error saving appointment", err);
-            })
         })
         
         //navigation.pop(3);

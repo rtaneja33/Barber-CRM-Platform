@@ -6,10 +6,14 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Text,
   ImageBackground
 } from "react-native";
+import { Block, Text} from "galio-framework";
+import { Button } from "../../components";
+import { firebase } from "../../src/firebase/config";
+
 import { Camera } from 'expo-camera';
+import Appointment from "../../models/Appointment"
 
 class RearCamera extends PureComponent {
     state = {
@@ -40,25 +44,11 @@ class RearCamera extends PureComponent {
     
     confirm = () => {
         const { route, navigation } = this.props;
-        
-        let parent = route.params.parent
-        if (route.params.title == "Front View") {
-            parent.setState({
-                pickedImageFront: this.state.image
-            })
-        }
-        if (route.params.title == "Side View") {
-            parent.setState({
-                pickedImageSide: this.state.image
-            })
-        }
-        if (route.params.title == "Rear View") {
-            parent.setState({
-                pickedImageRear: this.state.image
-            })
-        }
-        
-        navigation.goBack(null);
+        // this.setState({ pickedImageFront: this.state.image });
+        let apt = route.params.apt
+        apt.appointmentRearPhotoUID = this.state.image.uri;
+        navigation.navigate("SavePreferences",{apt: apt});
+        // navigation.navigate("RearCamera",{apt: apt});
     }
     
     toggleFlash = () => {
@@ -96,9 +86,14 @@ class RearCamera extends PureComponent {
                         <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Rear Camera </Text>
                         </View>
-                        <View style={styles.bottomView}>
-                            <TouchableOpacity style={styles.buttoncontinue} onPress={ this.takePicture } >
-                                <Text> Take picture </Text>
+                        <View style={[styles.bottomView]}>
+                            <TouchableOpacity
+                                hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
+                                onPressIn={this.handlePressIn}
+                                onPressOut = {this.handlePressOut}
+                                onPress={this.takePicture}
+                            >
+                                <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
                             </TouchableOpacity>
                         </View>
                     </Camera>
@@ -108,16 +103,33 @@ class RearCamera extends PureComponent {
             return (
                 <View style={ styles.container }>
                     <ImageBackground source={{uri: this.state.image.uri}} style={styles.backgroundImage}>
-                        <View style={styles.bottomViewLeft}>
-                            <TouchableOpacity onPress={ this.retake } >
-                                <Text> Retake </Text>
-                            </TouchableOpacity>
-                        </View>
-
+                    <View style={styles.bottomViewLeft}>
+                    <Button style={{ backgroundColor: 'transparent' }} onPress={this.retake}>
+                    <Block column center>
+                        <Icon
+                        name="undo"
+                        family="EvilIcons"
+                        size={30}
+                        color={"white"}
+                        style={{ marginTop: 2, marginRight: 5 }}
+                        />
+                        <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Retake</Text>
+                    </Block>
+                    </Button>
+                    </View>
                         <View style={styles.bottomViewRight}>
-                            <TouchableOpacity onPress={ this.confirm } >
-                                <Text> Confirm </Text>
-                            </TouchableOpacity>
+                        <Button style={{ backgroundColor: 'transparent' }} onPress={this.confirm}>
+                        <Block column center>
+                            <Icon
+                            name="arrow-right"
+                            family="EvilIcons"
+                            size={30}
+                            color={"white"}
+                            style={{ marginTop: 2, marginRight: 5 }}
+                            />
+                            <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Finish</Text>
+                        </Block>
+                        </Button>
                         </View>
                     </ImageBackground>
                 </View>
@@ -140,6 +152,15 @@ titletext: {
     fontWeight: 'bold',
     textAlign: 'center'
 },
+embeddedBottomView: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 55,
+    height: 55,
+    borderRadius: 35,
+    borderColor: '#FFF',
+    zIndex: 10,
+  },
 boxtitle: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -154,16 +175,19 @@ icons: {
     right: '10%'
 },
 bottomView: {
-    backgroundColor: '#EE5407',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '40%',
-    height: '15%',
-    bottom: '5%',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 5,
+    borderColor: '#FFF',
+    marginBottom: 15,
+    bottom: "10%"
 },
 bottomViewLeft: {
-    backgroundColor: '#EE5407',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -173,7 +197,7 @@ bottomViewLeft: {
     left: '5%'
 },
 bottomViewRight: {
-    backgroundColor: '#EE5407',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',

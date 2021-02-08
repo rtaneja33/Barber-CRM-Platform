@@ -71,7 +71,7 @@ class Profile extends React.Component {
 
           <Block row center shadow space="between" style={styles.card} key="test">
             <Block flex>
-              <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.serviceProvided}</Text>
+              <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{Object.keys(item.serviceProvided)[0]}</Text>
               <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{item.notes}</Text>
               {item.frontPhotoURL != null ? (
                  <Image style={styles.image} source={{uri: item.frontPhotoURL}} />

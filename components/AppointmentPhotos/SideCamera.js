@@ -6,9 +6,10 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Text,
   ImageBackground
 } from "react-native";
+import { Block, Text} from "galio-framework";
+import { Button } from "../../components";
 import { firebase } from "../../src/firebase/config";
 
 import { Camera } from 'expo-camera';
@@ -44,10 +45,11 @@ class SideCamera extends PureComponent {
     confirm = () => {
         const { route, navigation } = this.props;
         // this.setState({ pickedImageFront: this.state.image });
-        let apt = this.props.apt
+        console.log("in confirm, received apt", apt);
+        let apt = route.params.apt
         apt.appointmentSidePhotoUID = this.state.image.uri;
         console.log("Side Camera: apt isssss", apt);
-        navigation.navigate("SideCamera",{apt: apt});
+        navigation.navigate("RearCamera",{apt: apt});
     }
     
     toggleFlash = () => {
@@ -85,9 +87,14 @@ class SideCamera extends PureComponent {
                         <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Side Camera </Text>
                         </View>
-                        <View style={styles.bottomView}>
-                            <TouchableOpacity style={styles.buttoncontinue} onPress={ this.takePicture } >
-                                <Text> Take picture </Text>
+                        <View style={[styles.bottomView]}>
+                            <TouchableOpacity
+                                hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
+                                onPressIn={this.handlePressIn}
+                                onPressOut = {this.handlePressOut}
+                                onPress={this.takePicture}
+                            >
+                                <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
                             </TouchableOpacity>
                         </View>
                     </Camera>
@@ -97,16 +104,33 @@ class SideCamera extends PureComponent {
             return (
                 <View style={ styles.container }>
                     <ImageBackground source={{uri: this.state.image.uri}} style={styles.backgroundImage}>
-                        <View style={styles.bottomViewLeft}>
-                            <TouchableOpacity onPress={ this.retake } >
-                                <Text> Retake </Text>
-                            </TouchableOpacity>
-                        </View>
-
+                    <View style={styles.bottomViewLeft}>
+                    <Button style={{ backgroundColor: 'transparent' }} onPress={this.retake}>
+                    <Block column center>
+                        <Icon
+                        name="undo"
+                        family="EvilIcons"
+                        size={30}
+                        color={"white"}
+                        style={{ marginTop: 2, marginRight: 5 }}
+                        />
+                        <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Retake</Text>
+                    </Block>
+                    </Button>
+                    </View>
                         <View style={styles.bottomViewRight}>
-                            <TouchableOpacity onPress={ this.confirm } >
-                                <Text> Confirm </Text>
-                            </TouchableOpacity>
+                        <Button style={{ backgroundColor: 'transparent' }} onPress={this.confirm}>
+                        <Block column center>
+                            <Icon
+                            name="arrow-right"
+                            family="EvilIcons"
+                            size={30}
+                            color={"white"}
+                            style={{ marginTop: 2, marginRight: 5 }}
+                            />
+                            <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Confirm</Text>
+                        </Block>
+                        </Button>
                         </View>
                     </ImageBackground>
                 </View>
@@ -129,6 +153,15 @@ titletext: {
     fontWeight: 'bold',
     textAlign: 'center'
 },
+embeddedBottomView: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 55,
+    height: 55,
+    borderRadius: 35,
+    borderColor: '#FFF',
+    zIndex: 10,
+  },
 boxtitle: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -143,16 +176,19 @@ icons: {
     right: '10%'
 },
 bottomView: {
-    backgroundColor: '#EE5407',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '40%',
-    height: '15%',
-    bottom: '5%',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 5,
+    borderColor: '#FFF',
+    marginBottom: 15,
+    bottom: "10%"
 },
 bottomViewLeft: {
-    backgroundColor: '#EE5407',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -162,7 +198,7 @@ bottomViewLeft: {
     left: '5%'
 },
 bottomViewRight: {
-    backgroundColor: '#EE5407',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',

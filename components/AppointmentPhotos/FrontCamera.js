@@ -165,9 +165,6 @@ class FrontCamera extends PureComponent {
                 <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Confirm</Text>
             </Block>
             </Button>
-              {/* <TouchableOpacity onPress={this.confirm}>
-                <Text> Confirm </Text>
-              </TouchableOpacity> */}
             </View>
           </ImageBackground>
         </View>

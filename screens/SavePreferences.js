@@ -151,17 +151,17 @@ const SavePreferences = ({navigation, route}) => {
     const saveAppointmentSoFar = () => {
         // const { navigation, route } = this.props;
         
-        let frontImage = route.params.pickedImageFront
-        let sideImage = route.params.pickedImageSide
-        let rearImage = route.params.pickedImageRear
-        let phoneNumber = route.params.phoneNumber
-        let apt = new Appointment();
+        // let frontImage = route.params.pickedImageFront
+        // let sideImage = route.params.pickedImageSide
+        // let rearImage = route.params.pickedImageRear
+        //let phoneNumber = route.params.phoneNumber
+        let apt = route.params.apt;
         apt.barberUID = firebase.auth().currentUser.uid;
         apt.serviceProvided = saveServices()
-        apt.appointmentFrontPhotoUID = frontImage;
-        apt.appointmentSidePhotoUID = sideImage;
-        apt.appointmentRearPhotoUID = rearImage;
-        apt.customerPhoneNumber = phoneNumber;
+        // apt.appointmentFrontPhotoUID = frontImage;
+        // apt.appointmentSidePhotoUID = sideImage;
+        // apt.appointmentRearPhotoUID = rearImage;
+        // apt.customerPhoneNumber = phoneNumber;
         
         setAppointment(apt);
         navigation.navigate('SaveNotes', {apt: apt});
