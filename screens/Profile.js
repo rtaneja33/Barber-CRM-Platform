@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    flex: 1
+    height: 500
     //resizeMode: 'contain',
   }
 });
