@@ -136,9 +136,8 @@ class Profile extends React.Component {
 
           <Block row center shadow space="between" style={styles.card} key="test">
             <Block flex>
-              <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{Object.keys(item.serviceProvided)[0]}</Text>
-              <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{item.notes}</Text>
-             <View>
+            <Text style={{ color: "#2f363c",fontSize: 17,fontWeight:'bold' }} size={BASE_SIZE * 1.125} muted>Monday, Nov. 26 @ ABC Barbershop.</Text>
+             <View style={{marginTop: 5}}>
                 <Carousel
                   data={[item.frontPhotoURL, item.sidePhotoURL, item.rearPhotoURL]}
                   renderItem={this._renderItem}
@@ -150,13 +149,13 @@ class Profile extends React.Component {
                 <Pagination
                   dotsLength={pageLength}
                   activeDotIndex={this.state.activeSlide}
-                  containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
+                  containerStyle={{ backgroundColor: 'transparent' }}
                   dotStyle={{
                       width: 10,
                       height: 10,
                       borderRadius: 5,
                       marginHorizontal: 8,
-                      backgroundColor: 'rgba(255, 255, 255, 0.92)'
+                      backgroundColor: 'rgba(0,0,0,.75)'
                   }}
                   inactiveDotStyle={{
                       // Define styles for inactive dots here
@@ -165,6 +164,8 @@ class Profile extends React.Component {
                   inactiveDotScale={0.6}
                 />
             </View>
+            <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600', marginTop:10 }} size={BASE_SIZE * 1.125}>Service Received: {Object.keys(item.serviceProvided)[0]}</Text>
+              <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>Notes: {item.notes}</Text>
                                    
             </Block>
           </Block>
@@ -201,6 +202,7 @@ class Profile extends React.Component {
           >
             <ScrollView
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={{paddingBottom: 100}}
               style={{ width, marginTop: '20%', paddingTop: 50 }}
             >
               <Block flex style={styles.profileCard}>
