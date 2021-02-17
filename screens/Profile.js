@@ -16,23 +16,86 @@ import Icon from "../components/Icon";
 import { HeaderHeight } from "../constants/utils";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { firebase } from '../src/firebase/config'
-
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 import AppointmentPhoto from "../models/AppointmentPhoto"
-
 const BASE_SIZE = theme.SIZES.BASE;
 const { width, height } = Dimensions.get("screen");
-
+import * as ImageManipulator from 'expo-image-manipulator';
+import ImageLoad from 'react-native-image-placeholder';
 const thumbMeasure = (width - 48 - 32) / 3;
+const SLIDER_WIDTH = Dimensions.get('window').width;
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.99);
+const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
 class Profile extends React.Component {
     state = {
-        appointments: []
+        appointments: [],
+        activeSlide: 0,
     };
-    
+      _renderItem ({item, index}) {
+        return <ImageLoad
+            style={styles.image}
+            loadingStyle={{ size: 'small', color: argonTheme.COLORS.HEADER }}
+            source={{uri: item}}
+        />
+    }
+    get pagination () {
+      const { activeSlide } = this.state;
+      return (
+          <Pagination
+            dotsLength={3}
+            activeDotIndex={activeSlide}
+            containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
+            dotStyle={{
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                marginHorizontal: 8,
+                backgroundColor: 'rgba(255, 255, 255, 0.92)'
+            }}
+            inactiveDotStyle={{
+                // Define styles for inactive dots here
+            }}
+            inactiveDotOpacity={0.4}
+            inactiveDotScale={0.6}
+          />
+      );
+  }
+
     componentWillMount() {
         this.loadAppointments()
     }
+
+    saveFrontPhotoUrl = async (data) => {
+      if (data["appointmentFrontPhotoUID"] != "") {
+        await AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(photo => {
+           const url = photo.photoURL
+           console.log("front photo url is", url);
+           data["frontPhotoURL"] = url;
+        });
+    } 
+    }
+
+    saveSidePhotoUrl = async (data) => {
+      if (data["appointmentSidePhotoUID"] != "") {
+        await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(photo => {
+           const url = photo.photoURL
+           console.log("side photo url is", url);
+           data["sidePhotoURL"] = url;
+        });
+    } 
+    }
     
+    saveRearPhotoUrl = async (data) => {
+      if (data["appointmentRearPhotoUID"] != "") {
+        await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(photo => {
+           const url = photo.photoURL
+           console.log("rear photo url is", url);
+           data["rearPhotoURL"] = url;
+        });
+    } 
+    }
+
     async loadAppointments() {
         const { fullName, phoneNumber } = this.props.route.params;
         
@@ -43,57 +106,75 @@ class Profile extends React.Component {
             let data = document.data();
             
             var appointmentsToAdd = this.state.appointments
-            
-            if (data["appointmentFrontPhotoUID"] != "") {
-                const photo = AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(photo => {
-                   const url = photo.photoURL
-                    
-                    data["frontPhotoURL"] = url;
-                    appointmentsToAdd.push(data);
-                    this.setState({
-                        appointments: appointmentsToAdd
-                    })
-                });
-            } else {
-                appointmentsToAdd.push(data);
-                this.setState({
-                    appointments: appointmentsToAdd
+            Promise.all([ this.saveFrontPhotoUrl(data), this.saveSidePhotoUrl(data), this.saveRearPhotoUrl(data) ])
+                .then((responses)=>{
+                  console.log("pushing updated data....");
+                  appointmentsToAdd.push(data);
+                  this.setState({
+                      appointments: appointmentsToAdd
+                  })
                 })
-            }
         });
     }
     
   renderAppointments = () => {
       const { navigation } = this.props;
           
-      const renderItem = ({item}) => (
-        <View style={{minHeight:70, padding:5}}>
+      const renderItem = ({item}) => {
+        var pageLength = 0;
+        if(item.frontPhotoURL.length > 0){
+          pageLength += 1
+        }
+        if(item.sidePhotoURL.length > 0){
+          pageLength += 1
+        }
+        if(item.rearPhotoURL.length > 0){
+          pageLength += 1
+        }
+        return (
+        <View style={[styles.profileCard, {minHeight:70}]}>
 
           <Block row center shadow space="between" style={styles.card} key="test">
             <Block flex>
-              <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{Object.keys(item.serviceProvided)[0]}</Text>
-              <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{item.notes}</Text>
-              {item.frontPhotoURL != null ? (
-                 <Image style={styles.image} source={{uri: item.frontPhotoURL}} />
-              ) :
-              <View>
-              <Text>No image yet</Text>
-              </View>
-            }
+            <Text style={{ color: "#2f363c",fontSize: 17,fontWeight:'bold' }} size={BASE_SIZE * 1.125} muted>Monday, Nov. 26 @ ABC Barbershop.</Text>
+             <View style={{marginTop: 5}}>
+                <Carousel
+                  data={[item.frontPhotoURL, item.sidePhotoURL, item.rearPhotoURL]}
+                  renderItem={this._renderItem}
+                  windowSize={1}
+                  sliderWidth={SLIDER_WIDTH}
+                  itemWidth={ITEM_WIDTH}
+                  onSnapToItem={(index) => this.setState({ activeSlide: index }) }
+                />
+                <Pagination
+                  dotsLength={pageLength}
+                  activeDotIndex={this.state.activeSlide}
+                  containerStyle={{ backgroundColor: 'transparent' }}
+                  dotStyle={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 5,
+                      marginHorizontal: 8,
+                      backgroundColor: 'rgba(0,0,0,.75)'
+                  }}
+                  inactiveDotStyle={{
+                      // Define styles for inactive dots here
+                  }}
+                  inactiveDotOpacity={0.4}
+                  inactiveDotScale={0.6}
+                />
+            </View>
+            <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600', marginTop:10 }} size={BASE_SIZE * 1.125}>Service Received: {Object.keys(item.serviceProvided)[0]}</Text>
+              <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>Notes: {item.notes}</Text>
                                    
             </Block>
           </Block>
 
         </View>
-      );
+      )};
           
       return (
           <View>
-              <Block row space="between">
-                <Text bold size={18} style={styles.title}>
-                  Appointments
-                </Text>
-              </Block>
               <FlatList
                 data={this.state.appointments}
                 renderItem={renderItem}
@@ -121,6 +202,7 @@ class Profile extends React.Component {
           >
             <ScrollView
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={{paddingBottom: 100}}
               style={{ width, marginTop: '20%', paddingTop: 50 }}
             >
               <Block flex style={styles.profileCard}>
@@ -236,7 +318,12 @@ class Profile extends React.Component {
                   </Block>
                 </Block>
               </Block>
-            <Block flex={1} style={styles.profileCard}>
+            <Block row space="between">
+              <Text bold size={22} style={styles.title}>
+                Appointments
+              </Text>
+            </Block>
+            <Block flex={1}>
                   {this.renderAppointments()}
               </Block>
 
@@ -309,7 +396,7 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingBottom: theme.SIZES.BASE,
-    paddingHorizontal: theme.SIZES.BASE * 2,
+    paddingHorizontal: theme.SIZES.BASE * 1,
     marginTop: 22,
     color: argonTheme.COLORS.HEADER
   },
@@ -365,7 +452,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    height: 500
+    height: 300,
     //resizeMode: 'contain',
   }
 });
