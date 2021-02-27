@@ -44,12 +44,13 @@ class SideCamera extends PureComponent {
     
     confirm = () => {
         const { route, navigation } = this.props;
+        const { backHandler } = this.props.route.params;
         // this.setState({ pickedImageFront: this.state.image });
         console.log("in confirm, received apt", apt);
         let apt = route.params.apt
         apt.appointmentSidePhotoUID = this.state.image.uri;
         console.log("Side Camera: apt isssss", apt);
-        navigation.navigate("RearCamera",{apt: apt});
+        navigation.navigate("RearCamera",{apt: apt, backHandler: backHandler});
     }
     
     toggleFlash = () => {

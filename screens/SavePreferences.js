@@ -156,6 +156,7 @@ const SavePreferences = ({navigation, route}) => {
         // let rearImage = route.params.pickedImageRear
         //let phoneNumber = route.params.phoneNumber
         let apt = route.params.apt;
+        const backHandler = route.params.backHandler
         apt.barberUID = firebase.auth().currentUser.uid;
         apt.serviceProvided = saveServices()
         // apt.appointmentFrontPhotoUID = frontImage;
@@ -164,7 +165,7 @@ const SavePreferences = ({navigation, route}) => {
         // apt.customerPhoneNumber = phoneNumber;
         
         setAppointment(apt);
-        navigation.navigate('SaveNotes', {apt: apt});
+        navigation.navigate('SaveNotes', {apt: apt, backHandler: backHandler});
         // navigation.pop(2)
     }
 

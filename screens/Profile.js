@@ -39,6 +39,18 @@ class Profile extends React.Component {
             source={{uri: item}}
         />
     }
+     componentWillMount() {
+      this.loadAppointments()
+      console.log(this.props.route)
+    }
+    
+    onBackHandler = ()=>{
+      console.log("just had onBackHandler called from Profile")
+      this.loadAppointments()
+      this.forceUpdate()
+    }
+    
+
     get pagination () {
       const { activeSlide } = this.state;
       return (
@@ -62,10 +74,7 @@ class Profile extends React.Component {
       );
   }
 
-    componentWillMount() {
-        
-        this.loadAppointments()
-    }
+   
 
     saveFrontPhotoUrl = async (data) => {
       if (data["appointmentFrontPhotoUID"] != "") {
@@ -102,11 +111,9 @@ class Profile extends React.Component {
         
         const references = await firebase.firestore().collection('Appointments').where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,'')).get();
         
-        
+        var appointmentsToAdd = []
         references.forEach(document => {
             let data = document.data();
-            
-            var appointmentsToAdd = this.state.appointments
             Promise.all([ this.saveFrontPhotoUrl(data), this.saveSidePhotoUrl(data), this.saveRearPhotoUrl(data) ])
                 .then((responses)=>{
                   console.log("pushing updated data....");
@@ -193,7 +200,6 @@ class Profile extends React.Component {
     console.log("PHONE NUMBER IS", phoneNumber)
     console.log("IN RENDER PROFILE, full name is", fullName);
     return (
-      
       <Block flex style={styles.profile}>
         <Block flex>
           <ImageBackground
@@ -242,7 +248,7 @@ class Profile extends React.Component {
                     space="evenly"
                     style={{ marginTop: 20, paddingBottom: 24, marginHorizontal: 20 }}
                   >
-                      <Button style={{ ...styles.socialButtons, marginRight: 30 }} onPress={() => navigation.navigate('FrontCamera', {phoneNumber: phoneNumber})}>
+                      <Button style={{ ...styles.socialButtons, marginRight: 30 }} onPress={() => navigation.navigate('FrontCamera', {phoneNumber: phoneNumber, backHandler: this.onBackHandler.bind(this)})}>
                         <Block column center>
                           <Icon
                             name="add-a-photo"
