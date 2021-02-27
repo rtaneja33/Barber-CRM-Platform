@@ -125,7 +125,7 @@ function HomeStack(props) {
 
   // navigation.setOptions({tabBarVisible: false});
   return (
-    <Stack.Navigator mode="card" headerMode="screen">
+    <Stack.Navigator mode="card" headerMode="screen" >
       <Stack.Screen
         name="My Customers"
         component={Home}

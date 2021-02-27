@@ -20,6 +20,8 @@ import { Block, Text, theme } from "galio-framework";
 import { HeaderHeight } from "../constants/utils";
 import { argonTheme } from '../constants';
 import {TextInput, DefaultTheme} from 'react-native-paper';
+import {Profile} from "./Profile";
+import { useRoute } from '@react-navigation/native';
 
 const SaveNotes = ({navigation, route}) => {
     // state = {
@@ -40,12 +42,25 @@ const SaveNotes = ({navigation, route}) => {
     useEffect(() => {
         // console.log("appointment is", appointment);
         setSpinner(false);
+        return () => {
+            console.log("in savenotes, route is", route);
+            const backHandler = route.params.backHandler
+            if (backHandler) {
+                console.log("calling backHandler from SaveNotes....");
+                backHandler();
+            }
+            else{
+                console.log("backHandler in SaveNotes is", backHandler)
+                console.log("did NOT call backHandler...")
+            }
+            // Anything in here is fired on component unmount.
+        }
       }, []);
-
-    const saveAppointmentDumb = () => {
-        console.log("save apt");
-        console.log("received apt,", apt);
-    }
+    
+    
+    //   componentWillUnmount() {
+    //     
+    //   }
 
     const saveFrontPhoto = async (frontImageURI, appointment) => {
         if (frontImageURI != null) {
@@ -218,7 +233,7 @@ const SaveNotes = ({navigation, route}) => {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                saveAppointment()
+                 saveAppointment()
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>

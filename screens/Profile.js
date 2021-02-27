@@ -39,6 +39,18 @@ class Profile extends React.Component {
             source={{uri: item}}
         />
     }
+     componentWillMount() {
+      this.loadAppointments()
+      console.log(this.props.route)
+    }
+    
+    onBackHandler = ()=>{
+      console.log("just had onBackHandler called from Profile")
+      this.loadAppointments()
+      this.forceUpdate()
+    }
+    
+
     get pagination () {
       const { activeSlide } = this.state;
       return (
@@ -62,9 +74,7 @@ class Profile extends React.Component {
       );
   }
 
-    componentWillMount() {
-        this.loadAppointments()
-    }
+   
 
     saveFrontPhotoUrl = async (data) => {
       if (data["appointmentFrontPhotoUID"] != "") {
@@ -101,11 +111,9 @@ class Profile extends React.Component {
         
         const references = await firebase.firestore().collection('Appointments').where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,'')).get();
         
-        
+        var appointmentsToAdd = []
         references.forEach(document => {
             let data = document.data();
-            
-            var appointmentsToAdd = this.state.appointments
             Promise.all([ this.saveFrontPhotoUrl(data), this.saveSidePhotoUrl(data), this.saveRearPhotoUrl(data) ])
                 .then((responses)=>{
                   console.log("pushing updated data....");
@@ -134,7 +142,7 @@ class Profile extends React.Component {
         return (
         <View style={[styles.profileCard, {minHeight:70}]}>
 
-          <Block row center shadow space="between" style={styles.card} key="test">
+          <Block row center shadow space="between" key="test">
             <Block flex>
             <Text style={{ color: "#2f363c",fontSize: 17,fontWeight:'bold' }} size={BASE_SIZE * 1.125} muted>Monday, Nov. 26 @ ABC Barbershop.</Text>
              <View style={{marginTop: 5}}>
@@ -192,7 +200,6 @@ class Profile extends React.Component {
     console.log("PHONE NUMBER IS", phoneNumber)
     console.log("IN RENDER PROFILE, full name is", fullName);
     return (
-      
       <Block flex style={styles.profile}>
         <Block flex>
           <ImageBackground
@@ -235,58 +242,13 @@ class Profile extends React.Component {
                         { ((phoneNumber.length > 0) ? phoneNumber : "No phone provided.")}
                       </Text>
                 </Block>
-                <Block style={styles.info}>
-                  <Block row space="evenly">
-                  {/* <Block middle>
-                  <Icon
-                    size={20}
-                    color={argonTheme.COLORS.ICON}
-                    name="mobile1"
-                    family="AntDesign"
-                  />
-                  </Block> */}
-                    {/* <Block middle>
-                      <Text
-                        bold
-                        size={18}
-                        color="#525F7F"
-                        style={{ marginBottom: 4, marginLeft: 20}}
-                      >
-                        <Icon
-                          size={20}
-                          color={argonTheme.COLORS.ICON}
-                          name="mobile1"
-                          family="AntDesign"
-                        />
-                        { ((phoneNumber.length > 0) ? phoneNumber : "No phone provided.")}
-                      </Text>
-                      {/* <Text size={12} color={argonTheme.COLORS.TEXT}>MOBILE</Text> */}
-                    {/* </Block>  */}
-                  </Block>
-                </Block>
-                <Block center>
-                      <Button 
-                        style={styles.button}  onPress={() => navigation.navigate('FrontCamera', {phoneNumber: phoneNumber})}
-                      >
-                        Add Appointment Photos
-                      </Button>
-                </Block>
-                <Block center>
-                      <Button
-                        color="default"
-                        textStyle={{ color: "white", fontSize: 12, fontWeight: "700" }}
-                        style={styles.button}
-                      >
-                        Add Preferences
-                      </Button>
-                </Block>
                 <Block
                     middle
                     row
                     space="evenly"
                     style={{ marginTop: 20, paddingBottom: 24, marginHorizontal: 20 }}
                   >
-                      <Button style={{ ...styles.socialButtons, marginRight: 30 }}>
+                      <Button style={{ ...styles.socialButtons, marginRight: 30 }} onPress={() => navigation.navigate('FrontCamera', {phoneNumber: phoneNumber, backHandler: this.onBackHandler.bind(this)})}>
                         <Block column center>
                           <Icon
                             name="add-a-photo"
@@ -362,20 +324,7 @@ const styles = StyleSheet.create({
     width: width,
     height: height / 2
   },
-  profileCard: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
-    marginHorizontal: theme.SIZES.BASE,
-    marginTop: 60,
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
-    shadowOpacity: 0.2,
-    zIndex: 2
-  },
+
   info: {
     paddingHorizontal: 40,
     marginTop: 15
@@ -409,8 +358,8 @@ const styles = StyleSheet.create({
     borderColor: "#E9ECEF"
   },
   socialButtons: {
-    width: 120,
-    height: 65,
+    width: width/3,
+    aspectRatio: 2,
     shadowColor: argonTheme.COLORS.BLACK,
     shadowOffset: {
       width: 0,
@@ -435,7 +384,7 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     // position: "relative",
-    marginHorizontal: 8,
+    marginHorizontal: 3,
     padding: theme.SIZES.BASE,
     marginTop: 7,
     borderRadius: 6,
@@ -452,7 +401,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    height: 300,
+    width: width - theme.SIZES.BASE*2 - 6,
+    aspectRatio: 1,
     //resizeMode: 'contain',
   }
 });

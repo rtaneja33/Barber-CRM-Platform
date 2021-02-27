@@ -46,13 +46,14 @@ class FrontCamera extends PureComponent {
 
   confirm = () => {
     const { route, navigation } = this.props;
+    const { backHandler } = this.props.route.params;
     // this.setState({ pickedImageFront: this.state.image });
     let apt = new Appointment();
     apt.barberUID = firebase.auth().currentUser.uid;
     apt.appointmentFrontPhotoUID = this.state.image.uri;
     apt.customerPhoneNumber = route.params.phoneNumber;
     console.log("apt isssss", apt);
-    navigation.navigate("SideCamera", { apt: apt });
+    navigation.navigate("SideCamera", { apt: apt, backHandler: backHandler });
   };
 
   toggleFlash = () => {

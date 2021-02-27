@@ -42,13 +42,17 @@ class RearCamera extends PureComponent {
         })
     }
     
+    
+    
     confirm = () => {
+
+        const { backHandler } = this.props.route.params;
+        console.log("in rear camera - backhandler?", backHandler)
         const { route, navigation } = this.props;
         // this.setState({ pickedImageFront: this.state.image });
         let apt = route.params.apt
         apt.appointmentRearPhotoUID = this.state.image.uri;
-        navigation.navigate("SavePreferences",{apt: apt});
-        // navigation.navigate("RearCamera",{apt: apt});
+        navigation.navigate("SavePreferences",{apt: apt, backHandler: backHandler});
     }
     
     toggleFlash = () => {
