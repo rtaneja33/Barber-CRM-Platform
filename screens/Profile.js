@@ -109,7 +109,9 @@ class Profile extends React.Component {
     async loadAppointments() {
         const { fullName, phoneNumber } = this.props.route.params;
         
-        const references = await firebase.firestore().collection('Appointments').where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,'')).get();
+        const references = await firebase.firestore().collection('Appointments')
+          .where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,''))
+          .orderBy('timestamp', 'desc').get();
         
         var appointmentsToAdd = []
         references.forEach(document => {

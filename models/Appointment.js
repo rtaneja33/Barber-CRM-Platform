@@ -9,6 +9,8 @@ export default class Appointment {
     appointmentSidePhotoUID = ""
     appointmentRearPhotoUID = ""
     notes = ""
+    timestamp = ""
+
     serviceProvided = []
     approvedByCustomer = false
     privateNotes = false
@@ -30,6 +32,7 @@ export default class Appointment {
                 appointmentSidePhotoUID: this.appointmentSidePhotoUID,
                 appointmentRearPhotoUID: this.appointmentRearPhotoUID,
                 notes: this.notes,
+                timestamp: this.timestamp,
                 serviceProvided: this.serviceProvided,
                 approvedByCustomer: this.approvedByCustomer,
                 privateNotes: this.privateNotes
@@ -50,6 +53,7 @@ export default class Appointment {
                     appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
                     appointmentRearPhotoUID: appointment.appointmentRearPhotoUID,
                     notes: appointment.notes,
+                    timestamp: appointment.timestamp,
                     serviceProvided: appointment.serviceProvided,
                     approvedByCustomer: appointment.approvedByCustomer,
                     privateNotes: appointment.privateNotes,
@@ -90,6 +94,7 @@ export default class Appointment {
                     appointment.appointmentSidePhotoUID = data["appointmentSidePhotoUID"]
                     appointment.appointmentRearPhotoUID = data["appointmentRearPhotoUID"]
                     appointment.notes = data["notes"]
+                    appointment.timestamp = data["timestamp"]
                     appointment.serviceProvided = data["serviceProvided"]
                     appointment.approvedByCustomer = data["approvedByCustomer"]
                     appointment.privateNotes = data["privateNotes"]
