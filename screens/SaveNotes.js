@@ -124,6 +124,7 @@ const SaveNotes = ({navigation, route}) => {
             appointment.barberUID = apt.barberUID
             appointment.serviceProvided = apt.serviceProvided
             appointment.customerPhoneNumber = apt.customerPhoneNumber;
+            appointment.timestamp = firebase.firestore.Timestamp.fromDate(new Date());
             Promise.all([ saveFrontPhoto(frontImageURI, appointment), saveSidePhoto(sideImageURI, appointment), saveRearPhoto(readImageURI, appointment) ])
                 .then((responses)=>{
                     console.log("responses are", responses);
