@@ -41,6 +41,10 @@ class SignupScreen extends React.Component {
         //         alert(error)
         // });
     }
+    signupCustomerPressed = () => {
+        const {navigation} = this.props;
+        navigation.navigate('CreateCustomer', {email: this.state.email, password: this.state.password });
+    }
     
     signinPressed = () => {
 
@@ -98,7 +102,7 @@ class SignupScreen extends React.Component {
                         <Block width={width * 0.8} style={{ marginBottom: 15 }}>
                           <Input
                             borderless
-                            placeholder="Business Email"
+                            placeholder="Email Address"
                             onChangeText={(text) => { this.setState({ email: text})}}
                             iconContent={
                               <Icon
@@ -150,7 +154,12 @@ class SignupScreen extends React.Component {
                         <Block middle>
                             <Button onPress = {this.signupPressed} color="primary" style={styles.createButton}>
                               <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                                CREATE ACCOUNT
+                                SIGN UP AS BARBER
+                              </Text>
+                            </Button>
+                            <Button onPress = {this.signupCustomerPressed} color="primary" style={styles.createButton}>
+                              <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                                SIGN UP AS CUSTOMER
                               </Text>
                             </Button>
                             <Button onPress = {this.signinPressed} color="secondary" style={styles.createButton}>

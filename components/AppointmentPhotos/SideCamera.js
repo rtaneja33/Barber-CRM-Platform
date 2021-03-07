@@ -79,6 +79,9 @@ class SideCamera extends PureComponent {
         if (this.state.image == "") {
             return (
                     <Camera flashMode={this.state.flash} style={styles.screen} type={Camera.Constants.Type.back} ref={(ref) => { this.camera = ref }}>
+                    <View style={styles.screen}>
+                      <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+                    
                         <View style={styles.icons}>
                             <TouchableOpacity style={styles.buttoncontinue} onPress={ this.toggleFlash } >
                                 <Icon size={25} color={'white'} name={this.getFlashIcon()} family="MaterialIcons" />
@@ -88,6 +91,10 @@ class SideCamera extends PureComponent {
                         <View style={styles.boxtitle}>
                     <Text style={styles.titletext}> Side Camera </Text>
                         </View>
+                    
+                    </View>
+                    <View style={{flex: 4}}/>
+                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
                         <View style={[styles.bottomView]}>
                             <TouchableOpacity
                                 hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
@@ -97,7 +104,10 @@ class SideCamera extends PureComponent {
                             >
                                 <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
                             </TouchableOpacity>
-                        </View>
+                    </View>
+                        
+                </View>
+              </View>
                     </Camera>
             );
         } else {
@@ -105,6 +115,10 @@ class SideCamera extends PureComponent {
             return (
                 <View style={ styles.container }>
                     <ImageBackground source={{uri: this.state.image.uri}} style={styles.backgroundImage}>
+                    <View style={styles.screen}>
+                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}/>
+                    <View style={{flex: 4}}/>
+                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
                     <View style={styles.bottomViewLeft}>
                     <Button style={{ backgroundColor: 'transparent' }} onPress={this.retake}>
                     <Block column center>
@@ -132,7 +146,10 @@ class SideCamera extends PureComponent {
                             <Text style={{color: 'white', fontSize: 20, fontWeight: 'bold'}}>Confirm</Text>
                         </Block>
                         </Button>
-                        </View>
+                    </View>
+                      
+                      </View>
+                      </View>
                     </ImageBackground>
                 </View>
             );
@@ -142,19 +159,46 @@ class SideCamera extends PureComponent {
 }
 
 const styles = StyleSheet.create({
-screen: {
-    flex: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#CDECFF',
-},
-titletext: {
+  screen: {
+    flex: 1,
+    flexDirection: 'column'
+  },
+  titletext: {
     fontSize: 26,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center'
-},
-embeddedBottomView: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  boxtitle: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: "30%",
+    width: "100%"
+  },
+  icons: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: "70%",
+    right: "10%",
+  },
+  bottomView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    left: "40%",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 5,
+    borderColor: '#FFF',
+    marginBottom: 15,
+    bottom: "20%"
+  },
+  embeddedBottomView: {
     justifyContent: "center",
     alignItems: "center",
     width: 55,
@@ -163,58 +207,42 @@ embeddedBottomView: {
     borderColor: '#FFF',
     zIndex: 10,
   },
-boxtitle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: '8%',
-},
-icons: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: '25%',
-    right: '10%'
-},
-bottomView: {
+  takePictureView: {
+    backgroundColor: "#EE5407",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    borderWidth: 5,
-    borderColor: '#FFF',
-    marginBottom: 15,
-    bottom: "10%"
-},
-bottomViewLeft: {
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '30%',
-    height: '15%',
-    bottom: '5%',
-    left: '5%'
-},
-bottomViewRight: {
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '30%',
-    height: '15%',
-    bottom: '5%',
-    left: '65%'
-},
-container: {
+    width: "50%",
+    height: "15%",
+    bottom: "50%",
+  },
+  bottomViewLeft: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: "30%",
+    height: "15%",
+    bottom: "50%",
+    left: "5%",
+  },
+  bottomViewRight: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: "30%",
+    height: "15%",
+    bottom: "50%",
+    left: "65%",
+  },
+  container: {
     flex: 1,
-},
-backgroundImage: {
+  },
+  backgroundImage: {
     flex: 1,
     //resizeMode: 'contain',
-}
+  },
 });
 
 export default SideCamera;

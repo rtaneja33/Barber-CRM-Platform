@@ -18,6 +18,7 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import { firebase } from '../src/firebase/config'
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import AppointmentPhoto from "../models/AppointmentPhoto"
+import Customer from "../models/Customer"
 const BASE_SIZE = theme.SIZES.BASE;
 const { width, height } = Dimensions.get("screen");
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -31,6 +32,8 @@ class Profile extends React.Component {
     state = {
         appointments: [],
         activeSlide: 0,
+        name: "",
+        phoneNumber: ""
     };
       _renderItem ({item, index}) {
         return <ImageLoad
@@ -40,7 +43,16 @@ class Profile extends React.Component {
         />
     }
      componentWillMount() {
-      this.loadAppointments()
+         if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
+             this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
+         } else {
+             Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
+                 console.log(customer);
+                 this.setState({name: customer.name, phoneNumber: customer.phonenumber});
+                 this.loadAppointments()
+             })
+         }
+         
       console.log(this.props.route)
     }
     
@@ -77,37 +89,39 @@ class Profile extends React.Component {
    
 
     saveFrontPhotoUrl = async (data) => {
-      if (data["appointmentFrontPhotoUID"] != "") {
+      if (data != null && data["appointmentFrontPhotoUID"] != "") {
         await AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(photo => {
            const url = photo.photoURL
            console.log("front photo url is", url);
            data["frontPhotoURL"] = url;
         });
-    } 
+      }
     }
 
     saveSidePhotoUrl = async (data) => {
-      if (data["appointmentSidePhotoUID"] != "") {
+      if (data != null && data["appointmentSidePhotoUID"] != "") {
         await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(photo => {
            const url = photo.photoURL
            console.log("side photo url is", url);
            data["sidePhotoURL"] = url;
         });
-    } 
+      }
     }
     
     saveRearPhotoUrl = async (data) => {
-      if (data["appointmentRearPhotoUID"] != "") {
+      if (data != null && data["appointmentRearPhotoUID"] != "") {
         await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(photo => {
            const url = photo.photoURL
            console.log("rear photo url is", url);
            data["rearPhotoURL"] = url;
         });
-    } 
+      }
     }
 
     async loadAppointments() {
-        const { fullName, phoneNumber } = this.props.route.params;
+        //const { fullName, phoneNumber } = this.props.route.params;
+        const fullName = this.state.name;
+        const phoneNumber = this.state.phoneNumber;
         
         const references = await firebase.firestore().collection('Appointments')
           .where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,''))
@@ -116,6 +130,7 @@ class Profile extends React.Component {
         var appointmentsToAdd = []
         references.forEach(document => {
             let data = document.data();
+            console.log(data);
             Promise.all([ this.saveFrontPhotoUrl(data), this.saveSidePhotoUrl(data), this.saveRearPhotoUrl(data) ])
                 .then((responses)=>{
                   console.log("pushing updated data....");
@@ -132,13 +147,13 @@ class Profile extends React.Component {
           
       const renderItem = ({item}) => {
         var pageLength = 0;
-        if(item.frontPhotoURL.length > 0){
+        if(item.frontPhotoURL != null && item.frontPhotoURL.length > 0){
           pageLength += 1
         }
-        if(item.sidePhotoURL.length > 0){
+        if(item.sidePhotoURL != null && item.sidePhotoURL.length > 0){
           pageLength += 1
         }
-        if(item.rearPhotoURL.length > 0){
+        if(item.rearPhotoURL != null && item.rearPhotoURL.length > 0){
           pageLength += 1
         }
         return (
@@ -197,7 +212,10 @@ class Profile extends React.Component {
   render() {
     console.log("before finding fullname");
     console.log(this.props);
-    const { fullName, phoneNumber } = this.props.route.params;
+      
+    const fullName = this.state.name;
+    const phoneNumber = this.state.phoneNumber;
+      
     const { navigation } = this.props;
     console.log("PHONE NUMBER IS", phoneNumber)
     console.log("IN RENDER PROFILE, full name is", fullName);
