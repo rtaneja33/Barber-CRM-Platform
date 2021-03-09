@@ -148,19 +148,11 @@ class Profile extends React.Component {
         //const { fullName, phoneNumber } = this.props.route.params;
         const fullName = this.state.name;
         const phoneNumber = this.state.phoneNumber;
-        console.log("this person's phoneNumber var is storing", phoneNumber)
         var extractedNumber = phoneNumber.match(/\d/g);
         extractedNumber = extractedNumber.join("");
-        var testnum = "5555648583"; // 5555648583 // 8885555512 
-        console.log("length of extracted number is", extractedNumber.length, "length of testnum is", testnum.length)
-        console.log("extracted number is", extractedNumber, "testnum is", testnum);
         const references = await firebase.firestore().collection('Appointments')
-          .where("customerPhoneNumber", '==', testnum)
+          .where("customerPhoneNumber", '==', extractedNumber)
           .orderBy('timestamp', 'desc').get();
-
-          
-        console.log("got XXX many references:", references.size)
-        console.log("For customer named: ", fullName)
         var appointmentsToAdd = []
         references.forEach(document => {
             let data = document.data();
