@@ -91,7 +91,6 @@ class FrontCamera extends PureComponent {
   }
   render() {
     const { route } = this.props;
-    console.log("RERENDERING")
     if (this.state.image == "") {
       return (
         <Camera
@@ -104,7 +103,7 @@ class FrontCamera extends PureComponent {
         >
         
         <View style={styles.screen}>
-          <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+          <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
               <View style={styles.icons}>
                 <TouchableOpacity
                   style={styles.buttoncontinue}
@@ -126,7 +125,7 @@ class FrontCamera extends PureComponent {
               <View style={{flex: 4}}/>
 
       
-          <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}} >
+          <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.8)'}} >
 
               <View style={[styles.bottomView]}>
                 <TouchableOpacity
@@ -138,7 +137,6 @@ class FrontCamera extends PureComponent {
                      <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
                 </TouchableOpacity>
               </View>
-                  
           </View>
         </View>
         </Camera>
@@ -151,9 +149,9 @@ class FrontCamera extends PureComponent {
             style={styles.backgroundImage}
           >
               <View style={styles.screen}>
-              <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}/>
+              <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.95)'}}/>
               <View style={{flex: 4}}/>
-              <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+              <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.95)'}}>
 
               
             <View style={styles.bottomViewLeft}>

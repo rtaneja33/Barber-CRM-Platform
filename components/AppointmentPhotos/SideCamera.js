@@ -80,7 +80,7 @@ class SideCamera extends PureComponent {
             return (
                     <Camera flashMode={this.state.flash} style={styles.screen} type={Camera.Constants.Type.back} ref={(ref) => { this.camera = ref }}>
                     <View style={styles.screen}>
-                      <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+                      <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
                     
                         <View style={styles.icons}>
                             <TouchableOpacity style={styles.buttoncontinue} onPress={ this.toggleFlash } >
@@ -94,7 +94,7 @@ class SideCamera extends PureComponent {
                     
                     </View>
                     <View style={{flex: 4}}/>
-                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
                         <View style={[styles.bottomView]}>
                             <TouchableOpacity
                                 hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
@@ -116,9 +116,9 @@ class SideCamera extends PureComponent {
                 <View style={ styles.container }>
                     <ImageBackground source={{uri: this.state.image.uri}} style={styles.backgroundImage}>
                     <View style={styles.screen}>
-                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}/>
+                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.8)'}}/>
                     <View style={{flex: 4}}/>
-                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+                    <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
                     <View style={styles.bottomViewLeft}>
                     <Button style={{ backgroundColor: 'transparent' }} onPress={this.retake}>
                     <Block column center>

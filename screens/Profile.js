@@ -29,12 +29,39 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.99);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
 class Profile extends React.Component {
-    state = {
+  constructor(props) {
+    super(props);
+    // console.log(this.props.route.params.barberShop);
+    // this.state = {
+    //   appointments: [],
+    //   activeSlide: 0,
+    //   name: "",
+    //   phoneNumber: "",
+    // };
+    if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
+      this.state = {
         appointments: [],
         activeSlide: 0,
-        name: "",
-        phoneNumber: ""
-    };
+        name: this.props.route.params.fullName,
+        phoneNumber: this.props.route.params.phoneNumber,
+      };
+    } else {
+      Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
+          console.log(customer);
+          this.state = {
+            appointments: [],
+            activeSlide: 0,
+            name: customer.name,
+            phoneNumber: customer.phonenumber,
+          };
+          console.log("calling load appointments...")
+      })
+  }
+  this.loadAppointments()
+
+  }
+
+    
       _renderItem ({item, index}) {
         return <ImageLoad
             style={styles.image}
@@ -42,19 +69,18 @@ class Profile extends React.Component {
             source={{uri: item}}
         />
     }
-     componentWillMount() {
-         if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-             this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
-         } else {
-             Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-                 console.log(customer);
-                 this.setState({name: customer.name, phoneNumber: customer.phonenumber});
-                 this.loadAppointments()
-             })
-         }
-         
-      console.log(this.props.route)
-    }
+    //  componentWillMount() {
+    //      if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
+    //          this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
+    //      } else {
+    //          Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
+    //              console.log(customer);
+    //              this.setState({name: customer.name, phoneNumber: customer.phonenumber});
+    //              this.loadAppointments()
+    //          })
+    //      }
+    //   console.log(this.props.route)
+    // }
     
     onBackHandler = ()=>{
       console.log("just had onBackHandler called from Profile")
@@ -122,11 +148,19 @@ class Profile extends React.Component {
         //const { fullName, phoneNumber } = this.props.route.params;
         const fullName = this.state.name;
         const phoneNumber = this.state.phoneNumber;
-        
+        console.log("this person's phoneNumber var is storing", phoneNumber)
+        var extractedNumber = phoneNumber.match(/\d/g);
+        extractedNumber = extractedNumber.join("");
+        var testnum = "5555648583"; // 5555648583 // 8885555512 
+        console.log("length of extracted number is", extractedNumber.length, "length of testnum is", testnum.length)
+        console.log("extracted number is", extractedNumber, "testnum is", testnum);
         const references = await firebase.firestore().collection('Appointments')
-          .where("customerPhoneNumber", '==', phoneNumber.replace(/\D/g,''))
+          .where("customerPhoneNumber", '==', testnum)
           .orderBy('timestamp', 'desc').get();
-        
+
+          
+        console.log("got XXX many references:", references.size)
+        console.log("For customer named: ", fullName)
         var appointmentsToAdd = []
         references.forEach(document => {
             let data = document.data();
