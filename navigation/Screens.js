@@ -18,8 +18,11 @@ import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
 import EditServices from "../screens/EditServices";
 import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
+import CreateCustomer from "../screens/Onboarding/CreateCustomer";
 import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
+import Customer from "../models/Customer";
+import BarberShop from "../models/BarberShop";
 
 // drawer
 import CustomDrawerContent from "./Menu";
@@ -357,11 +360,29 @@ export default function AppStack(props) { // if this causes an error, try expo s
   
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
+  const [isBarber, setIsBarber] = useState(false);
 
   function onAuthStateChanged(user) {
     setUser(user);
-    if(initializing)
-      setInitializing(false);
+      Customer.loadFromID(user.uid).then( customer => {
+          if (customer != null) {
+              changeTypeOfAccount(false);
+              if(initializing)
+                setInitializing(false);
+          }
+      })
+      BarberShop.loadFromID(user.uid).then( barber => {
+          if (barber != null) {
+              changeTypeOfAccount(true);
+              if(initializing)
+                setInitializing(false);
+          }
+      })
+    
+  }
+    
+  function changeTypeOfAccount(isBarber) {
+      setIsBarber(isBarber);
   }
   function getTabBarVisibility(route){
     const routeName = getFocusedRouteNameFromRoute(route)
@@ -378,7 +399,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
   if(initializing){
     return null
   }
-  if(user){
+  if(user && isBarber){
     return (
       <Tab.Navigator>
         <Tab.Screen name="Home" component={ElementsStack} options ={{
@@ -415,8 +436,34 @@ export default function AppStack(props) { // if this causes an error, try expo s
           ), }}/>
       </Tab.Navigator>
     )
-  }
-  else {
+  } else if (user && !isBarber) {
+      return (
+              
+      <Tab.Navigator>
+          <Tab.Screen name="Home" component={ElementsStack} options ={{
+            tabBarLabel: "Recent Cuts",
+            tabBarIcon: ({ focused, color, size }) => (
+              <Icon
+              name="cut"
+              family="Ionicon"
+              size= {size}
+              color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+            />
+            ),
+          }} />
+        <Tab.Screen name="Profile" component={Profile} options ={{
+          tabBarLabel: "Profile",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon
+            name="store"
+            family="MaterialIcons"
+            size= {size}
+            color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
+          />
+          ), }}/>
+      </Tab.Navigator>
+              )
+  } else {
     return (
       <Stack.Navigator mode="card" headerMode="screen" screenOptions={{
         headerShown: false
@@ -439,6 +486,22 @@ export default function AppStack(props) { // if this causes an error, try expo s
             headerShown: false
           }}
         />
+            <Stack.Screen
+              name="CreateCustomer"
+              component={CreateCustomer}
+              options={{
+                header: ({ navigation, scene }) => (
+                  <Header
+                    title=""
+                    back
+                    black
+                    transparent
+                    navigation={navigation}
+                    scene={scene}
+                  />
+                ),
+              }}
+            />
         <Stack.Screen
           name="CreateBarbershop"
           component={CreateBarbershop}

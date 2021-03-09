@@ -102,33 +102,45 @@ class FrontCamera extends PureComponent {
             this.camera = ref;
           }}
         >
-          <View style={styles.icons}>
-            <TouchableOpacity
-              style={styles.buttoncontinue}
-              onPress={this.toggleFlash}
-            >
-              <Icon
-                size={25}
-                color={"white"}
-                name={this.getFlashIcon()}
-                family="MaterialIcons"
-              />
-            </TouchableOpacity>
+        
+        <View style={styles.screen}>
+          <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+              <View style={styles.icons}>
+                <TouchableOpacity
+                  style={styles.buttoncontinue}
+                  onPress={this.toggleFlash}
+                >
+                  <Icon
+                    size={25}
+                    color={"white"}
+                    name={this.getFlashIcon()}
+                    family="MaterialIcons"
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.boxtitle}>
+                <Text style={styles.titletext}> Front Camera </Text>
+              </View>
           </View>
-          <View style={styles.boxtitle}>
-            <Text style={styles.titletext}> Front Camera </Text>
+              
+              <View style={{flex: 4}}/>
+
+      
+          <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}} >
+
+              <View style={[styles.bottomView]}>
+                <TouchableOpacity
+                    hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
+                    onPressIn={this.handlePressIn}
+                    onPressOut = {this.handlePressOut}
+                    onPress={this.takePicture}
+                >
+                     <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
+                </TouchableOpacity>
+              </View>
+                  
           </View>
-          
-          <View style={[styles.bottomView]}>
-            <TouchableOpacity
-                hitSlop={{top: 50, bottom: 50, left: 50, right: 50}}
-                onPressIn={this.handlePressIn}
-                onPressOut = {this.handlePressOut}
-                onPress={this.takePicture}
-            >
-                 <View style={[styles.embeddedBottomView, {backgroundColor: this.state.pressedIn ? 'white' : 'white' }]}/>
-            </TouchableOpacity>
-          </View>
+        </View>
         </Camera>
       );
     } else {
@@ -138,6 +150,12 @@ class FrontCamera extends PureComponent {
             source={{ uri: this.state.image.uri }}
             style={styles.backgroundImage}
           >
+              <View style={styles.screen}>
+              <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}/>
+              <View style={{flex: 4}}/>
+              <View style={{flex: 2, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+
+              
             <View style={styles.bottomViewLeft}>
             <Button style={{ backgroundColor: 'transparent' }} onPress={this.retake}>
             <Block column center>
@@ -167,6 +185,9 @@ class FrontCamera extends PureComponent {
             </Block>
             </Button>
             </View>
+              
+              </View>
+              </View>
           </ImageBackground>
         </View>
       );
@@ -176,10 +197,8 @@ class FrontCamera extends PureComponent {
 
 const styles = StyleSheet.create({
   screen: {
-    flex: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#CDECFF",
+    flex: 1,
+    flexDirection: 'column'
   },
   titletext: {
     fontSize: 26,
@@ -191,26 +210,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    top: "8%",
+    top: "30%",
+    width: "100%"
   },
   icons: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    top: "25%",
+    top: "70%",
     right: "10%",
   },
   bottomView: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
+    left: "40%",
     width: 70,
     height: 70,
     borderRadius: 35,
     borderWidth: 5,
     borderColor: '#FFF',
     marginBottom: 15,
-    bottom: "10%"
+    bottom: "20%"
   },
   embeddedBottomView: {
     justifyContent: "center",
@@ -226,9 +249,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    width: "40%",
+    width: "50%",
     height: "15%",
-    bottom: "5%",
+    bottom: "50%",
   },
   bottomViewLeft: {
     backgroundColor: "transparent",
@@ -237,7 +260,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "30%",
     height: "15%",
-    bottom: "5%",
+    bottom: "50%",
     left: "5%",
   },
   bottomViewRight: {
@@ -247,7 +270,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "30%",
     height: "15%",
-    bottom: "5%",
+    bottom: "50%",
     left: "65%",
   },
   container: {

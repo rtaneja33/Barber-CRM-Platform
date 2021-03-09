@@ -8,12 +8,12 @@ export default class AppointmentPhoto {
     photoURL = ""
     
     setAndUpdateImage(imageURI) {
-        
+
         const imageRef = firebase.storage().ref('AppointmentPhotos').child(this.uid);
-        
+
         fetch(imageURI).then(response => {
             response.blob().then( blob => {
-                imageRef.put(blob).then(() => {  
+                imageRef.put(blob).then(() => {
                     imageRef.getDownloadURL().then((url) => {
                         this.photoURL = url
                         this.update()

@@ -94,7 +94,7 @@ class CustomCamera extends PureComponent {
 
                         </View>
                         <View style={styles.boxtitle}>
-                    <Text style={styles.titletext}> {route.params.title} </Text>
+                            <Text style={styles.titletext}> {route.params.title} </Text>
                         </View>
                         <View style={styles.bottomView}>
                             <TouchableOpacity style={styles.buttoncontinue} onPress={ this.takePicture } >
@@ -129,10 +129,7 @@ class CustomCamera extends PureComponent {
 
 const styles = StyleSheet.create({
 screen: {
-    flex: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#CDECFF',
+    flex: 1
 },
 titletext: {
     fontSize: 26,
@@ -147,14 +144,10 @@ boxtitle: {
     top: '8%',
 },
 icons: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: '25%',
-    right: '10%'
+    backgroundColor: '#F300FF'
 },
 bottomView: {
-    backgroundColor: '#EE5407',
+    backgroundColor: '#F300FF',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
