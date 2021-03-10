@@ -363,22 +363,25 @@ export default function AppStack(props) { // if this causes an error, try expo s
   const [isBarber, setIsBarber] = useState(false);
 
   function onAuthStateChanged(user) {
-    setUser(user);
-      Customer.loadFromID(user.uid).then( customer => {
+      setUser(user);
+      if(user == null)
+        setInitializing(false);
+      else {
+        Customer.loadFromID(user.uid).then( customer => {
           if (customer != null) {
               changeTypeOfAccount(false);
               if(initializing)
                 setInitializing(false);
           }
-      })
-      BarberShop.loadFromID(user.uid).then( barber => {
-          if (barber != null) {
-              changeTypeOfAccount(true);
-              if(initializing)
-                setInitializing(false);
-          }
-      })
-    
+        })
+        BarberShop.loadFromID(user.uid).then( barber => {
+            if (barber != null) {
+                changeTypeOfAccount(true);
+                if(initializing)
+                  setInitializing(false);
+            }
+        })
+      }
   }
     
   function changeTypeOfAccount(isBarber) {
