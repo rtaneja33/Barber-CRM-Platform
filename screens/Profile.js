@@ -29,40 +29,39 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.99);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
 class Profile extends React.Component {
-  constructor(props) {
-    super(props);
-    // console.log(this.props.route.params.barberShop);
-    // this.state = {
-    //   appointments: [],
-    //   activeSlide: 0,
-    //   name: "",
-    //   phoneNumber: "",
-    // };
-    if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-      this.state = {
-        appointments: [],
-        activeSlide: 0,
-        name: this.props.route.params.fullName,
-        phoneNumber: this.props.route.params.phoneNumber,
-      };
-    } else {
-      Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-          console.log(customer);
-          this.state = {
+    constructor(props) {
+        super(props);
+        this.state = {
             appointments: [],
             activeSlide: 0,
-            name: customer.name,
-            phoneNumber: customer.phonenumber,
-          };
-          console.log("calling load appointments...")
-      })
-  }
-  this.loadAppointments()
+            name: "",
+            phoneNumber: "",
+        };
 
-  }
+        if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
+            this.setState({
+                appointments: [],
+                activeSlide: 0,
+                name: this.props.route.params.fullName,
+                phoneNumber: this.props.route.params.phoneNumber,
+            });
+        } else {
+            Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
+                console.log(customer);
+                this.setState({
+                    appointments: [],
+                    activeSlide: 0,
+                    name: customer.name,
+                    phoneNumber: customer.phonenumber,
+                });
+                console.log("calling load appointments...")
+                this.loadAppointments()
+            })
+        }
+    }
 
     
-      _renderItem ({item, index}) {
+    _renderItem ({item, index}) {
         return <ImageLoad
             style={styles.image}
             loadingStyle={{ size: 'small', color: argonTheme.COLORS.HEADER }}
