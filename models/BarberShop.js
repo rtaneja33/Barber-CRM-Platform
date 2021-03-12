@@ -77,7 +77,12 @@ export default class BarberShop {
     }
     
     deleteServiceItem(serviceCategory, serviceIndex) { 
-        this.services[serviceCategory].splice(serviceIndex, 1);
+        this.services.filter((obj, ind) => {
+            if (obj.serviceType === serviceCategory) {
+                console.log("DELETING obj", obj, "at index", ind)
+                obj.services.splice(serviceIndex, 1);
+            }
+          });
         // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
@@ -146,7 +151,10 @@ export default class BarberShop {
     }
 
     deleteServiceCategory(oldKey) { 
-        delete this.services[oldKey];
+        //delete this.services[oldKey];
+        this.services = this.services.filter((obj) => {
+            return obj.serviceType !== oldKey
+          });
         // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {

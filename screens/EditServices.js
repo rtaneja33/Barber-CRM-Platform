@@ -119,6 +119,7 @@ class EditServices extends React.Component {
       serviceName: nameOfService,
     };
     this.setState({ loading: true, changeMade: true });
+    console.log("adding service item");
     this.state.barberShop
       .addServiceItem(
         serviceCategory, 
@@ -134,6 +135,9 @@ class EditServices extends React.Component {
               console.log("pushing new service obj, obj.serviceType");
               obj.services.push(newServiceObj);
             }
+            else{
+              console.log("couldn't find service Category", serviceCategory)
+            }
           });
           const timer = setTimeout(() => {
             this.setState({ loading: false });
@@ -144,6 +148,7 @@ class EditServices extends React.Component {
               icon: "success",
             });
           }, 300);
+          console.log("this.state.services is", this.state.services);
         } else {
           const timer = setTimeout(() => {
             this.setState({ loading: false });
@@ -299,11 +304,14 @@ class EditServices extends React.Component {
       .deleteServiceCategory(oldCategory)
       .then((updated) => {
         if (updated) {
+          console.log("Before", this.state.services)
           this.setState((prevState) => ({
             services: prevState.services.filter((obj) => {
               return obj.serviceType !== oldCategory;
             }),
           }));
+          console.log("After", this.state.services)
+
         } else {
           throw new Error("COULD NOT DELETE CATEGORY");
         }
@@ -382,10 +390,6 @@ class EditServices extends React.Component {
         case "addServiceName":
           modalTitle = "Add Service";
           this.state.services.map((category) => {
-            console.log(
-              "ADD CATEGORY, serviceField keys are",
-              category.serviceType
-            );
             dropdownItems.push({
               label: category.serviceType,
               value: category.serviceType,
