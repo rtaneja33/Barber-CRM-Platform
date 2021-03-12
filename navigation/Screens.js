@@ -15,7 +15,7 @@ import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Elements from "../screens/Elements";
-import Articles from "../screens/Articles";
+import BarbershopPage from "../screens/BarbershopPage";
 import EditServices from "../screens/EditServices";
 import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
 import CreateCustomer from "../screens/Onboarding/CreateCustomer";
@@ -78,12 +78,12 @@ function ElementsStack(props) {
   );
 }
 
-function ArticlesStack(props) {
+function BarbershopPageStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
-        name="Articles"
-        component={Articles}
+        name="BarbershopPage"
+        component={BarbershopPage}
         options={{
           header: ({ navigation, scene }) => (
             <Header 
@@ -430,7 +430,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
             color={focused ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}
           />
           ), })}/>
-        <Tab.Screen name="Articles" component={ArticlesStack} options ={{
+        <Tab.Screen name="BarbershopPage" component={BarbershopPageStack} options ={{
           tabBarLabel: "My Shop",
           tabBarIcon: ({ focused, color, size }) => (
             <Icon

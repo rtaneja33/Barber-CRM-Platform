@@ -18,7 +18,7 @@ import CustomForm from "../components/CustomForm";
 import { ListItem } from 'react-native-elements';
 import Icon from "../components/Icon";
 import { firebase } from "../src/firebase/config";
-import { Accordian, renderSeparator } from "../components/";
+import { Accordian, renderSeparator } from "../components";
 import BarberShops from "../models/BarberShop";
 import { Block, Text, theme, Button as GaButton } from "galio-framework";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -37,7 +37,7 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
-const Articles = ({navigation}) => {
+const BarbershopPage = ({navigation}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [spinner, setSpinner] = React.useState(true);
   const [shopInformation, setShopInformation] = useState({});
@@ -56,13 +56,16 @@ const Articles = ({navigation}) => {
   const onBackHandler = (changeMade)=>{
     if(changeMade) { // change was made in editServices
       setSpinner(true);
-
+      console.log("CHANGE MADE")
       BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
         console.log("REFRESHED RO, SHOP INFO IS", shopInfo)
         setShopInformation(shopInfo);
         loadServices(shopInfo.services);
         setSpinner(false);
       }).catch((err) =>{setSpinner(false)});
+    }
+    else{
+      console.log("change NOT made")
     }
   }
   
@@ -89,7 +92,6 @@ const Articles = ({navigation}) => {
   }
 
   const loadServices = (servicesMap) => {
-    console.log("LOADING SERVICES in ARTICLES", servicesMap);
     var fromFirestore = []
     servicesMap.map((serviceList)=>{
       var customList = new ServiceList();
@@ -100,8 +102,10 @@ const Articles = ({navigation}) => {
       })
       customList.services = localServices
       fromFirestore.push(customList);
-      setServices(fromFirestore);
+      console.log("from Firestore obj in LOADSERVICES is", fromFirestore)
+      console.log("IN LOAD SERVICES, the new services are", services)
     })
+    setServices(fromFirestore);
     // var shopServices = [];
     // for (var serviceType in servicesMap) {
     //   var serviceList = new ServiceList(serviceType, []);
@@ -496,7 +500,7 @@ const Articles = ({navigation}) => {
             <Block flex style={styles.profileCard}>
               <Block row space="between">
                 <Text bold size={18} style={styles.title}>
-                  Portfolio
+                  Portfolio (Coming soon) 
                 </Text>
                 <Button
                   small
@@ -758,4 +762,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Articles;
+export default BarbershopPage;
