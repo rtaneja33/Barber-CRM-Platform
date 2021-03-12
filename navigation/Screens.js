@@ -389,9 +389,12 @@ export default function AppStack(props) { // if this causes an error, try expo s
   }
   function getTabBarVisibility(route){
     const routeName = getFocusedRouteNameFromRoute(route)
-    if(routeName === 'My Customers'){
+    console.log("NEW ROUTE NAME IS", routeName);
+    if(routeName === 'My Customers' || !routeName){
+      console.log("tab bar will be visible!");
       return true;
     }
+    console.log("tab bar will be hidden!");
     return false;
   }
 

@@ -31,33 +31,34 @@ const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 class Profile extends React.Component {
     constructor(props) {
         super(props);
+        this.loadAppointments()
         this.state = {
             appointments: [],
             activeSlide: 0,
-            name: "",
-            phoneNumber: "",
+            name: this.props.route.params.fullName,
+            phoneNumber: this.props.route.params.phoneNumber,
         };
+       
 
-        if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-            this.setState({
-                appointments: [],
-                activeSlide: 0,
-                name: this.props.route.params.fullName,
-                phoneNumber: this.props.route.params.phoneNumber,
-            });
-        } else {
-            Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-                console.log(customer);
-                this.setState({
-                    appointments: [],
-                    activeSlide: 0,
-                    name: customer.name,
-                    phoneNumber: customer.phonenumber,
-                });
-                console.log("calling load appointments...")
-                this.loadAppointments()
-            })
-        }
+        // if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
+        //     this.setState({
+        //         appointments: [],
+        //         activeSlide: 0,
+        //         name: this.props.route.params.fullName,
+        //         phoneNumber: this.props.route.params.phoneNumber,
+        //     });
+        // } else {
+        //     Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
+        //         console.log(customer);
+        //         this.setState({
+        //             appointments: [],
+        //             activeSlide: 0,
+        //             name: customer.name,
+        //             phoneNumber: customer.phonenumber,
+        //         });
+        //         console.log("calling load appointments...")
+        //     })
+        // }
     }
 
     
@@ -145,14 +146,17 @@ class Profile extends React.Component {
 
     async loadAppointments() {
         //const { fullName, phoneNumber } = this.props.route.params;
-        const fullName = this.state.name;
-        const phoneNumber = this.state.phoneNumber;
+        const {fullName, phoneNumber} = this.props.route.params ;
+        console.log("load appoinmtnets recieved fullname and phone num of", fullName, phoneNumber)
+        // fullName = this.state.name;
+        // const phoneNumber = this.props.route.params.phoneNumber;
         var extractedNumber = phoneNumber.match(/\d/g);
         extractedNumber = extractedNumber.join("");
         const references = await firebase.firestore().collection('Appointments')
           .where("customerPhoneNumber", '==', extractedNumber)
           .orderBy('timestamp', 'desc').get();
         var appointmentsToAdd = []
+        console.log("has this many appointments", references.size)
         references.forEach(document => {
             let data = document.data();
             console.log(data);
@@ -240,7 +244,7 @@ class Profile extends React.Component {
       
     const fullName = this.state.name;
     const phoneNumber = this.state.phoneNumber;
-      
+    console.log("full name and phone are", fullName, phoneNumber)
     const { navigation } = this.props;
     console.log("PHONE NUMBER IS", phoneNumber)
     console.log("IN RENDER PROFILE, full name is", fullName);
