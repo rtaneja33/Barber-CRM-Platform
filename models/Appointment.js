@@ -9,6 +9,7 @@ export default class Appointment {
     appointmentSidePhotoUID = ""
     appointmentRearPhotoUID = ""
     notes = ""
+    shopName = ""
     timestamp = ""
 
     serviceProvided = []
@@ -27,6 +28,7 @@ export default class Appointment {
         return new Promise(resolve => {
             appointmentRef.update({
                 barberUID: this.barberUID,
+                shopName: this.shopName, 
                 customerPhoneNumber: this.customerPhoneNumber,
                 appointmentFrontPhotoUID: this.appointmentFrontPhotoUID,
                 appointmentSidePhotoUID: this.appointmentSidePhotoUID,
@@ -48,6 +50,7 @@ export default class Appointment {
             if (fromID == "") {
                 firebase.firestore().collection('Appointments').add({
                     barberUID: appointment.barberUID,
+                    shopName: appointment.shopName, 
                     customerPhoneNumber: appointment.customerPhoneNumber,
                     appointmentFrontPhotoUID: appointment.appointmentFrontPhotoUID,
                     appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
@@ -64,6 +67,7 @@ export default class Appointment {
             } else {
                 firebase.firestore().collection('Appointments').doc(fromID).set({
                     barberUID: appointment.barberUID,
+                    shopName: appointment.shopName, 
                     customerPhoneNumber: appointment.customerPhoneNumber,
                     appointmentFrontPhotoUID: appointment.appointmentFrontPhotoUID,
                     appointmentSidePhotoUID: appointment.appointmentSidePhotoUID,
@@ -89,6 +93,7 @@ export default class Appointment {
                     let data = documentSnapshot.data();
                     appointment.uid = documentSnapshot.documentID
                     appointment.barberUID = data["barberUID"]
+                    appointment.shopName = data["shopName"]
                     appointment.customerPhoneNumber = data["customerPhoneNumber"]
                     appointment.appointmentFrontPhotoUID = data["appointmentFrontPhotoUID"]
                     appointment.appointmentSidePhotoUID = data["appointmentSidePhotoUID"]
