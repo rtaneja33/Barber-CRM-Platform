@@ -122,6 +122,7 @@ const SaveNotes = ({navigation, route}) => {
         
         Appointment.createNew().then( (appointment) => {
             appointment.barberUID = apt.barberUID
+            appointment.shopName = apt.shopName
             appointment.serviceProvided = apt.serviceProvided
             appointment.customerPhoneNumber = apt.customerPhoneNumber;
             appointment.timestamp = firebase.firestore.Timestamp.fromDate(new Date());

@@ -50,6 +50,7 @@ class FrontCamera extends PureComponent {
     // this.setState({ pickedImageFront: this.state.image });
     let apt = new Appointment();
     apt.barberUID = firebase.auth().currentUser.uid;
+    // REPLACE ABOVE WITH THE INDIVIDUAL BARBER UID, not the shop -> should be done by Emerson 
     apt.appointmentFrontPhotoUID = this.state.image.uri;
     apt.customerPhoneNumber = route.params.phoneNumber;
     console.log("apt isssss", apt);

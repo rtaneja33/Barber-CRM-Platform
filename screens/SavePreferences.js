@@ -158,6 +158,7 @@ const SavePreferences = ({navigation, route}) => {
         let apt = route.params.apt;
         const backHandler = route.params.backHandler
         apt.barberUID = firebase.auth().currentUser.uid;
+        apt.shopName = shopInformation.shopName;
         apt.serviceProvided = saveServices()
         // apt.appointmentFrontPhotoUID = frontImage;
         // apt.appointmentSidePhotoUID = sideImage;
