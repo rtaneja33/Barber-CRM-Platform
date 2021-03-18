@@ -37,7 +37,7 @@ import {
 class EditServices extends React.Component {
   constructor(props) {
     super(props);
-    // console.log(this.props.route.params.barberShop);
+    // //console.log(this.props.route.params.barberShop);
     this.state = {
       serviceField: null,
       modalVisible: false,
@@ -47,22 +47,26 @@ class EditServices extends React.Component {
       services: this.props.route.params.services,
       changeMade: false,
     };
+    console.log("---------- constructor -----");
+      console.log("this.state.barbershop is", this.state.barberShop);
+      console.log("this.state.services is", this.state.services);
   }
 
   addServiceCategory = (result) => {
+    console.log("---------- add service cat -----");
     this.setState({ loading: true, changeMade: true });
     var newServiceCategory = new ServiceList();
     newServiceCategory.serviceType = result;
     newServiceCategory.services = [];
-    console.log("newservcat", newServiceCategory)
-    const newCat = Object.assign({}, newServiceCategory)
-    console.log("NEWCAT ISSS", newCat)
+    const newCat = { serviceType: result, services: [] }
     this.state.barberShop
       .addServiceCategory(newCat)
       .then((updated) => {
         if (updated) {
-          var updatedServices = this.state.services.concat(newServiceCategory);
+          var currentServices = [...this.state.services]
+          var updatedServices = currentServices.concat(newServiceCategory);
           this.setState({ services: updatedServices });
+          console.log("updatedServices are", updatedServices, "and services are", this.state.services);
           setTimeout(() => {
             this.setState({ loading: false });
             this.closeModal();
@@ -72,6 +76,9 @@ class EditServices extends React.Component {
               icon: "success",
             });
           }, 300);
+          
+            console.log("this.state.barbershop is", this.state.barberShop);
+            console.log("this.state.services is", this.state.services);
         } else {
           setTimeout(() => {
             this.setState({ loading: false });
@@ -83,13 +90,13 @@ class EditServices extends React.Component {
             });
           }, 300);
           //throw new Error("COULD NOT UPDATE");
-          console.log("error occured with adding service category");
+          //console.log("error occured with adding service category");
         }
       })
       .catch((err) => {
         this.setState({ loading: false });
-        console.log("edit services", err);
-        console.log("An error occurred with updating");
+        //console.log("edit services", err);
+        //console.log("An error occurred with updating");
       });
   };
 
@@ -118,8 +125,7 @@ class EditServices extends React.Component {
       price: price,
       serviceName: nameOfService,
     };
-    this.setState({ loading: true, changeMade: true });
-    console.log("adding service item");
+    
     this.state.barberShop
       .addServiceItem(
         serviceCategory, 
@@ -127,18 +133,20 @@ class EditServices extends React.Component {
       )
       .then((updated) => {
         if (updated) {
-          let newServiceObj = new Service(nameOfService, price);
-          this.setState({ loading: true, changeMade: true });
-          var tempArr = this.state.services;
+          //console.log("this.state.services is NOW, after bshop", this.state.services, this.state.barberShop)
+          let newService = new Service(nameOfService, price);
+          var tempArr = [...this.state.services];
+          //console.log("tempArr is", tempArr)
           tempArr.map((obj) => {
             if (obj.serviceType === serviceCategory) {
-              console.log("pushing new service obj, obj.serviceType");
-              obj.services.push(newServiceObj);
+              //console.log("pushing new service obj, obj.serviceType");
+              obj.services.push(newService);
             }
             else{
-              console.log("couldn't find service Category", serviceCategory)
+              //console.log("couldn't find service Category", serviceCategory)
             }
           });
+          this.setState({ services: tempArr, loading: true, changeMade: true })
           const timer = setTimeout(() => {
             this.setState({ loading: false });
             this.closeModal();
@@ -148,7 +156,7 @@ class EditServices extends React.Component {
               icon: "success",
             });
           }, 300);
-          console.log("this.state.services is", this.state.services);
+          //console.log("this.state.services is", this.state.services);
         } else {
           const timer = setTimeout(() => {
             this.setState({ loading: false });
@@ -164,7 +172,7 @@ class EditServices extends React.Component {
       })
       .catch((err) => {
         this.setState({ loading: false });
-        console.log("An error occurred with adding", err);
+        //console.log("An error occurred with adding", err);
       });
   };
 
@@ -176,7 +184,7 @@ class EditServices extends React.Component {
 
   renderAccordions = (services) => {
     const items = [];
-    console.log("in render accordions, services passed in is", services)
+    //console.log("in render accordions, services passed in is", services)
     services.map((item) => {
       items.push(
         <Accordian
@@ -200,7 +208,7 @@ class EditServices extends React.Component {
   };
 
   setServiceModified = (oldKey) => {
-    console.log("SET SERVICE MODIFIED, PASSED IN ", oldKey);
+    //console.log("SET SERVICE MODIFIED, PASSED IN ", oldKey);
     this.setState({ serviceModified: oldKey });
   };
 
@@ -216,7 +224,7 @@ class EditServices extends React.Component {
   deleteServiceItem = () => {
     this.setState({ loading: true, changeMade: true });
     let serviceLocation = { ...this.state.serviceModified };
-    console.log("serviceLocation is", serviceLocation);
+    //console.log("serviceLocation is", serviceLocation);
     this.state.barberShop
       .deleteServiceItem(
         serviceLocation.serviceCategory,
@@ -245,17 +253,12 @@ class EditServices extends React.Component {
       })
       .catch((err) => {
         this.setState({ loading: false });
-        console.log("An error occurred with deleting service item", err);
+        //console.log("An error occurred with deleting service item", err);
       });
   };
 
   updateServiceItem = (price, nameOfService) => {
-    console.log(
-      "for service item, new price is",
-      price,
-      "and new service is",
-      nameOfService
-    );
+    
     let serviceLocation = { ...this.state.serviceModified };
     // let newServiceObj = new Service(nameOfService, price);
     let newServiceObj = {
@@ -263,7 +266,7 @@ class EditServices extends React.Component {
       serviceName: nameOfService,
     };
     this.setState({ loading: true, changeMade: true });
-    console.log("this.state.barberShop is", this.state.barberShop)
+    //console.log("this.state.barberShop is", this.state.barberShop)
     this.state.barberShop
       .updateServiceItem(
         serviceLocation.serviceCategory,
@@ -293,7 +296,7 @@ class EditServices extends React.Component {
       })
       .catch((err) => {
         this.setState({ loading: false });
-        console.log("An error occurred with updating", err);
+        //console.log("An error occurred with updating", err);
       });
   };
 
@@ -304,13 +307,13 @@ class EditServices extends React.Component {
       .deleteServiceCategory(oldCategory)
       .then((updated) => {
         if (updated) {
-          console.log("Before", this.state.services)
+          //console.log("Before", this.state.services)
           this.setState((prevState) => ({
             services: prevState.services.filter((obj) => {
               return obj.serviceType !== oldCategory;
             }),
           }));
-          console.log("After", this.state.services)
+          //console.log("After", this.state.services)
 
         } else {
           throw new Error("COULD NOT DELETE CATEGORY");
@@ -327,8 +330,8 @@ class EditServices extends React.Component {
       })
       .catch((err) => {
         this.setState({ loading: false });
-        console.log("edit services", err);
-        console.log("An error occurred with deleting");
+        //console.log("edit services", err);
+        //console.log("An error occurred with deleting");
       });
   };
 
@@ -364,8 +367,8 @@ class EditServices extends React.Component {
       })
       .catch((err) => {
         this.setState({ loading: false });
-        console.log("edit services", err);
-        console.log("An error occurred with updating");
+        //console.log("edit services", err);
+        //console.log("An error occurred with updating");
       });
   };
 
@@ -470,19 +473,21 @@ class EditServices extends React.Component {
                             this.addServiceCategory(result["addServiceType"]);
                             break;
                           case "serviceName":
-                            console.log("this.state currently is", this.state)
-                            console.log("result of action is", result)
+                            //console.log("this.state currently is", this.state)
+                            //console.log("result of action is", result)
                             this.updateServiceItem(
                               result["price"],
                               result["serviceName"]
                             );
                             break;
                           case "addServiceName":
+                            //console.log("before calling addServiceName, this.state.services is", this.state.services);
                             this.addServiceName(
                               result["addServicePrice"],
                               result["addServiceName"],
                               serviceCategory
                             );
+                            break;
                           default:
                             this.updateServiceItem(
                               result["price"],

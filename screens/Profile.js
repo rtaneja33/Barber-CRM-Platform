@@ -204,7 +204,7 @@ class Profile extends React.Component {
     //console.log("returning...", preferences);
     return preferences;
   };
-
+  
   renderAppointments = () => {
     const { navigation } = this.props;
 
