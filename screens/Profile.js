@@ -494,7 +494,9 @@ const styles = StyleSheet.create({
     width: width,
     height: height / 2,
   },
-
+  background: {
+    flex: 1, 
+  },
   info: {
     paddingHorizontal: 40,
     marginTop: 15,
