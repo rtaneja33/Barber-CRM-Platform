@@ -17,7 +17,6 @@ const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
 
-// import firebase from "react-native-firebase";
 
 class AddBarbers extends React.Component {
   constructor(props) {
