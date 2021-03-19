@@ -14,10 +14,8 @@ import CustomServicesForm from './CustomServicesForm'
 import SubmitFormButton from './SubmitFormButton';
 import OnboardingForm from './OnboardingForm';
 import OnboardingField from './OnboardingField';
-import AppointmentCards from './AppointmentCards';
 export {
   Accordian,
-  AppointmentCards,
   Button,
   Card,
   CustomCamera,

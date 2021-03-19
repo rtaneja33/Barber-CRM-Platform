@@ -7,7 +7,6 @@ import Icon from './Icon';
 import Input from './Input';
 import Tabs from './Tabs';
 import argonTheme from '../constants/Theme';
-import { firebase } from "../src/firebase/config"
 
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
@@ -16,7 +15,7 @@ const PlusButton = ({isWhite, style, navigation}) => (
   <TouchableOpacity style={[styles.button, style]} onPress={() => console.log("Add Customer?")}>
     <Icon
       family="AntDesign"
-      size={20}
+      size={16}
       name="pluscircleo"
       color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
     />
@@ -24,22 +23,11 @@ const PlusButton = ({isWhite, style, navigation}) => (
   </TouchableOpacity>
 );
 
-const LogoutButton = ({isWhite, style, navigation, onLogout}) => (
-  <TouchableOpacity style={[styles.logout, style]} onPress={() => onLogout()}>
-    <Icon
-      family="MaterialIcons"
-      size={22}
-      name="logout"
-      color={argonTheme.COLORS['BARBERRED']}
-    />
-  </TouchableOpacity>
-);
-
 const PlusButtonService = ({isWhite, style, navigation}) => (
   <TouchableOpacity style={[styles.button, style]}>
     <Icon
       family="AntDesign"
-      size={22}
+      size={16}
       name="pluscircleo"
       color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
     />
@@ -74,16 +62,6 @@ class Header extends React.Component {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
   }
-
-  signOutUser = async () => {
-    try {
-        await firebase.auth().signOut();
-        // navigate('SignedOut');
-    } catch (e) {
-      console.log("error logging out: ", e);
-    }
-  }
-
   renderRight = () => {
     const { white, title, navigation } = this.props;
 
@@ -100,7 +78,7 @@ class Header extends React.Component {
         ]);
       case 'My Shop':
         return ([
-          <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
+          <PlusButtonService key='plus-home' navigation={navigation} isWhite={white}/>
         ]);
       default:
         break;
@@ -190,15 +168,15 @@ class Header extends React.Component {
           transparent={transparent}
           right={this.renderRight()}
           rightStyle={{ alignItems: 'center' }}
-          // left={
-          //   <Icon 
-          //     name={back ? 'chevron-left' : "menu"} family="entypo" 
-          //     size={20} onPress={this.handleLeftPress} 
-          //     color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
-          //     style={{ marginTop: 2 }}
-          //   />
+          left={
+            <Icon 
+              name={back ? 'chevron-left' : "menu"} family="entypo" 
+              size={20} onPress={this.handleLeftPress} 
+              color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
+              style={{ marginTop: 2 }}
+            />
               
-          // }
+          }
           leftStyle={{ paddingVertical: 12 }}
           titleStyle={[
             styles.title,
@@ -215,12 +193,8 @@ class Header extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
-    position: 'relative',
     padding: 12,
-  },
-  logout: {
-    position: 'absolute',
-    right: 5,
+    position: 'relative',
   },
   title: {
     width: '100%',
@@ -248,7 +222,7 @@ const styles = StyleSheet.create({
     height: theme.SIZES.BASE / 2,
     width: theme.SIZES.BASE / 2,
     position: 'absolute',
-    top: 11,
+    top: 9,
     right: 12,
   },
   header: {

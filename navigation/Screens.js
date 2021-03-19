@@ -38,24 +38,40 @@ import SaveNotes from '../screens/SaveNotes';
 import FrontCamera from '../components/AppointmentPhotos/FrontCamera';
 import SideCamera from '../components/AppointmentPhotos/SideCamera';
 import RearCamera from '../components/AppointmentPhotos/RearCamera';
-import RecentCuts from "../screens/RecentCuts";
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
-function RecentCutsStack(props) {
+function ElementsStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
-        name="Recent Cuts"
-        component={RecentCuts}
+        name="Elements"
+        component={Elements}
         options={{
           header: ({ navigation, scene }) => (
-            <Header title="Recent Cuts" navigation={navigation} scene={scene} />
+            <Header title="Elements" navigation={navigation} scene={scene} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" }
+        }}
+      />
+            <Stack.Screen
+        name="Pro"
+        component={Pro}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title=""
+              back
+              white
+              transparent
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          headerTransparent: true
         }}
       />
     </Stack.Navigator>
@@ -392,7 +408,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
   if(user && isBarber){
     return (
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={RecentCutsStack} options ={{
+        <Tab.Screen name="Home" component={ElementsStack} options ={{
           tabBarLabel: "Recent Cuts",
           tabBarIcon: ({ focused, color, size }) => (
             <Icon
@@ -430,7 +446,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
       return (
               
       <Tab.Navigator>
-          <Tab.Screen name="Home" component={RecentCutsStack} options ={{
+          <Tab.Screen name="Home" component={ElementsStack} options ={{
             tabBarLabel: "Recent Cuts",
             tabBarIcon: ({ focused, color, size }) => (
               <Icon

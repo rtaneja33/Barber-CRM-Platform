@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react';
 import { Camera } from 'expo-camera';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { View, StyleSheet } from 'react-native';
 import {Text} from 'galio-framework';
 
