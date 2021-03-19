@@ -216,9 +216,6 @@ class AddServices extends React.Component {
         break;
       }
     }
-    // tempArr.map((obj) => {
-      
-    // });
     const timer = setTimeout(() => {
       this.setState({ loading: false });
       this.closeModal();

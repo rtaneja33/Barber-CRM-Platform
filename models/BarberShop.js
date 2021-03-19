@@ -117,9 +117,7 @@ export default class BarberShop {
         })
     }
     addServiceItem(serviceCategory, serviceItem) {
-        // console.log("ADDSERVICECATEGORY",newServiceCategory);
-        // let newCategory = Object.assign({}, newServiceCategory)
-        this.services.map((obj)=>{
+        this.services.map((obj, ind)=>{
             if(obj.serviceType === serviceCategory){
                 obj.services.push(serviceItem);
             }
@@ -136,8 +134,6 @@ export default class BarberShop {
     }
 
     addServiceCategory(newServiceCategory) {
-        console.log("ADDSERVICECATEGORY",newServiceCategory);
-        let newCategory = Object.assign({}, newServiceCategory)
         this.services.push(newServiceCategory);
         return new Promise((resolve, reject) => {
             this.update().then(success => {
