@@ -8,13 +8,13 @@ import { Button, Select, Icon, Input, Header, Switch } from "../components/";
 import { firebase } from "../src/firebase/config"
 const { width } = Dimensions.get("screen");
 import { useContext } from 'react';
-import { BarberContext } from '../App';
+// import { BarberContext } from '../App';
 import { AppointmentCards } from "../components";
 
 
 class RecentCuts extends React.Component {
 
-    static contextType = BarberContext;
+    // static contextType = BarberContext;
 
     constructor(props) {
         super(props);
@@ -27,13 +27,10 @@ class RecentCuts extends React.Component {
     }
 
     componentDidMount() {
-
-        const user =this.context;
-        this.getReferences(user.uid)
-        // this.setState({barberShop: user})
-        console.log("recent cuts context is",user);
+        this.getReferences(firebase.auth().currentUser.uid)
     }
     getReferences = async (shopID) => {
+        console.log("get references shop id is", shopID);
         const references = await firebase
           .firestore()
           .collection("Appointments")
@@ -58,10 +55,9 @@ class RecentCuts extends React.Component {
                 />
                 : <></>
               }
-              <BarberContext.Consumer>
+              {/* <BarberContext.Consumer>
                 {value => <Text>{value.address}</Text>}
-                </BarberContext.Consumer>
-            
+                </BarberContext.Consumer> */}
             </Block>
           {/* {this.renderButtons()}
           {this.renderText()}

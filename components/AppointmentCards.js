@@ -34,15 +34,38 @@ class AppointmentCards extends React.Component{
         this.state = {
             appointments: [],
             activeSlide: 0,
+            references: this.props.references,
         }
     }
-    componentDidMount(){
-        this.loadAppointments(this.props.references).then((response)=>{console.log(response); console.log("this.state.apts ", this.state.appointments)});
-        
+
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+      // Are we adding new items to the list?
+      // Capture the scroll position so we can adjust scroll later.
+      console.log("prev props", prevProps.references.size, "current props", this.props.references.size);
+      if(this.props.references.size > prevProps.references.size){
+        this.loadAppointments(this.props.references);
+      }
+      return null;
     }
 
-    async loadAppointments(references) { //this.props.references
+    // static getDerivedStateFromProps(nextProps, prevState){
+    //   console.log("in derived state", nextProps.references.size, prevState.references.size)
+    //   if(prevState.references.size < nextProps.references.size ){
+    //     console.log("YES IT WORKED")
+    //     this.loadAppointments(nextProps.references).then((response)=>{console.log(response); });
+
+    //   }
+    //   //onsole.log("DERIVED STATE", state, "PROPS DERIVED", props)
+    // }
+
+
+    componentDidMount(){
+        this.loadAppointments(this.state.references).then((response)=>{console.log(response); });
+    }
+
+    async loadAppointments(references) { //this.state.references
         //const { fullName, phoneNumber } = this.props.route.params;
+        console.log("CALLED loadAppointments")
         var appointmentsToAdd = [];
         console.log("has this many appointments", references.size);
         references.forEach((document) => {
@@ -53,7 +76,7 @@ class AppointmentCards extends React.Component{
             this.saveSidePhotoUrl(data),
             this.saveRearPhotoUrl(data),
           ]).then((responses) => {
-            console.log("pushing updated data....");
+            console.log("UPDATING APPOINTMNET STATE....");
             appointmentsToAdd.push(data);
             this.setState({
               appointments: appointmentsToAdd,
@@ -82,7 +105,7 @@ class AppointmentCards extends React.Component{
           await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(
             (photo) => {
               const url = photo.photoURL;
-              console.log("side photo url is", url);
+              //console.log("side photo url is", url);
               data["sidePhotoURL"] = url;
             }
           );
@@ -94,14 +117,14 @@ class AppointmentCards extends React.Component{
           await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(
             (photo) => {
               const url = photo.photoURL;
-              console.log("rear photo url is", url);
+              //console.log("rear photo url is", url);
               data["rearPhotoURL"] = url;
             }
           );
         }
       };
       parsePreferences = (serviceReceived) => {
-        console.log("service received", serviceReceived);
+        //console.log("service received", serviceReceived);
         if (serviceReceived.length < 1) {
           return null;
         }

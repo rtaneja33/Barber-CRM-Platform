@@ -68,8 +68,7 @@ class Profile extends React.Component {
 
   onBackHandler = () => {
     console.log("just had onBackHandler called from Profile");
-    this.loadAppointments();
-    this.forceUpdate();
+    this.getReferencesBack()
   };
 
   get pagination() {
@@ -166,6 +165,7 @@ class Profile extends React.Component {
         this.setState({
           appointments: appointmentsToAdd,
         });
+        this.forceUpdate()
       });
     });
   }
@@ -185,6 +185,29 @@ class Profile extends React.Component {
     return preferences;
   };
   
+  getReferencesBack = async () => {
+    const { fullName, phoneNumber } = this.props.route.params;
+    console.log(
+      "load appoinmtnets recieved fullname and phone num of",
+      fullName,
+      phoneNumber
+    );
+    // fullName = this.state.name;
+    // const phoneNumber = this.props.route.params.phoneNumber;
+    var extractedNumber = phoneNumber.match(/\d/g);
+    extractedNumber = extractedNumber.join("");
+    const references = await firebase
+      .firestore()
+      .collection("Appointments")
+      .where("customerPhoneNumber", "==", extractedNumber)
+      .orderBy("timestamp", "desc")
+      .get();
+    this.setState({
+      references: references,
+      name: "ROHANT"
+    })
+  }
+
   getReferences = async () => {
     const { fullName, phoneNumber } = this.props.route.params;
     console.log(
