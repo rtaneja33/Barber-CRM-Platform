@@ -48,17 +48,6 @@ class AppointmentCards extends React.Component{
       return null;
     }
 
-    // static getDerivedStateFromProps(nextProps, prevState){
-    //   console.log("in derived state", nextProps.references.size, prevState.references.size)
-    //   if(prevState.references.size < nextProps.references.size ){
-    //     console.log("YES IT WORKED")
-    //     this.loadAppointments(nextProps.references).then((response)=>{console.log(response); });
-
-    //   }
-    //   //onsole.log("DERIVED STATE", state, "PROPS DERIVED", props)
-    // }
-
-
     componentDidMount(){
         this.loadAppointments(this.state.references).then((response)=>{console.log(response); });
     }
