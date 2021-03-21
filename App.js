@@ -11,23 +11,23 @@ import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
 import BarberShops from '../barber-crm-app/models/BarberShop';
 
-// export const BarberContext = React.createContext();
+export const BarberContext = React.createContext({});
 
 export default function App() {
-  // const [barberContext, setBarberContext] = useState({})
-  // const getLoggedInBarbershop = async () => {
-  //     // get User data
-  //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
-  //     setBarberContext(barber);
-  //     console.log("barber is", barber);
-  //   })
-  // }
-  // useEffect(() => {
-  //   getLoggedInBarbershop()
-  // }, [])
+  const [barberContext, setBarberContext] = useState({})
+  const getLoggedInBarbershop = async () => {
+      // get User data
+    await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
+      setBarberContext(barber);
+    })
+    console.log("barber context isss", barberContext)
+  }
+  useEffect(() => {
+    getLoggedInBarbershop()
+  }, [])
 
   return ( // signed in
-    // <BarberContext.Provider value={barberContext}>
+    <BarberContext.Provider value={barberContext}>
       <SafeAreaProvider>
           <NavigationContainer>
                 <GalioProvider theme={argonTheme}>
@@ -37,7 +37,7 @@ export default function App() {
                 </GalioProvider>
           </NavigationContainer>
           </SafeAreaProvider>
-    // </BarberContext.Provider>
+    </BarberContext.Provider>
    
   )
 }

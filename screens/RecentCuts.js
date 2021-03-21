@@ -7,15 +7,16 @@ import { argonTheme, tabs } from "../constants/";
 import { Button, Select, Icon, Input, Header, Switch } from "../components/";
 import { firebase } from "../src/firebase/config"
 const { width } = Dimensions.get("screen");
-// import { useContext } from 'react';
+import { useContext } from 'react';
+import { BarberContext } from '../App';
+import { AppointmentCards } from "../components";
 
 
 class RecentCuts extends React.Component {
 
+
     constructor(props) {
         super(props);
-        const bContext = this.context;
-        console.log("CONTEXT ISSSS", bContext)
         // this.loadAppointments();
         this.state = {
             references: null,
@@ -23,14 +24,12 @@ class RecentCuts extends React.Component {
         this.getReferences();
     }
 
-    
-
     getReferences = async () => {
 
         const references = await firebase
           .firestore()
           .collection("Appointments")
-          .where("customerPhoneNumber", "==", extractedNumber)
+          .where("customerPhoneNumber", "==", "7037951312")
           .orderBy("timestamp", "desc")
           .get();
         this.setState({
@@ -50,6 +49,9 @@ class RecentCuts extends React.Component {
                 />
                 : <></>
               }
+              <BarberContext.Consumer>
+                {value => <Text>{value.address}</Text>}
+                </BarberContext.Consumer>
             </Block>
           {/* {this.renderButtons()}
           {this.renderText()}

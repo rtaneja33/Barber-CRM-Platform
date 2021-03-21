@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Easing, Animated, Dimensions, TextInput, Button } from "react-native";
 
 import { createStackNavigator, HeaderBackButton } from "@react-navigation/stack";
@@ -23,6 +23,7 @@ import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
 import Customer from "../models/Customer";
 import BarberShop from "../models/BarberShop";
+
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -31,7 +32,6 @@ import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import { useEffect } from "react";
 import AddBarbers from '../screens/Onboarding/AddBarbers';
-import { FalsyText } from '@ui-kitten/components/devsupport';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import SaveNotes from '../screens/SaveNotes';
 import FrontCamera from '../components/AppointmentPhotos/FrontCamera';
@@ -345,7 +345,6 @@ export default function AppStack(props) { // if this causes an error, try expo s
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [isBarber, setIsBarber] = useState(false);
-  const [barberContext, setBarberContext] = useState({})
   // const getLoggedInBarbershop = async () => {
   //     // get User data
   //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
@@ -353,6 +352,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
   //     console.log("barber is", barber);
   //   })
   // }
+  // const val = useContext(BarberContext);
 
   function onAuthStateChanged(user) {
 
@@ -371,12 +371,9 @@ export default function AppStack(props) { // if this causes an error, try expo s
         // getLoggedInBarbershop();
         BarberShop.loadFromID(user.uid).then( barber => {
             if (barber != null) {
-                setBarberContext(barber);
                 changeTypeOfAccount(true);
                 if(initializing)
                   setInitializing(false);
-                myBarberShop = barber;
-                console.log("barber context is now," , barberContext);
 
             }
         })
