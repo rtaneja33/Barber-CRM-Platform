@@ -190,15 +190,15 @@ class Header extends React.Component {
           transparent={transparent}
           right={this.renderRight()}
           rightStyle={{ alignItems: 'center' }}
-          // left={
-          //   <Icon 
-          //     name={back ? 'chevron-left' : "menu"} family="entypo" 
-          //     size={20} onPress={this.handleLeftPress} 
-          //     color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
-          //     style={{ marginTop: 2 }}
-          //   />
+          left={
+            <Icon 
+              name={back ? 'chevron-left' : "menu"} family="entypo" 
+              size={20} onPress={this.handleLeftPress} 
+              color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
+              style={{ marginTop: 2 }}
+            />
               
-          // }
+          }
           leftStyle={{ paddingVertical: 12 }}
           titleStyle={[
             styles.title,

@@ -7,14 +7,50 @@ import { argonTheme, tabs } from "../constants/";
 import { Button, Select, Icon, Input, Header, Switch } from "../components/";
 import { firebase } from "../src/firebase/config"
 const { width } = Dimensions.get("screen");
+// import { useContext } from 'react';
 
-class Elements extends React.Component {
+
+class RecentCuts extends React.Component {
+
+    constructor(props) {
+        super(props);
+        const bContext = this.context;
+        console.log("CONTEXT ISSSS", bContext)
+        // this.loadAppointments();
+        this.state = {
+            references: null,
+        };
+        this.getReferences();
+    }
+
+    
+
+    getReferences = async () => {
+
+        const references = await firebase
+          .firestore()
+          .collection("Appointments")
+          .where("customerPhoneNumber", "==", extractedNumber)
+          .orderBy("timestamp", "desc")
+          .get();
+        this.setState({
+          references: references
+        })
+    }
 
   render() {
     return (
       <Block flex center>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, width }}>
-            
+            <Block>
+              {
+                this.state.references ? 
+                <AppointmentCards 
+                  references={this.state.references}
+                />
+                : <></>
+              }
+            </Block>
           {/* {this.renderButtons()}
           {this.renderText()}
           {this.renderInputs()}
@@ -84,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Elements;
+export default RecentCuts;

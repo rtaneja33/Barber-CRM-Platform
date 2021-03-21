@@ -42,26 +42,6 @@ class Profile extends React.Component {
       phoneNumber: this.props.route.params.phoneNumber,
     };
     this.getReferences();
-
-    // if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-    //     this.setState({
-    //         appointments: [],
-    //         activeSlide: 0,
-    //         name: this.props.route.params.fullName,
-    //         phoneNumber: this.props.route.params.phoneNumber,
-    //     });
-    // } else {
-    //     Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-    //         console.log(customer);
-    //         this.setState({
-    //             appointments: [],
-    //             activeSlide: 0,
-    //             name: customer.name,
-    //             phoneNumber: customer.phonenumber,
-    //         });
-    //         console.log("calling load appointments...")
-    //     })
-    // }
   }
 
   _renderItem({ item, index }) {
@@ -481,13 +461,13 @@ class Profile extends React.Component {
               </Text>
             </Block>
             <Block>
-              {/* {
+              {
                 this.state.references ? 
                 <AppointmentCards 
                   references={this.state.references}
                 />
                 : <></>
-              } */}
+              }
             </Block>
             {/* <Block flex={1}>{this.renderAppointments()}</Block> */}
           </ScrollView>

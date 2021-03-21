@@ -23,7 +23,6 @@ import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
 import Customer from "../models/Customer";
 import BarberShop from "../models/BarberShop";
-
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -140,6 +139,7 @@ function HomeStack(props) {
             <Header
               title=""
               back
+              iconColor = {argonTheme.COLORS.HEADER}
               white
               transparent
               navigation={navigation}
@@ -345,8 +345,18 @@ export default function AppStack(props) { // if this causes an error, try expo s
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [isBarber, setIsBarber] = useState(false);
+  const [barberContext, setBarberContext] = useState({})
+  // const getLoggedInBarbershop = async () => {
+  //     // get User data
+  //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
+  //     setBarberContext(barber);
+  //     console.log("barber is", barber);
+  //   })
+  // }
 
   function onAuthStateChanged(user) {
+
+      
       setUser(user);
       if(user == null)
         setInitializing(false);
@@ -358,11 +368,16 @@ export default function AppStack(props) { // if this causes an error, try expo s
                 setInitializing(false);
           }
         })
+        // getLoggedInBarbershop();
         BarberShop.loadFromID(user.uid).then( barber => {
             if (barber != null) {
+                setBarberContext(barber);
                 changeTypeOfAccount(true);
                 if(initializing)
                   setInitializing(false);
+                myBarberShop = barber;
+                console.log("barber context is now," , barberContext);
+
             }
         })
       }

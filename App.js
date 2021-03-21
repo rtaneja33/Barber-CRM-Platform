@@ -9,19 +9,36 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 enableScreens();
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
+import BarberShops from '../barber-crm-app/models/BarberShop';
 
+// export const BarberContext = React.createContext();
 
 export default function App() {
+  // const [barberContext, setBarberContext] = useState({})
+  // const getLoggedInBarbershop = async () => {
+  //     // get User data
+  //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
+  //     setBarberContext(barber);
+  //     console.log("barber is", barber);
+  //   })
+  // }
+  // useEffect(() => {
+  //   getLoggedInBarbershop()
+  // }, [])
+
   return ( // signed in
-    <SafeAreaProvider>
-    <NavigationContainer>
-          <GalioProvider theme={argonTheme}>
-            <Block flex>
-              <Screens />
-            </Block>
-          </GalioProvider>
-    </NavigationContainer>
-    </SafeAreaProvider>
+    // <BarberContext.Provider value={barberContext}>
+      <SafeAreaProvider>
+          <NavigationContainer>
+                <GalioProvider theme={argonTheme}>
+                  <Block flex>
+                    <Screens />
+                  </Block>
+                </GalioProvider>
+          </NavigationContainer>
+          </SafeAreaProvider>
+    // </BarberContext.Provider>
+   
   )
 }
 
