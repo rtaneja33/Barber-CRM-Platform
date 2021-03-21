@@ -481,13 +481,13 @@ class Profile extends React.Component {
               </Text>
             </Block>
             <Block>
-              {
+              {/* {
                 this.state.references ? 
                 <AppointmentCards 
                   references={this.state.references}
                 />
                 : <></>
-              }
+              } */}
             </Block>
             {/* <Block flex={1}>{this.renderAppointments()}</Block> */}
           </ScrollView>
