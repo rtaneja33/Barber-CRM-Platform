@@ -22,9 +22,23 @@ export default function App() {
     })
     console.log("barber context isss", barberContext)
   }
+  function onAuthStateChanged(user) {
+    if(user !== null){
+      // getLoggedInBarbershop();
+      console.log("app js firebase state changed! user is", user);
+      BarberShops.loadFromID(user.uid).then( barberObj => {
+          if (barberObj != null) {
+              setBarberContext(barberObj)
+          }
+      })
+    }
+  }
+
   useEffect(() => {
-    getLoggedInBarbershop()
-  }, [])
+    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    console.log("App js firebase user is", firebase.auth().currentUser)
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
   return ( // signed in
     <BarberContext.Provider value={barberContext}>

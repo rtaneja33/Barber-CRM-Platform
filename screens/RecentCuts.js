@@ -14,22 +14,30 @@ import { AppointmentCards } from "../components";
 
 class RecentCuts extends React.Component {
 
+    static contextType = BarberContext;
 
     constructor(props) {
         super(props);
         // this.loadAppointments();
         this.state = {
             references: null,
+            // barberShop: null,
         };
-        this.getReferences();
+       // this.getReferences();
     }
 
-    getReferences = async () => {
+    componentDidMount() {
 
+        const user =this.context;
+        this.getReferences(user.uid)
+        // this.setState({barberShop: user})
+        console.log("recent cuts context is",user);
+    }
+    getReferences = async (shopID) => {
         const references = await firebase
           .firestore()
           .collection("Appointments")
-          .where("customerPhoneNumber", "==", "7037951312")
+          .where("barberUID", "==", shopID )
           .orderBy("timestamp", "desc")
           .get();
         this.setState({
@@ -46,12 +54,14 @@ class RecentCuts extends React.Component {
                 this.state.references ? 
                 <AppointmentCards 
                   references={this.state.references}
+                  barberFacing
                 />
                 : <></>
               }
               <BarberContext.Consumer>
                 {value => <Text>{value.address}</Text>}
                 </BarberContext.Consumer>
+            
             </Block>
           {/* {this.renderButtons()}
           {this.renderText()}

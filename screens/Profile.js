@@ -414,6 +414,7 @@ class Profile extends React.Component {
                   onPress={() =>
                     navigation.navigate("FrontCamera", {
                       phoneNumber: phoneNumber,
+                      customerFullName: fullName,
                       backHandler: this.onBackHandler.bind(this),
                     })
                   }

@@ -53,6 +53,8 @@ class FrontCamera extends PureComponent {
     // REPLACE ABOVE WITH THE INDIVIDUAL BARBER UID, not the shop -> should be done by Emerson 
     apt.appointmentFrontPhotoUID = this.state.image.uri;
     apt.customerPhoneNumber = route.params.phoneNumber;
+    apt.customerFullName = route.params.customerFullName;
+    
     console.log("apt isssss", apt);
     navigation.navigate("SideCamera", { apt: apt, backHandler: backHandler });
   };

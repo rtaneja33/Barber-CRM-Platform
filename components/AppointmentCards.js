@@ -37,7 +37,6 @@ class AppointmentCards extends React.Component{
         }
     }
     componentDidMount(){
-      console.log("PRINT FUCKING SOMETHING")
         this.loadAppointments(this.props.references).then((response)=>{console.log(response); console.log("this.state.apts ", this.state.appointments)});
         
     }
@@ -166,10 +165,32 @@ class AppointmentCards extends React.Component{
             pageLength += 1;
           }
           const options = { year: "numeric", month: "long", day: "numeric" };
+          let dateString = item.timestamp.toDate().toLocaleDateString("en-US", options) 
+          if(!this.props.barberFacing){
+            const dateDetail = " @ " + item.shopName;
+            dateString += dateDetail
+          }
           return (
             <View style={[styles.profileCard, { minHeight: 70 }]}>
               <Block row center shadow space="between" key="test">
                 <Block flex>
+                  {
+                    this.props.barberFacing ? 
+                    <Text
+                      style={{
+                        color: argonTheme.COLORS.HEADER,
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        alignSelf: "stretch",
+                        marginLeft: 5,
+                      }}
+                      size={BASE_SIZE*1.2}
+                      muted
+                    >
+                      {item.customerFullName}
+                    </Text> : 
+                    <></>
+                  }
                   <Text
                     style={{
                       color: argonTheme.COLORS.MUTED,
@@ -180,8 +201,7 @@ class AppointmentCards extends React.Component{
                     size={BASE_SIZE * 0.8}
                     muted
                   >
-                    {item.timestamp.toDate().toLocaleDateString("en-US", options)} @{" "}
-                    {item.shopName}
+                    { dateString }
                   </Text>
                   <View style={{ marginTop: 10 }}>
                     <Carousel

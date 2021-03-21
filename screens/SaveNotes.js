@@ -125,14 +125,12 @@ const SaveNotes = ({navigation, route}) => {
             appointment.shopName = apt.shopName
             appointment.serviceProvided = apt.serviceProvided
             appointment.customerPhoneNumber = apt.customerPhoneNumber;
+            appointment.customerFullName = apt.customerFullName;
             appointment.timestamp = firebase.firestore.Timestamp.fromDate(new Date());
             Promise.all([ saveFrontPhoto(frontImageURI, appointment), saveSidePhoto(sideImageURI, appointment), saveRearPhoto(readImageURI, appointment) ])
                 .then((responses)=>{
-                    console.log("responses are", responses);
-                    console.log("appointment is", appointment);
                     appointment.notes = text // notes
                     appointment.update().then(success => {
-                        console.log("success??", success)
                         setSpinner(false);
                         navigation.pop(5);
                     }).catch((err)=> {
