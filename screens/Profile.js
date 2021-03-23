@@ -14,18 +14,16 @@ import { Button } from "../components";
 import { Images, argonTheme } from "../constants";
 import Icon from "../components/Icon";
 import { HeaderHeight } from "../constants/utils";
-import { TouchableHighlight } from "react-native-gesture-handler";
 import { firebase } from "../src/firebase/config";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { FlatGrid } from "react-native-super-grid";
 import AppointmentPhoto from "../models/AppointmentPhoto";
-import Customer from "../models/Customer";
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { AppointmentCards } from "../components";
 const BASE_SIZE = theme.SIZES.BASE;
 const { width, height } = Dimensions.get("screen");
-import * as ImageManipulator from "expo-image-manipulator";
 import ImageLoad from "react-native-image-placeholder";
+
 const thumbMeasure = (width - 48 - 32) / 3;
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.99);
@@ -35,33 +33,15 @@ const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 3) / 4);
 class Profile extends React.Component {
   constructor(props) {
     super(props);
-    this.loadAppointments();
+    // this.loadAppointments();
     this.state = {
       appointments: [],
       activeSlide: 0,
+      references: null,
       name: this.props.route.params.fullName,
       phoneNumber: this.props.route.params.phoneNumber,
     };
-
-    // if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-    //     this.setState({
-    //         appointments: [],
-    //         activeSlide: 0,
-    //         name: this.props.route.params.fullName,
-    //         phoneNumber: this.props.route.params.phoneNumber,
-    //     });
-    // } else {
-    //     Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-    //         console.log(customer);
-    //         this.setState({
-    //             appointments: [],
-    //             activeSlide: 0,
-    //             name: customer.name,
-    //             phoneNumber: customer.phonenumber,
-    //         });
-    //         console.log("calling load appointments...")
-    //     })
-    // }
+    this.getReferences();
   }
 
   _renderItem({ item, index }) {
@@ -88,8 +68,7 @@ class Profile extends React.Component {
 
   onBackHandler = () => {
     console.log("just had onBackHandler called from Profile");
-    this.loadAppointments();
-    this.forceUpdate();
+    this.getReferences()
   };
 
   get pagination() {
@@ -186,6 +165,7 @@ class Profile extends React.Component {
         this.setState({
           appointments: appointmentsToAdd,
         });
+        this.forceUpdate()
       });
     });
   }
@@ -205,6 +185,51 @@ class Profile extends React.Component {
     return preferences;
   };
   
+  getReferencesWRONG = async () => {
+    const { fullName, phoneNumber } = this.props.route.params;
+    console.log(
+      "load appoinmtnets recieved fullname and phone num of",
+      fullName,
+      phoneNumber
+    );
+    // fullName = this.state.name;
+    // const phoneNumber = this.props.route.params.phoneNumber;
+    var extractedNumber = phoneNumber.match(/\d/g);
+    extractedNumber = extractedNumber.join("");
+    const references = await firebase
+      .firestore()
+      .collection("Appointments")
+      .where("customerPhoneNumber", "==", extractedNumber)
+      .orderBy("timestamp", "desc")
+      .get();
+    this.setState({
+      references: references,
+      name: "ROHANT"
+    })
+  }
+
+  getReferences = async () => {
+    const { fullName, phoneNumber } = this.props.route.params;
+    console.log(
+      "load appoinmtnets recieved fullname and phone num of",
+      fullName,
+      phoneNumber
+    );
+    // fullName = this.state.name;
+    // const phoneNumber = this.props.route.params.phoneNumber;
+    var extractedNumber = phoneNumber.match(/\d/g);
+    extractedNumber = extractedNumber.join("");
+    const references = await firebase
+      .firestore()
+      .collection("Appointments")
+      .where("customerPhoneNumber", "==", extractedNumber)
+      .orderBy("timestamp", "desc")
+      .get();
+    this.setState({
+      references: references
+    })
+  }
+
   renderAppointments = () => {
     const { navigation } = this.props;
 
@@ -357,7 +382,7 @@ class Profile extends React.Component {
     return (
       <Block flex style={styles.profile}>
         <Block flex>
-            <LinearGradient
+          <LinearGradient
             // Background Linear Gradient
             colors={['rgba(255,255,255,1)','rgba(97,181,255,.6)']}
             //colors={['rgba(97,181,255,1)', 'rgba(82,95,127,1)']}
@@ -412,6 +437,7 @@ class Profile extends React.Component {
                   onPress={() =>
                     navigation.navigate("FrontCamera", {
                       phoneNumber: phoneNumber,
+                      customerFullName: fullName,
                       backHandler: this.onBackHandler.bind(this),
                     })
                   }
@@ -458,7 +484,16 @@ class Profile extends React.Component {
                 Appointments
               </Text>
             </Block>
-            <Block flex={1}>{this.renderAppointments()}</Block>
+            <Block>
+              {
+                this.state.references ? 
+                <AppointmentCards 
+                  references={this.state.references}
+                />
+                : <></>
+              }
+            </Block>
+            {/* <Block flex={1}>{this.renderAppointments()}</Block> */}
           </ScrollView>
           </LinearGradient>
           {/* </ImageBackground> */}

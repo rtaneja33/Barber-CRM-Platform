@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Easing, Animated, Dimensions, TextInput, Button } from "react-native";
 
 import { createStackNavigator, HeaderBackButton } from "@react-navigation/stack";
@@ -32,46 +32,29 @@ import { Icon, Header } from "../components";
 import { argonTheme, tabs } from "../constants";
 import { useEffect } from "react";
 import AddBarbers from '../screens/Onboarding/AddBarbers';
-import { FalsyText } from '@ui-kitten/components/devsupport';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import SaveNotes from '../screens/SaveNotes';
 import FrontCamera from '../components/AppointmentPhotos/FrontCamera';
 import SideCamera from '../components/AppointmentPhotos/SideCamera';
 import RearCamera from '../components/AppointmentPhotos/RearCamera';
+import RecentCuts from "../screens/RecentCuts";
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
-function ElementsStack(props) {
+function RecentCutsStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
-        name="Elements"
-        component={Elements}
+        name="Recent Cuts"
+        component={RecentCuts}
         options={{
           header: ({ navigation, scene }) => (
-            <Header title="Elements" navigation={navigation} scene={scene} />
+            <Header title="Recent Cuts" navigation={navigation} scene={scene} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" }
-        }}
-      />
-            <Stack.Screen
-        name="Pro"
-        component={Pro}
-        options={{
-          header: ({ navigation, scene }) => (
-            <Header
-              title=""
-              back
-              white
-              transparent
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          headerTransparent: true
         }}
       />
     </Stack.Navigator>
@@ -156,6 +139,7 @@ function HomeStack(props) {
             <Header
               title=""
               back
+              iconColor = {argonTheme.COLORS.HEADER}
               white
               transparent
               navigation={navigation}
@@ -361,8 +345,18 @@ export default function AppStack(props) { // if this causes an error, try expo s
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [isBarber, setIsBarber] = useState(false);
+  // const getLoggedInBarbershop = async () => {
+  //     // get User data
+  //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
+  //     setBarberContext(barber);
+  //     console.log("barber is", barber);
+  //   })
+  // }
+  // const val = useContext(BarberContext);
 
   function onAuthStateChanged(user) {
+
+      
       setUser(user);
       if(user == null)
         setInitializing(false);
@@ -374,11 +368,13 @@ export default function AppStack(props) { // if this causes an error, try expo s
                 setInitializing(false);
           }
         })
+        // getLoggedInBarbershop();
         BarberShop.loadFromID(user.uid).then( barber => {
             if (barber != null) {
                 changeTypeOfAccount(true);
                 if(initializing)
                   setInitializing(false);
+
             }
         })
       }
@@ -408,7 +404,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
   if(user && isBarber){
     return (
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={ElementsStack} options ={{
+        <Tab.Screen name="Home" component={RecentCutsStack} options ={{
           tabBarLabel: "Recent Cuts",
           tabBarIcon: ({ focused, color, size }) => (
             <Icon
@@ -446,7 +442,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
       return (
               
       <Tab.Navigator>
-          <Tab.Screen name="Home" component={ElementsStack} options ={{
+          <Tab.Screen name="Home" component={RecentCutsStack} options ={{
             tabBarLabel: "Recent Cuts",
             tabBarIcon: ({ focused, color, size }) => (
               <Icon
