@@ -68,7 +68,7 @@ class Profile extends React.Component {
 
   onBackHandler = () => {
     console.log("just had onBackHandler called from Profile");
-    this.getReferencesBack()
+    this.getReferences()
   };
 
   get pagination() {
@@ -185,7 +185,7 @@ class Profile extends React.Component {
     return preferences;
   };
   
-  getReferencesBack = async () => {
+  getReferencesWRONG = async () => {
     const { fullName, phoneNumber } = this.props.route.params;
     console.log(
       "load appoinmtnets recieved fullname and phone num of",
