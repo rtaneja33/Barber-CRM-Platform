@@ -63,40 +63,44 @@ const SaveNotes = ({navigation, route}) => {
 
     const saveFrontPhoto = async (frontImageURI, appointment) => {
         if (frontImageURI != null) {
-            await AppointmentPhoto.createNew().then( (photo) => {
-                photo.setAndUpdateImage(frontImageURI)
+            await AppointmentPhoto.createNew().then( async (photo) => {
+                await photo.setAndUpdateImage(frontImageURI)
+                console.log("awaited front photo ", photo);
+
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update().then((tes)=>{
-                    console.log("IN SAVE FRONT PHOTO SAVE NOTES, photo is", photo);
-                    appointment.appointmentFrontPhotoUID = photo.uid
-                })
+                appointment.appointmentFrontPhotoUID = photo.uid
+                await photo.update()
+                console.log("IN SAVE FRONT PHOTO SAVE NOTES, photo is", photo);
+                    
+                
             })
         }
     }
 
     const saveSidePhoto = async (sideImageURI, appointment) => {
         if (sideImageURI != null) {
-            await AppointmentPhoto.createNew().then( (photo) => {
-                photo.setAndUpdateImage(sideImageURI)
+            await AppointmentPhoto.createNew().then( async (photo) => {
+                await photo.setAndUpdateImage(sideImageURI)
+                console.log("awaited side photo ", photo);
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update()
-                
                 appointment.appointmentSidePhotoUID = photo.uid
+                await photo.update()
             })
         }
     }
 
     const saveRearPhoto = async (readImageURI, appointment) => {
         if (readImageURI != null) {
-            await AppointmentPhoto.createNew().then( (photo) => {
-                photo.setAndUpdateImage(readImageURI)
+            await AppointmentPhoto.createNew().then( async (photo) => {
+                await photo.setAndUpdateImage(readImageURI)
+                console.log("awaited rear photo ", photo);
+
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update()
-                
                 appointment.appointmentRearPhotoUID = photo.uid
+                await photo.update()
             })
         }
     }
