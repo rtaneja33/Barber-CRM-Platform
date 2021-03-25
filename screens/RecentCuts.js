@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, Dimensions, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Dimensions, TouchableOpacity, View, RefreshControl } from "react-native";
 // Galio components
 import { Block, Text, Button as GaButton, theme } from "galio-framework";
 // Argon themed components
@@ -21,31 +21,71 @@ class RecentCuts extends React.Component {
         // this.loadAppointments();
         this.state = {
             references: null,
+            refreshing: false,
             // barberShop: null,
         };
        // this.getReferences();
     }
 
     componentDidMount() {
-        this.getReferences(firebase.auth().currentUser.uid)
+        this.getInitialReferences()
     }
-    getReferences = async (shopID) => {
-        console.log("get references shop id is", shopID);
+    getInitialReferences = async () => {
+      const shopID = firebase.auth().currentUser.uid
+      this.setState({refreshing: true})
+      // console.log("get references shop id is", shopID);
+      const references = await firebase
+        .firestore()
+        .collection("Appointments")
+        .where("barberUID", "==", shopID )
+        .orderBy("timestamp", "desc")
+        .limit(5)
+        .get();
+      this.setState({
+        references: references,
+        refreshing: false,
+      })
+    }
+
+    getReferencesOnRefresh = async () => {
+        const shopID = firebase.auth().currentUser.uid
+        this.setState({refreshing: true})
+        // console.log("get references shop id is", shopID);
         const references = await firebase
           .firestore()
           .collection("Appointments")
           .where("barberUID", "==", shopID )
           .orderBy("timestamp", "desc")
+          .limit(5)
           .get();
-        this.setState({
-          references: references
-        })
+        
+        if(references.size > this.state.references.length){
+          this.setState({
+            references: references,
+            refreshing: false,
+          })
+        }
+        else {
+          this.setState({
+            refreshing: false,
+          })
+        }
+        
     }
 
   render() {
     return (
       <Block flex center>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, width }}>
+        <ScrollView 
+          showsVerticalScrollIndicator={false} 
+          contentContainerStyle={{ paddingBottom: 30, width }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.getReferencesOnRefresh}
+            />
+          }
+        >
             <Block>
               {
                 this.state.references ?
