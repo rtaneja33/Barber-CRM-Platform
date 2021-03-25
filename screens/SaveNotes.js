@@ -43,7 +43,6 @@ const SaveNotes = ({navigation, route}) => {
         // console.log("appointment is", appointment);
         setSpinner(false);
         return () => {
-            console.log("in savenotes, route is", route);
             const backHandler = route.params.backHandler
             if (backHandler) {
                 console.log("calling backHandler from SaveNotes....");
@@ -65,17 +64,13 @@ const SaveNotes = ({navigation, route}) => {
     const saveFrontPhoto = async (frontImageURI, appointment) => {
         if (frontImageURI != null) {
             await AppointmentPhoto.createNew().then( (photo) => {
-                console.log("PHOTO IS", photo);
-                console.log("FRONT IMAGE URI", frontImageURI)
                 photo.setAndUpdateImage(frontImageURI)
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update()
-                
-                appointment.appointmentFrontPhotoUID = photo.uid
-                console.log("photo.uid is", photo.uid)
-                console.log("SETTING APPOINTMENT FRONT PHOTO to", appointment.appointmentFrontPhotoUID);
-                console.log("appointment is", appointment)
+                photo.update().then((tes)=>{
+                    console.log("IN SAVE FRONT PHOTO SAVE NOTES, photo is", photo);
+                    appointment.appointmentFrontPhotoUID = photo.uid
+                })
             })
         }
     }
@@ -89,8 +84,6 @@ const SaveNotes = ({navigation, route}) => {
                 photo.update()
                 
                 appointment.appointmentSidePhotoUID = photo.uid
-                console.log("SETTING APPOINTMENT SIDE PHOTO to", appointment.appointmentSidePhotoUID);
-                console.log("appointment is", appointment)
             })
         }
     }
@@ -104,8 +97,6 @@ const SaveNotes = ({navigation, route}) => {
                 photo.update()
                 
                 appointment.appointmentRearPhotoUID = photo.uid
-                console.log("SETTING APPOINTMENT REAR PHOTO to", appointment.appointmentRearPhotoUID);
-                console.log("appointment is", appointment)
             })
         }
     }

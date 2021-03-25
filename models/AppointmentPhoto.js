@@ -69,6 +69,7 @@ export default class AppointmentPhoto {
             firebase.firestore().collection('AppointmentPhotos').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
+                    console.log("IN PHOTO LOADFROMID, DOCUMENTSNAPSHOT.DATA IS", data);
                     appointmentPhoto.uid = documentSnapshot.documentID
                     appointmentPhoto.barberUID = data["barberUID"]
                     appointmentPhoto.appointmentUID = data["appointmentUID"]

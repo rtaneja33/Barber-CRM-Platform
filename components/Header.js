@@ -102,6 +102,10 @@ class Header extends React.Component {
         return ([
           <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
         ]);
+      case 'Recent Cuts':
+        return ([
+          <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
+        ]);
       default:
         break;
     }

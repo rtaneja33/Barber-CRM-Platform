@@ -1,12 +1,12 @@
 import React from "react";
-import { ScrollView, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Dimensions, TouchableOpacity, View } from "react-native";
 // Galio components
 import { Block, Text, Button as GaButton, theme } from "galio-framework";
 // Argon themed components
 import { argonTheme, tabs } from "../constants/";
 import { Button, Select, Icon, Input, Header, Switch } from "../components/";
 import { firebase } from "../src/firebase/config"
-const { width } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("screen");
 import { useContext } from 'react';
 // import { BarberContext } from '../App';
 import { AppointmentCards } from "../components";
@@ -48,11 +48,16 @@ class RecentCuts extends React.Component {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 30, width }}>
             <Block>
               {
-                this.state.references ? 
-                <AppointmentCards 
-                  references={this.state.references}
-                  barberFacing
-                />
+                this.state.references ?
+                (
+                    this.state.references.size > 0 ? 
+                    <AppointmentCards 
+                        references={this.state.references}
+                        barberFacing
+                        /> : 
+                    <Text center style={{marginTop: height*0.1, fontSize: 15, color: argonTheme.COLORS.HEADER, fontWeight: '500' }}>No appointments have been saved yet.</Text>
+                     
+                )
                 : <></>
               }
               {/* <BarberContext.Consumer>

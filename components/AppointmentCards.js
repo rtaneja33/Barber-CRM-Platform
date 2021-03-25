@@ -54,9 +54,9 @@ class AppointmentCards extends React.Component{
 
     async loadAppointments(references) { //this.state.references
         //const { fullName, phoneNumber } = this.props.route.params;
-        console.log("CALLED loadAppointments")
+        console.log("CALLED loadAppointments in appt cards")
         var appointmentsToAdd = [];
-        console.log("has this many appointments", references.size);
+        console.log("appointment cards - has this many appointments", references.size);
         references.forEach((document) => {
           let data = document.data();
           console.log(data);
@@ -79,8 +79,11 @@ class AppointmentCards extends React.Component{
 
     saveFrontPhotoUrl = async (data) => {
         if (data != null && data["appointmentFrontPhotoUID"] != "") {
+          console.log("calling saveSideXUrl with uid of ", data["appointmentFrontPhotoUID"]);
           await AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(
             (photo) => {
+              //console.log("photo returned in saveXXXPhotoURl", photo);
+
               const url = photo.photoURL;
               console.log("front photo url is", url);
               data["frontPhotoURL"] = url;
@@ -91,10 +94,13 @@ class AppointmentCards extends React.Component{
     
       saveSidePhotoUrl = async (data) => {
         if (data != null && data["appointmentSidePhotoUID"] != "") {
+          console.log("calling saveSideXUrl with uid of ", data["appointmentSidePhotoUID"]);
           await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(
             (photo) => {
+           //   console.log("photo returned in saveXXXPhotoURl", photo);
+
               const url = photo.photoURL;
-              //console.log("side photo url is", url);
+              console.log("side photo url is", url);
               data["sidePhotoURL"] = url;
             }
           );
@@ -103,10 +109,12 @@ class AppointmentCards extends React.Component{
     
       saveRearPhotoUrl = async (data) => {
         if (data != null && data["appointmentRearPhotoUID"] != "") {
+          console.log("calling saveSideXUrl with uid of ", data["appointmentRearPhotoUID"]);
           await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(
             (photo) => {
+          //    console.log("photo returned in saveXXXPhotoURl", photo);
               const url = photo.photoURL;
-              //console.log("rear photo url is", url);
+              console.log("rear photo url is", url);
               data["rearPhotoURL"] = url;
             }
           );
@@ -164,8 +172,6 @@ class AppointmentCards extends React.Component{
 
     renderItem = ({item}) => {
         const { navigation } = this.props;
-    
-        
           var pageLength = 0;
           if (item.frontPhotoURL != null && item.frontPhotoURL.length > 0) {
             pageLength += 1;
