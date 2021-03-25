@@ -65,12 +65,10 @@ const SaveNotes = ({navigation, route}) => {
         if (frontImageURI != null) {
             await AppointmentPhoto.createNew().then( async (photo) => {
                 await photo.setAndUpdateImage(frontImageURI)
-                console.log("awaited front photo ", photo);
-
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
                 appointment.appointmentFrontPhotoUID = photo.uid
-                await photo.update()
+                photo.update()
                 console.log("IN SAVE FRONT PHOTO SAVE NOTES, photo is", photo);
                     
                 
@@ -82,11 +80,10 @@ const SaveNotes = ({navigation, route}) => {
         if (sideImageURI != null) {
             await AppointmentPhoto.createNew().then( async (photo) => {
                 await photo.setAndUpdateImage(sideImageURI)
-                console.log("awaited side photo ", photo);
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
                 appointment.appointmentSidePhotoUID = photo.uid
-                await photo.update()
+                photo.update()
             })
         }
     }
@@ -95,12 +92,10 @@ const SaveNotes = ({navigation, route}) => {
         if (readImageURI != null) {
             await AppointmentPhoto.createNew().then( async (photo) => {
                 await photo.setAndUpdateImage(readImageURI)
-                console.log("awaited rear photo ", photo);
-
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
                 appointment.appointmentRearPhotoUID = photo.uid
-                await photo.update()
+                photo.update()
             })
         }
     }
@@ -179,7 +174,7 @@ const SaveNotes = ({navigation, route}) => {
         <Block flex style={styles.centeredView}>
         <Spinner
             visible={spinner}
-            textContent={"Loading..."}
+            textContent={"Saving Appointment..."}
             textStyle={styles.spinnerTextStyles}
         />
             <View style={styles.box}>
@@ -247,6 +242,9 @@ screen: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#CDECFF',
+},
+spinnerTextStyles: {
+    color: argonTheme.COLORS.HEADER,
 },
 subbox2: {
     flex:6,
