@@ -18,6 +18,7 @@ import { firebase } from "../src/firebase/config";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { FlatGrid } from "react-native-super-grid";
 import AppointmentPhoto from "../models/AppointmentPhoto";
+import Customer from "../models/Customer";
 import { LinearGradient } from 'expo-linear-gradient';
 import { AppointmentCards } from "../components";
 const BASE_SIZE = theme.SIZES.BASE;
@@ -38,8 +39,8 @@ class Profile extends React.Component {
       appointments: [],
       activeSlide: 0,
       references: null,
-      name: this.props.route.params.fullName,
-      phoneNumber: this.props.route.params.phoneNumber,
+      name: "",
+      phoneNumber: "",
     };
     this.getReferences();
   }
@@ -53,18 +54,18 @@ class Profile extends React.Component {
       />
     );
   }
-  //  componentWillMount() {
-  //      if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-  //          this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
-  //      } else {
-  //          Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-  //              console.log(customer);
-  //              this.setState({name: customer.name, phoneNumber: customer.phonenumber});
-  //              this.loadAppointments()
-  //          })
-  //      }
-  //   console.log(this.props.route)
-  // }
+    componentWillMount() {
+        if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
+            this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
+        } else {
+            Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
+                console.log(customer);
+                this.setState({name: customer.name, phoneNumber: customer.phonenumber});
+                this.loadAppointments()
+            })
+        }
+     console.log(this.props.route)
+   }
 
   onBackHandler = () => {
     console.log("just had onBackHandler called from Profile");

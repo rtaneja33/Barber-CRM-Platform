@@ -50,12 +50,14 @@ class CreateBarbershop extends React.Component {
               barberShop.email = shopEmail;
               barberShop.shopName = name;
               barberShop.address = address;
+              barberShop.updateLatLongFromAddress();
               // barberShop.update()
               return barberShop
                 .update()
                 .then((updated) => {
                   console.log("RESPONSE FROM UPDATE IS", updated);
                   resolve(updated);
+                    
                 })
                 .catch((err) => {
                   alert("error updating info", err);

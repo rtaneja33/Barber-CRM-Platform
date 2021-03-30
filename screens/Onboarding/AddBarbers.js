@@ -60,6 +60,8 @@ class AddBarbers extends React.Component {
               barberShop.services = this.toFirestore(this.state.barberShop.services); // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
               barberShop.shopName = this.state.barberShop.shopName;
               barberShop.address= this.state.barberShop.address;
+              barberShop.updateLatLongFromAddress();
+
               if(!isSkipped){
                 barberShop.baberIDs = this.state.barberShop.baberIDs;
               }

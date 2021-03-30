@@ -38,6 +38,7 @@ import FrontCamera from '../components/AppointmentPhotos/FrontCamera';
 import SideCamera from '../components/AppointmentPhotos/SideCamera';
 import RearCamera from '../components/AppointmentPhotos/RearCamera';
 import RecentCuts from "../screens/RecentCuts";
+import Explore from "../screens/Explore";
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -53,6 +54,23 @@ function RecentCutsStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header title="Recent Cuts" navigation={navigation} scene={scene} />
+          ),
+          cardStyle: { backgroundColor: "#F8F9FE" }
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function ExploreStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen
+        name="Explore"
+        component={Explore}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header title="Explore" navigation={navigation} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" }
         }}
@@ -442,8 +460,8 @@ export default function AppStack(props) { // if this causes an error, try expo s
       return (
               
       <Tab.Navigator>
-          <Tab.Screen name="Home" component={RecentCutsStack} options ={{
-            tabBarLabel: "Recent Cuts",
+          <Tab.Screen name="Home" component={ExploreStack} options ={{
+            tabBarLabel: "Explore",
             tabBarIcon: ({ focused, color, size }) => (
               <Icon
               name="cut"

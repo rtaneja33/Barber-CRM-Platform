@@ -103,7 +103,10 @@ class Header extends React.Component {
           <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
         ]);
       default:
-        break;
+        return ([
+          <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
+        ]);
+        //break;
     }
   }
   renderSearch = (val) => {
