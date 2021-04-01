@@ -103,10 +103,7 @@ class Header extends React.Component {
           <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
         ]);
       default:
-        return ([
-          <LogoutButton key='logout' navigation={navigation} onLogout={this.signOutUser.bind(this)}/>
-        ]);
-        //break;
+        break;
     }
   }
   renderSearch = (val) => {
@@ -193,14 +190,13 @@ class Header extends React.Component {
           transparent={transparent}
           right={this.renderRight()}
           rightStyle={{ alignItems: 'center' }}
-          left={
+          left={back &&
             <Icon 
-              name={back ? 'chevron-left' : "menu"} family="entypo" 
+              name={'chevron-left'} family="entypo" 
               size={20} onPress={this.handleLeftPress} 
               color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
               style={{ marginTop: 2 }}
             />
-              
           }
           leftStyle={{ paddingVertical: 12 }}
           titleStyle={[

@@ -75,6 +75,23 @@ function ExploreStack(props) {
           cardStyle: { backgroundColor: "#F8F9FE" }
         }}
       />
+      <Stack.Screen
+        name="BarbershopPage"
+        component={BarbershopPage}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title=""
+              transparent
+              navigation={navigation}
+              scene={scene}
+              back
+            />
+          ),
+
+          cardStyle: { backgroundColor: "#F8F9FE" }
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -460,7 +477,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
       return (
               
       <Tab.Navigator>
-          <Tab.Screen name="Home" component={ExploreStack} options ={{
+          <Tab.Screen name="Explore" component={ExploreStack} options ={{
             tabBarLabel: "Explore",
             tabBarIcon: ({ focused, color, size }) => (
               <Icon

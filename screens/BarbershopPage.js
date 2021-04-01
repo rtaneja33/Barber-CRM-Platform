@@ -37,20 +37,34 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
-const BarbershopPage = ({navigation}) => {
+const BarbershopPage = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [spinner, setSpinner] = React.useState(true);
+  const [isOwner, setIsOwner] = React.useState(false);
   const [shopInformation, setShopInformation] = useState({});
+
   useEffect(() => {
-    console.log("making api call");
     setSpinner(true);
 
-    BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
-      setShopInformation(shopInfo);
-      console.log("shop info is", shopInfo)
-      loadServices(shopInfo.services);
-      setSpinner(false);
-    }).catch((err)=>{setSpinner(false)});
+    if (route != null && route.params != null && route.params.shopID != null) {
+      setIsOwner(false);
+
+      BarberShops.loadFromID(route.params.shopID).then((shopInfo) => {
+        setShopInformation(shopInfo);
+        console.log("shop info is", shopInfo)
+        loadServices(shopInfo.services);
+        setSpinner(false);
+      }).catch((err)=>{setSpinner(false)});
+    } else {
+      setIsOwner(true);
+
+      BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+        setShopInformation(shopInfo);
+        console.log("shop info is", shopInfo)
+        loadServices(shopInfo.services);
+        setSpinner(false);
+      }).catch((err)=>{setSpinner(false)});
+    }
   }, [services]);
 
   const onBackHandler = (changeMade)=>{
@@ -385,12 +399,14 @@ const BarbershopPage = ({navigation}) => {
                     marginTop: 22,
                   }}
                 >
+                  { isOwner &&
                   <Icon
                     name="edit"
                     family="FontAwesome5"
                     size={25}
                     color={nowTheme.COLORS.DEFAULT}
                   />
+                  }
                 </TouchableOpacity>
               </Block>
               <Text
@@ -423,6 +439,7 @@ const BarbershopPage = ({navigation}) => {
                   marginTop: 22,
                 }}
               >
+                { isOwner &&
                 <Icon
                   name="edit"
                   family="FontAwesome5"
@@ -430,6 +447,7 @@ const BarbershopPage = ({navigation}) => {
                   onPress={() => {}}
                   color={nowTheme.COLORS.DEFAULT}
                 />
+                }
               </TouchableOpacity>
             </Block>
             {/* <Text bold size={18} style={styles.title}>
@@ -551,12 +569,14 @@ const BarbershopPage = ({navigation}) => {
                     marginTop: 22,
                   }}
                 >
+                  { isOwner &&
                   <Icon
                     name="edit"
                     family="FontAwesome5"
                     size={25}
                     color={nowTheme.COLORS.DEFAULT}
                   />
+                  }
                 </TouchableOpacity>
               </Block>
 
