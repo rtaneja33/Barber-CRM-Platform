@@ -41,7 +41,7 @@ class AppointmentCards extends React.Component{
     getSnapshotBeforeUpdate(prevProps, prevState) {
       // Are we adding new items to the list?
       // Capture the scroll position so we can adjust scroll later.
-      console.log("prev props", prevProps.references.size, "current props", this.props.references.size);
+      // console.log("prev props", prevProps.references.size, "current props", this.props.references.size);
       if(this.props.references.size > prevProps.references.size){
         this.loadAppointments(this.props.references);
       }
@@ -54,23 +54,23 @@ class AppointmentCards extends React.Component{
 
     async loadAppointments(references) { //this.state.references
         //const { fullName, phoneNumber } = this.props.route.params;
-        console.log("CALLED loadAppointments")
+        // console.log("CALLED loadAppointments in appt cards")
         var appointmentsToAdd = [];
-        console.log("has this many appointments", references.size);
+        // console.log("appointment cards - has this many appointments", references.size);
         references.forEach((document) => {
           let data = document.data();
-          console.log(data);
+          // console.log(data);
           Promise.all([
             this.saveFrontPhotoUrl(data),
             this.saveSidePhotoUrl(data),
             this.saveRearPhotoUrl(data),
           ]).then((responses) => {
-            console.log("UPDATING APPOINTMNET STATE....");
+            // console.log("UPDATING APPOINTMNET STATE....");
             appointmentsToAdd.push(data);
             this.setState({
               appointments: appointmentsToAdd,
             });
-            console.log("this.state.appointmentz", this.state.appointments)
+            // console.log("this.state.appointmentz", this.state.appointments)
           });
         });
       }
@@ -79,10 +79,13 @@ class AppointmentCards extends React.Component{
 
     saveFrontPhotoUrl = async (data) => {
         if (data != null && data["appointmentFrontPhotoUID"] != "") {
+          // console.log("calling saveSideXUrl with uid of ", data["appointmentFrontPhotoUID"]);
           await AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(
             (photo) => {
+              //// console.log("photo returned in saveXXXPhotoURl", photo);
+
               const url = photo.photoURL;
-              console.log("front photo url is", url);
+              // console.log("front photo url is", url);
               data["frontPhotoURL"] = url;
             }
           );
@@ -91,10 +94,13 @@ class AppointmentCards extends React.Component{
     
       saveSidePhotoUrl = async (data) => {
         if (data != null && data["appointmentSidePhotoUID"] != "") {
+          // console.log("calling saveSideXUrl with uid of ", data["appointmentSidePhotoUID"]);
           await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(
             (photo) => {
+           //   // console.log("photo returned in saveXXXPhotoURl", photo);
+
               const url = photo.photoURL;
-              //console.log("side photo url is", url);
+              // console.log("side photo url is", url);
               data["sidePhotoURL"] = url;
             }
           );
@@ -103,17 +109,19 @@ class AppointmentCards extends React.Component{
     
       saveRearPhotoUrl = async (data) => {
         if (data != null && data["appointmentRearPhotoUID"] != "") {
+          // console.log("calling saveSideXUrl with uid of ", data["appointmentRearPhotoUID"]);
           await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(
             (photo) => {
+          //    // console.log("photo returned in saveXXXPhotoURl", photo);
               const url = photo.photoURL;
-              //console.log("rear photo url is", url);
+              // console.log("rear photo url is", url);
               data["rearPhotoURL"] = url;
             }
           );
         }
       };
       parsePreferences = (serviceReceived) => {
-        //console.log("service received", serviceReceived);
+        //// console.log("service received", serviceReceived);
         if (serviceReceived.length < 1) {
           return null;
         }
@@ -123,7 +131,7 @@ class AppointmentCards extends React.Component{
             preferences.push({ name: arrayElem });
           });
         }
-        //console.log("returning...", preferences);
+        //// console.log("returning...", preferences);
         return preferences;
       };
 
@@ -164,8 +172,6 @@ class AppointmentCards extends React.Component{
 
     renderItem = ({item}) => {
         const { navigation } = this.props;
-    
-        
           var pageLength = 0;
           if (item.frontPhotoURL != null && item.frontPhotoURL.length > 0) {
             pageLength += 1;

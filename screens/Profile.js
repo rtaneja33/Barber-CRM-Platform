@@ -97,79 +97,6 @@ class Profile extends React.Component {
     );
   }
 
-  saveFrontPhotoUrl = async (data) => {
-    if (data != null && data["appointmentFrontPhotoUID"] != "") {
-      await AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(
-        (photo) => {
-          const url = photo.photoURL;
-          console.log("front photo url is", url);
-          data["frontPhotoURL"] = url;
-        }
-      );
-    }
-  };
-
-  saveSidePhotoUrl = async (data) => {
-    if (data != null && data["appointmentSidePhotoUID"] != "") {
-      await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(
-        (photo) => {
-          const url = photo.photoURL;
-          console.log("side photo url is", url);
-          data["sidePhotoURL"] = url;
-        }
-      );
-    }
-  };
-
-  saveRearPhotoUrl = async (data) => {
-    if (data != null && data["appointmentRearPhotoUID"] != "") {
-      await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(
-        (photo) => {
-          const url = photo.photoURL;
-          console.log("rear photo url is", url);
-          data["rearPhotoURL"] = url;
-        }
-      );
-    }
-  };
-
-  async loadAppointments() {
-    //const { fullName, phoneNumber } = this.props.route.params;
-    const { fullName, phoneNumber } = this.props.route.params;
-    console.log(
-      "load appoinmtnets recieved fullname and phone num of",
-      fullName,
-      phoneNumber
-    );
-    // fullName = this.state.name;
-    // const phoneNumber = this.props.route.params.phoneNumber;
-    var extractedNumber = phoneNumber.match(/\d/g);
-    extractedNumber = extractedNumber.join("");
-    const references = await firebase
-      .firestore()
-      .collection("Appointments")
-      .where("customerPhoneNumber", "==", extractedNumber)
-      .orderBy("timestamp", "desc")
-      .get();
-    var appointmentsToAdd = [];
-    console.log("has this many appointments", references.size);
-    references.forEach((document) => {
-      let data = document.data();
-      console.log(data);
-      Promise.all([
-        this.saveFrontPhotoUrl(data),
-        this.saveSidePhotoUrl(data),
-        this.saveRearPhotoUrl(data),
-      ]).then((responses) => {
-        console.log("pushing updated data....");
-        appointmentsToAdd.push(data);
-        this.setState({
-          appointments: appointmentsToAdd,
-        });
-        this.forceUpdate()
-      });
-    });
-  }
 
   parsePreferences = (serviceReceived) => {
     console.log("service received", serviceReceived);
@@ -186,28 +113,6 @@ class Profile extends React.Component {
     return preferences;
   };
   
-  getReferencesWRONG = async () => {
-    const { fullName, phoneNumber } = this.props.route.params;
-    console.log(
-      "load appoinmtnets recieved fullname and phone num of",
-      fullName,
-      phoneNumber
-    );
-    // fullName = this.state.name;
-    // const phoneNumber = this.props.route.params.phoneNumber;
-    var extractedNumber = phoneNumber.match(/\d/g);
-    extractedNumber = extractedNumber.join("");
-    const references = await firebase
-      .firestore()
-      .collection("Appointments")
-      .where("customerPhoneNumber", "==", extractedNumber)
-      .orderBy("timestamp", "desc")
-      .get();
-    this.setState({
-      references: references,
-      name: "ROHANT"
-    })
-  }
 
   getReferences = async () => {
     const { fullName, phoneNumber } = this.props.route.params;
