@@ -21,7 +21,7 @@ import { firebase } from "../src/firebase/config";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { FlatGrid } from "react-native-super-grid";
 import AppointmentPhoto from "../models/AppointmentPhoto";
-
+import AppointmentCard from "./AppointmentCard";
 const BASE_SIZE = theme.SIZES.BASE;
 import ImageLoad from "react-native-image-placeholder";
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -62,8 +62,8 @@ class AppointmentCards extends React.Component{
           // console.log(data);
           Promise.all([
             this.saveFrontPhotoUrl(data),
-            this.saveSidePhotoUrl(data),
-            this.saveRearPhotoUrl(data),
+            // this.saveSidePhotoUrl(data),
+            // this.saveRearPhotoUrl(data),
           ]).then((responses) => {
             // console.log("UPDATING APPOINTMNET STATE....");
             appointmentsToAdd.push(data);
@@ -171,150 +171,11 @@ class AppointmentCards extends React.Component{
     }
 
     renderItem = ({item}) => {
-        const { navigation } = this.props;
-          var pageLength = 0;
-          if (item.frontPhotoURL != null && item.frontPhotoURL.length > 0) {
-            pageLength += 1;
-          }
-          if (item.sidePhotoURL != null && item.sidePhotoURL.length > 0) {
-            pageLength += 1;
-          }
-          if (item.rearPhotoURL != null && item.rearPhotoURL.length > 0) {
-            pageLength += 1;
-          }
-          const options = { year: "numeric", month: "long", day: "numeric" };
-          let dateString = item.timestamp.toDate().toLocaleDateString("en-US", options) 
-          if(!this.props.barberFacing){
-            const dateDetail = " @ " + item.shopName;
-            dateString += dateDetail
-          }
-          return (
-            <View style={[styles.profileCard, { minHeight: 70 }]}>
-              <Block row center shadow space="between" key="test">
-                <Block flex>
-                  {
-                    this.props.barberFacing ? 
-                    <Text
-                      style={{
-                        color: argonTheme.COLORS.HEADER,
-                        fontWeight: "bold",
-                        textAlign: "left",
-                        alignSelf: "stretch",
-                        marginLeft: 5,
-                      }}
-                      size={BASE_SIZE*1.2}
-                      muted
-                    >
-                      {item.customerFullName}
-                    </Text> : 
-                    <></>
-                  }
-                  <Text
-                    style={{
-                      color: argonTheme.COLORS.MUTED,
-                      fontWeight: "bold",
-                      textAlign: "right",
-                      alignSelf: "stretch",
-                    }}
-                    size={BASE_SIZE * 0.8}
-                    muted
-                  >
-                    { dateString }
-                  </Text>
-                  <View style={{ marginTop: 10 }}>
-                    <Carousel
-                      data={[
-                        item.frontPhotoURL,
-                        item.sidePhotoURL,
-                        item.rearPhotoURL,
-                      ]}
-                      renderItem={this._renderItem}
-                      windowSize={1}
-                      sliderWidth={SLIDER_WIDTH}
-                      itemWidth={ITEM_WIDTH}
-                      onSnapToItem={(index) =>
-                        this.setState({ activeSlide: index })
-                      }
-                    />
-                    <Pagination
-                      dotsLength={pageLength}
-                      activeDotIndex={this.state.activeSlide}
-                      containerStyle={{ backgroundColor: "transparent" }}
-                      dotStyle={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: 5,
-                        marginHorizontal: 8,
-                        backgroundColor: "rgba(0,0,0,.75)",
-                      }}
-                      inactiveDotStyle={
-                        {
-                          // Define styles for inactive dots here
-                        }
-                      }
-                      inactiveDotOpacity={0.4}
-                      inactiveDotScale={0.6}
-                    />
-                  </View>
-                  {Object.keys(item.serviceProvided).length > 0 ? (
-                    <Block>
-                      <Text
-                        style={{
-                          color: argonTheme.COLORS.HEADER,
-                          fontWeight: "600",
-                        }}
-                        size={BASE_SIZE * 1.125}
-                      >
-                        Services Received:
-                      </Text>
-                      <FlatGrid
-                        itemDimension={130}
-                        data={this.parsePreferences(item.serviceProvided)}
-                        style={styles.gridView}
-                        // staticDimension={300}
-                        // fixed
-                        spacing={10}
-                        renderItem={({ item }) => (
-                          <View style={styles.itemContainer}>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                          </View>
-                        )}
-                      />
-                    </Block>
-                  ) : (
-                    <></>
-                  )}
-                  {item.notes.length > 0 ? (
-                    <Block>
-                      <Text
-                        style={{
-                          color: argonTheme.COLORS.HEADER,
-                          fontWeight: "600",
-                        }}
-                        size={BASE_SIZE * 1.125}
-                      >
-                        Appointment Notes:
-                      </Text>
-                      <Text
-                        style={{
-                          color: "#808080",
-                          paddingVertical: 6,
-                          fontWeight: "bold",
-                        }}
-                        size={BASE_SIZE * 0.875}
-                        muted
-                      >
-                        {" "}
-                        {item.notes}
-                      </Text>
-                    </Block>
-                  ) : (
-                    <></>
-                  )}
-                </Block>
-              </Block>
-            </View>
-          );
+        return (
+          <AppointmentCard 
+            appointment={item}
+          />
+        )
       };
 
       render () {
