@@ -15,9 +15,11 @@ import SubmitFormButton from './SubmitFormButton';
 import OnboardingForm from './OnboardingForm';
 import OnboardingField from './OnboardingField';
 import AppointmentCards from './AppointmentCards';
+import AppointmentCard from './AppointmentCard';
 export {
   Accordian,
   AppointmentCards,
+  AppointmentCard,
   Button,
   Card,
   CustomCamera,
