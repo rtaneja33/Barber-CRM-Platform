@@ -36,9 +36,6 @@ class AppointmentCard extends React.Component{
         }
     }
     parsePreferences = (serviceReceived) => {
-        //// console.log("service received", serviceReceived);
-        console.log("item in apt card is", this.state.item);
-
         if (serviceReceived.length < 1) {
           return null;
         }
@@ -48,9 +45,10 @@ class AppointmentCard extends React.Component{
             preferences.push({ name: arrayElem });
           });
         }
-        console.log("returning...", preferences);
+        // console.log("returning...", preferences);
         return preferences;
       };
+      
       _renderItem({ item, index }) {
         return (
           <ImageLoad
@@ -109,11 +107,11 @@ class AppointmentCard extends React.Component{
       };
 
     render() {
+          console.log("rendering apt card with notes", this.state.item.notes);
           const { navigation } = this.props;
           var pageLength = 0;
 
           if (this.state.item.appointmentFrontPhotoUID.length >0) {
-            console.log("YES,", this.state.item.appointmentFrontPhotoUID)
             pageLength += 1;
           }
           if (this.state.item.appointmentSidePhotoUID.length >0) {
@@ -122,14 +120,14 @@ class AppointmentCard extends React.Component{
           if (this.state.item.appointmentRearPhotoUID.length >0) {
             pageLength += 1;
           }
-          console.log("page Length in apt card is", pageLength);
+          // console.log("page Length in apt card is", pageLength);
           const options = { year: "numeric", month: "long", day: "numeric" };
           let dateString = this.state.item.timestamp.toDate().toLocaleDateString("en-US", options) 
           if(!this.props.barberFacing){
             const dateDetail = " @ " + this.state.item.shopName;
             dateString += dateDetail
           }
-          console.log("this.state.item.frontPhotoURL is", this.state.item.frontPhotoURL);
+          // console.log("this.state.item.frontPhotoURL is", this.state.item.frontPhotoURL);
           return (
             <View style={[styles.profileCard, { minHeight: 70 }]}>
               <Block row center shadow space="between" key="test">

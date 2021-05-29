@@ -35,8 +35,13 @@ class AppointmentCards extends React.Component{
             appointments: [],
             activeSlide: 0,
             references: this.props.references,
+
         }
+        console.log("this.props.references is", this.props.references)
+        this.onEndReachedCalledDuringMomentum = false
     }
+
+    onMomentumScrollBegin = () => { this.onEndReachedCalledDuringMomentum = false; }
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
       // Are we adding new items to the list?
@@ -49,6 +54,7 @@ class AppointmentCards extends React.Component{
     }
 
     componentDidMount(){
+        console.log("in apt cards, references passed in were this long", this.state.references.length, "and were", this.state.references)
         this.loadAppointments(this.state.references).then((response)=>{console.log(response); });
     }
 
@@ -58,6 +64,7 @@ class AppointmentCards extends React.Component{
         var appointmentsToAdd = [];
         // console.log("appointment cards - has this many appointments", references.size);
         references.forEach((document) => {
+          console.log("IN LOAD APPOINTMENTS, document is", document)
           let data = document.data();
           // console.log(data);
           Promise.all([
@@ -171,12 +178,26 @@ class AppointmentCards extends React.Component{
     }
 
     renderItem = ({item}) => {
+        console.log("rendering item........")
         return (
           <AppointmentCard 
             appointment={item}
           />
         )
       };
+    
+      loadMoreProducts = () => {
+        console.log("load more products called!")
+      }
+
+      onEndReached = () => {
+        console.log('end reached');
+        if (!this.onEndReachedCalledDuringMomentum) {
+            console.log('loading more archived products');
+            this.loadMoreProducts();                
+            this.onEndReachedCalledDuringMomentum = true;
+        }
+    }
 
       render () {
         return (
@@ -185,6 +206,10 @@ class AppointmentCards extends React.Component{
                 data={this.state.appointments}
                 renderItem={this.renderItem}
                 keyExtractor={(item, index) => index.toString()}
+                // initialNumToRender={4}
+                // windowSize={1}
+                // onEndReachedThreshold={0}
+                // onEndReached={(distance)=>{console.log("reached end!!", distance)}}
               />
             </View>
           );

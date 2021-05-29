@@ -20,8 +20,11 @@ class RecentCuts extends React.Component {
         super(props);
         // this.loadAppointments();
         this.state = {
-            references: null,
+            references: [],
             refreshing: false,
+            loadingExtraData: false,
+            page: 1,
+            lastTimeStamp: null
             // barberShop: null,
         };
        // this.getReferences();
@@ -31,23 +34,65 @@ class RecentCuts extends React.Component {
         this.getInitialReferences()
     }
     getInitialReferences = async () => {
+      console.log("in get initial references")
       const shopID = firebase.auth().currentUser.uid
       this.setState({refreshing: true})
       // console.log("get references shop id is", shopID);
-      const references = await firebase
+      let query = await firebase
         .firestore()
         .collection("Appointments")
         .where("barberUID", "==", shopID )
-        .orderBy("timestamp", "desc")
-        .limit(5)
-        .get();
-      this.setState({
-        references: references,
-        refreshing: false,
+        .orderBy("timestamp", "desc");
+      var docs = []
+      query.limit(3).get().then(querySnapshot => {
+        const references = querySnapshot
+        querySnapshot.forEach((document) => {
+          docs.push(document)
+          let data = document.data();
+          var options = { timeZone: 'UTC', timeZoneName: 'short' };
+          let dateString = data.timestamp.toDate().toLocaleDateString("en-US", options) 
+          let timeString = data.timestamp.toDate().toLocaleTimeString("en-US") 
+          console.log("IN INITIAL REFERENCE, TIMESTAMP FOR ITEM IS", dateString,timeString, "NOTES ARE", data.notes);
+        })
+        console.log("in initial ref, references.docs is this long", docs.length)
+        this.setState({
+          references: docs,
+          refreshing: false,
+          lastTimeStamp: querySnapshot.docs[querySnapshot.docs.length-1].data().timestamp
+        })
+      })
+    }
+    getReferencesOnRefresh = async () => {
+      const shopID = firebase.auth().currentUser.uid
+      this.setState({refreshing: true})
+      console.log("REFRESHING....")
+      // console.log("get references shop id is", shopID);
+      let query = await firebase
+        .firestore()
+        .collection("Appointments")
+        .where("barberUID", "==", shopID )
+        .orderBy("timestamp", "desc");
+
+      query.startAfter(this.state.lastTimeStamp).limit(6).get().then(querySnapshot => {
+        const references = querySnapshot
+        var newRef = [...this.state.references]
+        querySnapshot.forEach((document) => {
+          newRef.push(document)
+          let data = document.data();
+          var options = { timeZone: 'UTC', timeZoneName: 'short' };
+          let dateString = data.timestamp.toDate().toLocaleDateString("en-US", options) 
+          let timeString = data.timestamp.toDate().toLocaleTimeString("en-US") 
+          console.log("IN REFRESHED REFERENCE, TIMESTAMP FOR ITEM IS", dateString,timeString, "NOTES ARE", data.notes);
+        })
+        this.setState({
+          references: newRef,
+          refreshing: false,
+        })
+        console.log("this.state.references is now this long", this.state.references.length)
       })
     }
 
-    getReferencesOnRefresh = async () => {
+    getReferencesOnRefresh2 = async () => {
         const shopID = firebase.auth().currentUser.uid
         this.setState({refreshing: true})
         // console.log("get references shop id is", shopID);
@@ -74,6 +119,8 @@ class RecentCuts extends React.Component {
     }
 
   render() {
+    if(this.state.references)
+      console.log("this.state.references.length is in render: ", this.state.references.length)
     return (
       <Block flex center>
         <ScrollView 
@@ -90,7 +137,7 @@ class RecentCuts extends React.Component {
               {
                 this.state.references ?
                 (
-                    this.state.references.size > 0 ? 
+                    this.state.references.length > 0 ? 
                     <AppointmentCards 
                         references={this.state.references}
                         barberFacing
