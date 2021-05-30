@@ -24,7 +24,7 @@ import { AppointmentCards } from "../components";
 const BASE_SIZE = theme.SIZES.BASE;
 const { width, height } = Dimensions.get("screen");
 import ImageLoad from "react-native-image-placeholder";
-
+import { Avatar } from 'react-native-elements';
 const thumbMeasure = (width - 48 - 32) / 3;
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.99);
@@ -306,10 +306,17 @@ class Profile extends React.Component {
           >
             <Block flex style={styles.profileCard}>
               <Block middle style={styles.avatarContainer}>
-                <Image
+              <Avatar
+            size="large"
+            rounded
+            title= {(this.props.route.params.firstName ? this.props.route.params.firstName[0]: "") + (this.props.route.params.lastName ? this.props.route.params.lastName[0]: "")}
+            overlayContainerStyle={{backgroundColor: argonTheme.COLORS.HEADER, borderColor: argonTheme.COLORS.BORDER_COLOR, borderWidth: 4  }}
+            activeOpacity={0.9}
+          />
+                {/* <Image
                   source={{ uri: Images.ProfilePicture }}
                   style={styles.avatar}
-                />
+                /> */}
               </Block>
               <Block middle style={styles.nameInfo}>
                 <Text bold size={28} color="#32325D">
@@ -442,7 +449,7 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     position: "relative",
-    marginTop: -63,
+    marginTop: -60,
   },
   avatar: {
     width: 110,
