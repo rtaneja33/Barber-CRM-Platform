@@ -43,6 +43,9 @@ class AddServices extends React.Component {
       changeMade: false,
     };
   }
+  componentDidUpdate(){
+    console.log(this.state.services);
+  }
   renderAccordions = (services) => {
     const items = [];
     services.map((item) => {
@@ -386,7 +389,7 @@ class AddServices extends React.Component {
 
   render() {
     return (
-      <Block flex style={styles.centeredView}>
+      <Block flex>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
