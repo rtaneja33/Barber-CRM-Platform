@@ -140,6 +140,7 @@ class RecentCuts extends React.Component {
                     this.state.references.length > 0 ? 
                     <AppointmentCards 
                         references={this.state.references}
+                        key={this.state.references.length}
                         barberFacing
                         /> : 
                     <Text center style={{marginTop: height*0.1, fontSize: 15, color: argonTheme.COLORS.HEADER, fontWeight: '500' }}>No appointments have been saved yet.</Text>

@@ -47,8 +47,9 @@ class AppointmentCards extends React.Component{
       // Are we adding new items to the list?
       // Capture the scroll position so we can adjust scroll later.
       // console.log("prev props", prevProps.references.size, "current props", this.props.references.size);
-      if(this.props.references.size > prevProps.references.size){
-        this.loadAppointments(this.props.references);
+      console.log("GETTING SNAPSHOT", this.state.appointments.length)
+      if(this.props.references.length > this.state.appointments.length){
+        //this.loadAppointments(this.props.references);
       }
       return null;
     }
@@ -60,7 +61,7 @@ class AppointmentCards extends React.Component{
 
     async loadAppointments(references) { //this.state.references
         //const { fullName, phoneNumber } = this.props.route.params;
-        // console.log("CALLED loadAppointments in appt cards")
+        console.log("CALLED loadAppointments in appt cards")
         var appointmentsToAdd = [];
         // console.log("appointment cards - has this many appointments", references.size);
         references.forEach((document) => {
@@ -181,7 +182,7 @@ class AppointmentCards extends React.Component{
         console.log("rendering item........")
         return (
           <AppointmentCard 
-            appointment={item}
+            appointment={item} 
           />
         )
       };
