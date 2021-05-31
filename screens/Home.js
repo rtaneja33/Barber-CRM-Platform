@@ -50,7 +50,7 @@ export default function Home({ navigation, route }) {
     (
     <View style={{minHeight:70, padding:5}}>
      
-      <TouchableOpacity onPress={() => {navigation.navigate('Customers', { params: { fullName: item.firstName + " " + item.lastName, phoneNumber:(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
+      <TouchableOpacity onPress={() => {navigation.navigate('Customers', { params: { fullName: item.firstName + " " + item.lastName, firstName: item.firstName, lastName: item.lastName, phoneNumber:(item.phoneNumbers && item.phoneNumbers.length > 0) ? item.phoneNumbers[0].number : ""}, screen: 'UserProfile'}); console.log("passing param", item.firstName)}}>
       <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
         <Block style={styles.left}>
           <Avatar
