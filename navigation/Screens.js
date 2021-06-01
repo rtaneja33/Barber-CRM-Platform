@@ -16,6 +16,7 @@ import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import BarbershopPage from "../screens/BarbershopPage";
+import BarberLoginScreen from "../screens/BarberLoginScreen";
 import EditServices from "../screens/EditServices";
 import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
 import CreateCustomer from "../screens/Onboarding/CreateCustomer";
@@ -39,6 +40,7 @@ import SideCamera from '../components/AppointmentPhotos/SideCamera';
 import RearCamera from '../components/AppointmentPhotos/RearCamera';
 import RecentCuts from "../screens/RecentCuts";
 import Explore from "../screens/Explore";
+import StartScreen from '../screens/StartScreen';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -286,94 +288,10 @@ function HomeStack(props) {
                 headerTransparent: true
               }}
           />
-          {/* <Stack.Screen
-            name="CustomCamera"
-            component={CustomCamera}
-              options={{
-                header: ({ navigation, scene }) => (
-                  <Header
-                    title=""
-                    back
-                    white
-                    transparent
-                    navigation={navigation}
-                    scene={scene}
-                  />
-                ),
-                headerTransparent: true
-              }}
-          /> */}
 
     </Stack.Navigator>
   );
 }
-
-
-
-// export default function OnboardingStack(props) {
-//   const [isLoading, setLoading] = React.useState(false);
-//   const [user, setUser] = useState(null);
-//   if(isLoading){
-//     return(
-//       <></>
-//     )
-//   }
-  
-//   // https://www.freecodecamp.org/news/react-native-firebase-tutorial/
-//   useEffect(() => {
-//     const usersRef = firebase.firestore().collection('users');
-//     firebase.auth().onAuthStateChanged(user => {
-//       if (user) {
-//         usersRef
-//           .doc(user.uid)
-//           .get()
-//           .then((document) => {
-//             const userData = document.data()
-//             setLoading(false)
-//             setUser(userData)
-//           })
-//           .catch((error) => {
-//             setLoading(false)
-//           });
-//       } else {
-//         setLoading(false)
-//       }
-//     });
-//   }, []);
-
-//   return (
-//     <Stack.Navigator mode="card" headerMode="none">
-//       { user ? (
-//         <Stack.Screen name="App" component={AppStack} />
-//       ) : (
-//         <>
-//           <Stack.Screen
-//             name="SignupScreen"
-//             component={SignupScreen}
-//             option={{
-//               headerTransparent: true
-//             }}
-//           />
-//            <Stack.Screen name="App" component={AppStack} />
-//         </>
-//       )}
-//     </Stack.Navigator>
-//   );
-// }
-// function SignedOut(props) {
-//   return (
-//     <Stack.Navigator mode="card" headerMode="screen">
-//       <Stack.Screen
-//         name="SignUp"
-//         component={SignupScreen}
-//         options={{
-//           headerTransparent: true
-//         }}
-//       />
-//       <Stack.Screen name="App" component={AppStack} />
-//     </Stack.Navigator>
-//   )
-// }
 
 export default function AppStack(props) { // if this causes an error, try expo start -c to clean cache -> rebuild (requires new version for tab nav.)
   
@@ -517,8 +435,15 @@ export default function AppStack(props) { // if this causes an error, try expo s
     return (
       <Stack.Navigator mode="card" headerMode="screen">
         <Stack.Screen
+          name="StartScreen"
+          component={StartScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
           name="SignUp"
-          component={SignupScreen}
+          component={BarberLoginScreen}
           options={{
             headerShown: false
           }}
@@ -543,16 +468,17 @@ export default function AppStack(props) { // if this causes an error, try expo s
           name="CreateBarbershop"
           component={CreateBarbershop}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header
-                title=""
-                back
-                black
-                transparent
-                navigation={navigation}
-                scene={scene}
-              />
-            ),
+            headerShown: false,
+            // header: ({ navigation, scene }) => (
+            //   <Header
+            //     title=""
+            //     back
+            //     black
+            //     transparent
+            //     navigation={navigation}
+            //     scene={scene}
+            //   />
+            // ),
           }}
         />
         <Stack.Screen

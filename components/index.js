@@ -16,11 +16,22 @@ import OnboardingForm from './OnboardingForm';
 import OnboardingField from './OnboardingField';
 import AppointmentCards from './AppointmentCards';
 import AppointmentCard from './AppointmentCard';
+import BackButton from './BackButton';
+import Background from './Background';
+import Logo from './Logo';
+import Paragraph from './Paragraph';
+import TextInput from './TextInput';
+import ButtonSpecial from './ButtonSpecial';
+import HeaderSpecial from './HeaderSpecial';
+
 export {
   Accordian,
   AppointmentCards,
   AppointmentCard,
+  BackButton,
+  Background,
   Button,
+  ButtonSpecial,
   Card,
   CustomCamera,
   CustomForm,
@@ -30,9 +41,13 @@ export {
   Icon,
   Input,
   Header,
+  HeaderSpecial,
+  Logo,
   OnboardingForm,
   OnboardingField,
+  Paragraph,
   Switch, 
   Select,
-  SubmitFormButton
+  SubmitFormButton,
+  TextInput,
 };

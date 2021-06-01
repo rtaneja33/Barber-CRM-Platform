@@ -15,6 +15,8 @@ import { validateContent } from "../../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
+import { BackButton, Logo, HeaderSpecial, Background } from '../../components'
+
 
 
 class CreateBarbershop extends React.Component {
@@ -72,16 +74,20 @@ class CreateBarbershop extends React.Component {
 
   render() {
     return (
-      <Block flex>
+      <Background>
+      <BackButton goBack={this.props.navigation.goBack} />
+      
+      {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
+      <Block>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block style={styles.centeredView}>
-          <Text bold size={28} style={styles.title}>
+        <Text bold size={36} style={styles.title}>
             Create My Shop
           </Text>
+        <Block style={styles.centeredView}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             // contentContainerStyle={styles.child}
@@ -130,6 +136,7 @@ class CreateBarbershop extends React.Component {
           </ScrollView>
         </Block>
       </Block>
+      </Background>
     );
   }
 }
@@ -141,12 +148,14 @@ const styles = StyleSheet.create({
   centeredView: {
     // position: "relative",
     padding: theme.SIZES.BASE,
+    flexDirection: 'row',
+  
   },
   title: {
     paddingBottom: argonTheme.SIZES.BASE,
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
-    textAlign: "left",
+    
   },
   
 });
