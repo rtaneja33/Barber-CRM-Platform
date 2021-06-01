@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   centeredView: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
+    // // position: "relative",
+    // padding: theme.SIZES.BASE,
     flexDirection: 'row',
   
   },
