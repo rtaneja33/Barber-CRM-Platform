@@ -8,15 +8,17 @@ export default class AppointmentPhoto {
     photoURL = ""
     
     setAndUpdateImage(imageURI) {
-
         const imageRef = firebase.storage().ref('AppointmentPhotos').child(this.uid);
-
-        fetch(imageURI).then(response => {
-            response.blob().then( blob => {
-                imageRef.put(blob).then(() => {
-                    imageRef.getDownloadURL().then((url) => {
-                        this.photoURL = url
-                        this.update()
+        return new Promise(resolve => {
+            fetch(imageURI).then(response => {
+                response.blob().then( blob => {
+                    imageRef.put(blob).then(() => {
+                        imageRef.getDownloadURL().then(async (url) => {
+                            this.photoURL = url
+                            await this.update();
+                            console.log("XX photo updated!", this.photoURL);
+                            resolve(true);
+                        })
                     })
                 })
             })
@@ -69,6 +71,7 @@ export default class AppointmentPhoto {
             firebase.firestore().collection('AppointmentPhotos').doc(id).get().then(documentSnapshot => {
                 if (documentSnapshot.exists) {
                     let data = documentSnapshot.data();
+                    console.log("IN PHOTO LOADFROMID, DOCUMENTSNAPSHOT.DATA IS", data);
                     appointmentPhoto.uid = documentSnapshot.documentID
                     appointmentPhoto.barberUID = data["barberUID"]
                     appointmentPhoto.appointmentUID = data["appointmentUID"]

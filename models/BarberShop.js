@@ -10,6 +10,8 @@ export default class BarberShop {
     barberIDs = []
     admin = ""
     services = {}
+    long = 0.0
+    lat = 0.0
     
     update() {
         var barberShopRef = firebase.firestore().collection('BarberShops').doc(this.uid);
@@ -22,9 +24,32 @@ export default class BarberShop {
                 barberIDs: this.barberIDs,
                 admin: this.admin,
                 services: this.services,
+                long: this.long,
+                lat: this.lat
             })
             resolve(true);
           });
+    }
+    
+    updateLatLongFromAddress() {
+        console.log("Getting lat long")
+        firebase.firestore().collection("Global").doc("AccessTokens").get().then(documentSnapshot => {
+            
+            let data = documentSnapshot.data();
+            let accesstoken = data["mapbox"];
+            let encodedAddress = encodeURIComponent(this.address.trim());
+            let request = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodedAddress + ".json?types=address&access_token=" + accesstoken;
+                        
+            fetch(request).then((response) => response.json()).then((json) => {
+                let longitude = json.features[0].center[0];
+                let latitude = json.features[0].center[1];
+                this.lat = Number(latitude);
+                this.long = Number(longitude);
+                this.update();
+            }).catch((error) => {
+                console.error(error);
+            });
+        })
     }
     
     static createNew(fromID = "") {
@@ -41,6 +66,8 @@ export default class BarberShop {
                     barberIDs: barberShop.barberIDs,
                     admin: barberShop.admin,
                     services: barberShop.services,
+                    long: barberShop.long,
+                    lat: barberShop.lat,
                 }).then( (docRef) => {
                     barberShop.uid = docRef.id;
                     resolve(barberShop);
@@ -54,8 +81,9 @@ export default class BarberShop {
                     barberIDs: barberShop.barberIDs,
                     admin: barberShop.admin,
                     services: barberShop.services,
+                    long: barberShop.long,
+                    lat: barberShop.lat,
                 })
-                
                 barberShop.uid = fromID;
                 resolve(barberShop);
             }
@@ -77,7 +105,12 @@ export default class BarberShop {
     }
     
     deleteServiceItem(serviceCategory, serviceIndex) { 
-        this.services[serviceCategory].splice(serviceIndex, 1);
+        this.services.filter((obj, ind) => {
+            if (obj.serviceType === serviceCategory) {
+                console.log("DELETING obj", obj, "at index", ind)
+                obj.services.splice(serviceIndex, 1);
+            }
+          });
         // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
@@ -112,9 +145,7 @@ export default class BarberShop {
         })
     }
     addServiceItem(serviceCategory, serviceItem) {
-        // console.log("ADDSERVICECATEGORY",newServiceCategory);
-        // let newCategory = Object.assign({}, newServiceCategory)
-        this.services.map((obj)=>{
+        this.services.map((obj, ind)=>{
             if(obj.serviceType === serviceCategory){
                 obj.services.push(serviceItem);
             }
@@ -131,8 +162,6 @@ export default class BarberShop {
     }
 
     addServiceCategory(newServiceCategory) {
-        console.log("ADDSERVICECATEGORY",newServiceCategory);
-        let newCategory = Object.assign({}, newServiceCategory)
         this.services.push(newServiceCategory);
         return new Promise((resolve, reject) => {
             this.update().then(success => {
@@ -146,7 +175,10 @@ export default class BarberShop {
     }
 
     deleteServiceCategory(oldKey) { 
-        delete this.services[oldKey];
+        //delete this.services[oldKey];
+        this.services = this.services.filter((obj) => {
+            return obj.serviceType !== oldKey
+          });
         // this.update();
         return new Promise((resolve, reject) => {
             this.update().then(success => {
@@ -193,6 +225,8 @@ export default class BarberShop {
                     barberShop.barberIDs = data["barberIDs"]
                     barberShop.admin = data["admin"]
                     barberShop.services = data["services"]
+                    barberShop.long = Number(data["long"])
+                    barberShop.lat = Number(data["lat"])
                     
                     resolve(barberShop);
                 } else {

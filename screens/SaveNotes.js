@@ -43,7 +43,6 @@ const SaveNotes = ({navigation, route}) => {
         // console.log("appointment is", appointment);
         setSpinner(false);
         return () => {
-            console.log("in savenotes, route is", route);
             const backHandler = route.params.backHandler
             if (backHandler) {
                 console.log("calling backHandler from SaveNotes....");
@@ -64,48 +63,39 @@ const SaveNotes = ({navigation, route}) => {
 
     const saveFrontPhoto = async (frontImageURI, appointment) => {
         if (frontImageURI != null) {
-            await AppointmentPhoto.createNew().then( (photo) => {
-                console.log("PHOTO IS", photo);
-                console.log("FRONT IMAGE URI", frontImageURI)
-                photo.setAndUpdateImage(frontImageURI)
+            await AppointmentPhoto.createNew().then( async (photo) => {
+                await photo.setAndUpdateImage(frontImageURI)
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update()
-                
                 appointment.appointmentFrontPhotoUID = photo.uid
-                console.log("photo.uid is", photo.uid)
-                console.log("SETTING APPOINTMENT FRONT PHOTO to", appointment.appointmentFrontPhotoUID);
-                console.log("appointment is", appointment)
+                photo.update()
+                console.log("IN SAVE FRONT PHOTO SAVE NOTES, photo is", photo);
+                    
+                
             })
         }
     }
 
     const saveSidePhoto = async (sideImageURI, appointment) => {
         if (sideImageURI != null) {
-            await AppointmentPhoto.createNew().then( (photo) => {
-                photo.setAndUpdateImage(sideImageURI)
+            await AppointmentPhoto.createNew().then( async (photo) => {
+                await photo.setAndUpdateImage(sideImageURI)
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update()
-                
                 appointment.appointmentSidePhotoUID = photo.uid
-                console.log("SETTING APPOINTMENT SIDE PHOTO to", appointment.appointmentSidePhotoUID);
-                console.log("appointment is", appointment)
+                photo.update()
             })
         }
     }
 
     const saveRearPhoto = async (readImageURI, appointment) => {
         if (readImageURI != null) {
-            await AppointmentPhoto.createNew().then( (photo) => {
-                photo.setAndUpdateImage(readImageURI)
+            await AppointmentPhoto.createNew().then( async (photo) => {
+                await photo.setAndUpdateImage(readImageURI)
                 photo.appointmentUID = appointment.uid
                 photo.barberUID = appointment.barberUID
-                photo.update()
-                
                 appointment.appointmentRearPhotoUID = photo.uid
-                console.log("SETTING APPOINTMENT REAR PHOTO to", appointment.appointmentRearPhotoUID);
-                console.log("appointment is", appointment)
+                photo.update()
             })
         }
     }
@@ -122,16 +112,15 @@ const SaveNotes = ({navigation, route}) => {
         
         Appointment.createNew().then( (appointment) => {
             appointment.barberUID = apt.barberUID
+            appointment.shopName = apt.shopName
             appointment.serviceProvided = apt.serviceProvided
             appointment.customerPhoneNumber = apt.customerPhoneNumber;
+            appointment.customerFullName = apt.customerFullName;
             appointment.timestamp = firebase.firestore.Timestamp.fromDate(new Date());
             Promise.all([ saveFrontPhoto(frontImageURI, appointment), saveSidePhoto(sideImageURI, appointment), saveRearPhoto(readImageURI, appointment) ])
                 .then((responses)=>{
-                    console.log("responses are", responses);
-                    console.log("appointment is", appointment);
                     appointment.notes = text // notes
                     appointment.update().then(success => {
-                        console.log("success??", success)
                         setSpinner(false);
                         navigation.pop(5);
                     }).catch((err)=> {
@@ -185,7 +174,7 @@ const SaveNotes = ({navigation, route}) => {
         <Block flex style={styles.centeredView}>
         <Spinner
             visible={spinner}
-            textContent={"Loading..."}
+            textContent={"Saving Appointment..."}
             textStyle={styles.spinnerTextStyles}
         />
             <View style={styles.box}>
@@ -253,6 +242,9 @@ screen: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#CDECFF',
+},
+spinnerTextStyles: {
+    color: argonTheme.COLORS.HEADER,
 },
 subbox2: {
     flex:6,

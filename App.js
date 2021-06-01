@@ -9,19 +9,50 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 enableScreens();
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
+import BarberShops from '../barber-crm-app/models/BarberShop';
 
+export const BarberContext = React.createContext({});
 
 export default function App() {
+  const [barberContext, setBarberContext] = useState({})
+  const getLoggedInBarbershop = async () => {
+      // get User data
+    await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
+      setBarberContext(barber);
+    })
+    console.log("barber context isss", barberContext)
+  }
+  function onAuthStateChanged(user) {
+    if(user !== null){
+      // getLoggedInBarbershop();
+      console.log("app js firebase state changed! user is", user);
+      BarberShops.loadFromID(user.uid).then( barberObj => {
+          if (barberObj != null) {
+              setBarberContext(barberObj)
+          }
+      })
+    }
+  }
+
+  useEffect(() => {
+    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    console.log("App js firebase user is", firebase.auth().currentUser)
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
   return ( // signed in
-    <SafeAreaProvider>
-    <NavigationContainer>
-          <GalioProvider theme={argonTheme}>
-            <Block flex>
-              <Screens />
-            </Block>
-          </GalioProvider>
-    </NavigationContainer>
-    </SafeAreaProvider>
+    <BarberContext.Provider value={barberContext}>
+      <SafeAreaProvider>
+          <NavigationContainer>
+                <GalioProvider theme={argonTheme}>
+                  <Block flex>
+                    <Screens />
+                  </Block>
+                </GalioProvider>
+          </NavigationContainer>
+          </SafeAreaProvider>
+    </BarberContext.Provider>
+   
   )
 }
 

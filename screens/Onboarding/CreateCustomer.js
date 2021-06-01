@@ -16,7 +16,6 @@ const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import Customer from "../../models/Customer";
 
-// import firebase from "react-native-firebase";
 
 class CreateCustomer extends React.Component {
   constructor(props) {

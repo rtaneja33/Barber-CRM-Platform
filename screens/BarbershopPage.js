@@ -18,7 +18,7 @@ import CustomForm from "../components/CustomForm";
 import { ListItem } from 'react-native-elements';
 import Icon from "../components/Icon";
 import { firebase } from "../src/firebase/config";
-import { Accordian, renderSeparator } from "../components/";
+import { Accordian, renderSeparator } from "../components";
 import BarberShops from "../models/BarberShop";
 import { Block, Text, theme, Button as GaButton } from "galio-framework";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -37,32 +37,49 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
-const Articles = ({navigation}) => {
+const BarbershopPage = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [spinner, setSpinner] = React.useState(true);
+  const [isOwner, setIsOwner] = React.useState(false);
   const [shopInformation, setShopInformation] = useState({});
+
   useEffect(() => {
-    console.log("making api call");
     setSpinner(true);
 
-    BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
-      setShopInformation(shopInfo);
-      console.log("shop info is", shopInfo)
-      loadServices(shopInfo.services);
-      setSpinner(false);
-    }).catch((err)=>{setSpinner(false)});
+    if (route != null && route.params != null && route.params.shopID != null) {
+      setIsOwner(false);
+
+      BarberShops.loadFromID(route.params.shopID).then((shopInfo) => {
+        setShopInformation(shopInfo);
+        console.log("shop info is", shopInfo)
+        loadServices(shopInfo.services);
+        setSpinner(false);
+      }).catch((err)=>{setSpinner(false)});
+    } else {
+      setIsOwner(true);
+
+      BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
+        setShopInformation(shopInfo);
+        console.log("shop info is", shopInfo)
+        loadServices(shopInfo.services);
+        setSpinner(false);
+      }).catch((err)=>{setSpinner(false)});
+    }
   }, [services]);
 
   const onBackHandler = (changeMade)=>{
     if(changeMade) { // change was made in editServices
       setSpinner(true);
-
+      console.log("CHANGE MADE")
       BarberShops.loadFromID(firebase.auth().currentUser.uid).then((shopInfo) => {
         console.log("REFRESHED RO, SHOP INFO IS", shopInfo)
         setShopInformation(shopInfo);
         loadServices(shopInfo.services);
         setSpinner(false);
       }).catch((err) =>{setSpinner(false)});
+    }
+    else{
+      console.log("change NOT made")
     }
   }
   
@@ -89,7 +106,6 @@ const Articles = ({navigation}) => {
   }
 
   const loadServices = (servicesMap) => {
-    console.log("LOADING SERVICES in ARTICLES", servicesMap);
     var fromFirestore = []
     servicesMap.map((serviceList)=>{
       var customList = new ServiceList();
@@ -100,8 +116,10 @@ const Articles = ({navigation}) => {
       })
       customList.services = localServices
       fromFirestore.push(customList);
-      setServices(fromFirestore);
+      console.log("from Firestore obj in LOADSERVICES is", fromFirestore)
+      console.log("IN LOAD SERVICES, the new services are", services)
     })
+    setServices(fromFirestore);
     // var shopServices = [];
     // for (var serviceType in servicesMap) {
     //   var serviceList = new ServiceList(serviceType, []);
@@ -381,12 +399,14 @@ const Articles = ({navigation}) => {
                     marginTop: 22,
                   }}
                 >
+                  { isOwner &&
                   <Icon
                     name="edit"
                     family="FontAwesome5"
                     size={25}
                     color={nowTheme.COLORS.DEFAULT}
                   />
+                  }
                 </TouchableOpacity>
               </Block>
               <Text
@@ -419,6 +439,7 @@ const Articles = ({navigation}) => {
                   marginTop: 22,
                 }}
               >
+                { isOwner &&
                 <Icon
                   name="edit"
                   family="FontAwesome5"
@@ -426,6 +447,7 @@ const Articles = ({navigation}) => {
                   onPress={() => {}}
                   color={nowTheme.COLORS.DEFAULT}
                 />
+                }
               </TouchableOpacity>
             </Block>
             {/* <Text bold size={18} style={styles.title}>
@@ -496,7 +518,7 @@ const Articles = ({navigation}) => {
             <Block flex style={styles.profileCard}>
               <Block row space="between">
                 <Text bold size={18} style={styles.title}>
-                  Portfolio
+                  Portfolio (Coming soon) 
                 </Text>
                 <Button
                   small
@@ -547,12 +569,14 @@ const Articles = ({navigation}) => {
                     marginTop: 22,
                   }}
                 >
+                  { isOwner &&
                   <Icon
                     name="edit"
                     family="FontAwesome5"
                     size={25}
                     color={nowTheme.COLORS.DEFAULT}
                   />
+                  }
                 </TouchableOpacity>
               </Block>
 
@@ -758,4 +782,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Articles;
+export default BarbershopPage;
