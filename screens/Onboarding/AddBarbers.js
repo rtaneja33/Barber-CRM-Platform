@@ -86,6 +86,11 @@ class AddBarbers extends React.Component {
     }).catch((err)=> {alert(err); reject(err);});
   };
 
+  continueToNext = () => {
+    const {navigation} = this.props;
+    navigation.navigate('CreateAccount', {barberShop: this.state.barberShop });
+  }
+
   render() {
     console.log(this.props)
     return (
@@ -121,7 +126,9 @@ class AddBarbers extends React.Component {
                 this.setState({ loading: true });
                  setTimeout(() => {
                   this.setState({ loading: false });
-                  this.onRegister(true);
+                  // this.onRegister(true);
+                  this.continueToNext();
+
                   // const {navigation} = this.props;
                   // navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
                   // barberShop.email = email;
@@ -145,7 +152,8 @@ class AddBarbers extends React.Component {
               onPress={() => {
                 console.log("EMAIL AND PASSWORD ARE", this.state.email, this.state.password)
                 console.log("addbarbers- this.props is", this.props);
-                this.onRegister(false);
+                // this.onRegister(false);
+                this.continueToNext();
                 console.log("pressed CONTINUE!");
               //   this.setState({ loading: true });
               //   setTimeout(() => {

@@ -41,6 +41,7 @@ import RearCamera from '../components/AppointmentPhotos/RearCamera';
 import RecentCuts from "../screens/RecentCuts";
 import Explore from "../screens/Explore";
 import StartScreen from '../screens/StartScreen';
+import CreateAccount from '../screens/Onboarding/CreateAccount';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -511,6 +512,13 @@ export default function AppStack(props) { // if this causes an error, try expo s
                 scene={scene}
               />
             ),
+          }}
+        />
+        <Stack.Screen
+          name="CreateAccount"
+          component={CreateAccount}
+          options={{
+            headerShown: false,
           }}
         />
       </Stack.Navigator>

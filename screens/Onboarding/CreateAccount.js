@@ -19,17 +19,17 @@ import { BackButton, Logo, HeaderSpecial, Background } from '../../components'
 
 
 
-class CreateBarbershop extends React.Component {
+class CreateAccount extends React.Component {
   constructor(props) {
     super(props);
     console.log("PROPS ARE", props);
     this.state = {
       loading: false,
-      fullname: "",
-      phone: "",
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
-      barberShop: null,
+    //   fullname: "",
+    //   phone: "",
+      email: "",
+      password: "",
+    //   barberShop: null,
     };
   }
 
@@ -51,8 +51,12 @@ class CreateBarbershop extends React.Component {
           visible={this.state.loading}
         />
         <Text bold size={36} style={styles.title}>
-            Create My Shop
+            Create My Account
           </Text>
+          <Block center>
+<HeaderSpecial >One Last Step!</HeaderSpecial>
+          </Block>
+        
         <Block style={styles.centeredView}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -73,27 +77,29 @@ class CreateBarbershop extends React.Component {
                 }, 300);
               }}
               afterSubmit={() => console.log("afterSubmit!")}
-              buttonText="Continue"
+              buttonText="Create Account"
               fields={{
                 shopName: {
-                  label: "Shop Name*",
+                  label: "Email",
                   validators: [validateContent],
                   inputProps: {
                     backgroundColor: "transparent",
                   },
                 },
                 shopEmail: {
-                  label: "Shop Email*",
+                  label: "Password",
                   validators: [validateContent],
                   inputProps: {
                     backgroundColor: "transparent",
+                    secureTextEntry:true,
                   },
                 },
                 shopAddress: {
-                  label: "Shop Address*",
+                  label: "Confirm Password",
                   validators: [validateContent],
                   inputProps: {
                     backgroundColor: "transparent",
+                    secureTextEntry:true,
                   },
                 },
               }}
@@ -126,4 +132,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default CreateBarbershop;
+export default CreateAccount;
