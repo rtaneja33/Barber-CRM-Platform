@@ -521,6 +521,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
             headerShown: false,
           }}
         />
+        
       </Stack.Navigator>
     )
   }

@@ -37,7 +37,6 @@ class CreateBarbershop extends React.Component {
   //     this.setState({loading: false})
   // },);
 
-
   render() {
     return (
       <Background>

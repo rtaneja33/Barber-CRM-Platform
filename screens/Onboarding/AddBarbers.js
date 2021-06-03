@@ -88,7 +88,10 @@ class AddBarbers extends React.Component {
 
   continueToNext = () => {
     const {navigation} = this.props;
-    navigation.navigate('CreateAccount', {barberShop: this.state.barberShop });
+    console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
+    var shop = {...this.state.barberShop};
+    shop.services = []
+    navigation.navigate('CreateAccount', {barberShop: shop});
   }
 
   render() {
@@ -123,19 +126,20 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                this.setState({ loading: true });
-                 setTimeout(() => {
-                  this.setState({ loading: false });
-                  // this.onRegister(true);
-                  this.continueToNext();
+                this.continueToNext();
+                // this.setState({ loading: true });
+                //  setTimeout(() => {
+                //   this.setState({ loading: false });
+                //   // this.onRegister(true);
+                  
 
-                  // const {navigation} = this.props;
-                  // navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
-                  // barberShop.email = email;
-                  // barberShop.shopName = name;
-                  // barberShop.address = address;
-                  // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
-                }, 300);
+                //   // const {navigation} = this.props;
+                //   // navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
+                //   // barberShop.email = email;
+                //   // barberShop.shopName = name;
+                //   // barberShop.address = address;
+                //   // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                // }, 300);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>

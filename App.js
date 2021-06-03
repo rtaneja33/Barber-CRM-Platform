@@ -25,7 +25,6 @@ export default function App() {
   function onAuthStateChanged(user) {
     if(user !== null){
       // getLoggedInBarbershop();
-      console.log("app js firebase state changed! user is", user);
       BarberShops.loadFromID(user.uid).then( barberObj => {
           if (barberObj != null) {
               setBarberContext(barberObj)
@@ -36,7 +35,6 @@ export default function App() {
 
   useEffect(() => {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-    console.log("App js firebase user is", firebase.auth().currentUser)
     return subscriber; // unsubscribe on unmount
   }, []);
 

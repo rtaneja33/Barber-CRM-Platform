@@ -27,6 +27,7 @@ class CreateAccount extends React.Component {
       loading: false,
     //   fullname: "",
     //   phone: "",
+      barberShop: this.props.route.params.barberShop,
       email: "",
       password: "",
     //   barberShop: null,
@@ -37,6 +38,63 @@ class CreateAccount extends React.Component {
   //     this.setState({loading: false})
   // },);
 
+  toFirestore(services){
+    if(!services)
+      return null
+    var firestoreServices = []
+    console.log("services in toFirestore is..", services)
+    services.map((serviceList)=>{
+      var firestoreObj = { serviceType: serviceList.serviceType, services: []}
+      serviceList.services.map((serviceObj) =>{
+        firestoreObj.services.push({price: serviceObj.price, serviceName: serviceObj.serviceName})
+      })
+      firestoreServices.push(firestoreObj)
+    })
+    console.log("returning firestoreServices from toFirestore: ", firestoreServices)
+    return firestoreServices
+  }
+
+  onRegister = (email, password) => {
+    console.log("IN ON REGISTER");
+    console.log("EMAIL IS", email);
+    // try {
+    return new Promise((resolve, reject) => {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then((response) => {
+          const uid = response.user.uid;
+          return BarberShop.createNew(uid)
+            .then((barberShop) => {
+              console.log("ROHAN THIS>BARBER is", this.state.barberShop);
+              barberShop.email = email;
+              
+              barberShop.services = this.state.barberShop.services ? this.toFirestore(this.state.barberShop.services) : []; // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
+              barberShop.shopName = this.state.barberShop.shopName;
+              barberShop.address= this.state.barberShop.address;
+              barberShop.updateLatLongFromAddress();
+
+              barberShop.baberIDs = this.state.barberShop.baberIDs || null;
+              
+              //can add more fields here when add barbers complete, or about description etc.! 
+              // barberShop.update()
+              return barberShop
+                .update()
+                .then((updated) => {
+                  resolve(updated);
+                })
+                .catch((err) => {
+                  console.log("ERROR UPDATING ERROR", err);
+                  alert("error updating info", err);
+                });
+            })
+            .catch((error) => {
+              console.log("the create shop error is", error)
+              alert("Error occured with creating Barbershop", error);
+            });
+        })
+    }).catch((err)=> {alert(err); reject(err);});
+  };
 
   render() {
     return (
@@ -54,7 +112,7 @@ class CreateAccount extends React.Component {
             Create My Account
           </Text>
           <Block center>
-<HeaderSpecial >One Last Step!</HeaderSpecial>
+          <HeaderSpecial >One Last Step!</HeaderSpecial>
           </Block>
         
         <Block style={styles.centeredView}>
@@ -64,16 +122,17 @@ class CreateAccount extends React.Component {
           >
             {/* <View> */}
             <OnboardingForm
-              action={(address, email, name) => {
+              action={(confirmPass, pass, email) => {
                  this.setState({ loading: true });
                  setTimeout(() => {
                   this.setState({ loading: false });
-                  const {navigation} = this.props;
-                  var barberShop = new BarberShop();
-                  barberShop.email = email;
-                  barberShop.shopName = name;
-                  barberShop.address = address;
-                  navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                  this.onRegister(email, pass)
+                  // const {navigation} = this.props;
+                  // var barberShop = new BarberShop();
+                  // barberShop.email = email;
+                  // barberShop.shopName = name;
+                  // barberShop.address = address;
+                  // navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
                 }, 300);
               }}
               afterSubmit={() => console.log("afterSubmit!")}
