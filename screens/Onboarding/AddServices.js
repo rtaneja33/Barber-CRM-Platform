@@ -21,6 +21,7 @@ import { Accordian, renderSeparator } from "../../components/";
 import { HeaderHeight } from "../../constants/utils";
 import CustomForm from "../../components/CustomForm";
 import { validateContent } from "../../constants/utils";
+import { BackButton, Background } from '../../components'
 
 import FlashMessage, {
   showMessage,
@@ -383,13 +384,15 @@ class AddServices extends React.Component {
 
   render() {
     return (
+      <Background>
+      <BackButton goBack={this.props.navigation.goBack} />
       <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block>
+        <Block flex style={styles.addServices}>
           <Text bold size={28} style={styles.title}>
             Add Services
           </Text>
@@ -550,6 +553,7 @@ class AddServices extends React.Component {
           style={{ elevation: 10 }}
         />
       </Block>
+      </Background>
     );
   }
 }
@@ -557,6 +561,9 @@ class AddServices extends React.Component {
 const styles = StyleSheet.create({
   child: {
     width: "100%",
+  },
+  addServices: {
+    marginTop: height*0.05,  
   },
   centeredView: {
     // position: "relative",

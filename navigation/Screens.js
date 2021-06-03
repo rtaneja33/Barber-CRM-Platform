@@ -486,33 +486,37 @@ export default function AppStack(props) { // if this causes an error, try expo s
           name="AddServices"
           component={AddServices}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header
-                title=""
-                back
-                black
-                transparent
-                navigation={navigation}
-                scene={scene}
-              />
-            ),
+            headerShown: false,
           }}
+          // options={{
+          //   header: ({ navigation, scene }) => (
+          //     <Header
+          //       transparent
+          //       navigation={navigation}
+          //       scene={scene}
+          //     />
+          //   ),
+          // }}
         />
+
          <Stack.Screen
           name="AddBarbers"
           component={AddBarbers}
           options={{
-            header: ({ navigation, scene }) => (
-              <Header
-                title=""
-                back
-                black
-                transparent
-                navigation={navigation}
-                scene={scene}
-              />
-            ),
+            headerShown: false,
           }}
+          // options={{
+          //   header: ({ navigation, scene }) => (
+          //     <Header
+          //       title=""
+          //       back
+          //       black
+          //       transparent
+          //       navigation={navigation}
+          //       scene={scene}
+          //     />
+          //   ),
+          // }}
         />
         <Stack.Screen
           name="CreateAccount"

@@ -16,6 +16,7 @@ import { validateContent } from "../../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
+import { BackButton, Background } from '../../components'
 
 
 class AddBarbers extends React.Component {
@@ -97,22 +98,24 @@ class AddBarbers extends React.Component {
   render() {
     console.log(this.props)
     return (
-      <Block flex>
+      <Background>
+      <BackButton goBack={this.props.navigation.goBack} />
+      <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block style={styles.centeredView}>
+        <Block flex style={styles.addServices}>
           <Text bold size={28} style={styles.title}>
             Add Barbers
           </Text>
-          <ScrollView
+          {/* <ScrollView
             showsVerticalScrollIndicator={false}
             // contentContainerStyle={styles.child}
-          >
-            <Text>Have a way to create barbers here / just add their names+create profiles? @Emerson</Text>
-          </ScrollView>
+          > */}
+            {/* <Text>Have a way to create barbers here / just add their names+create profiles? @Emerson</Text> */}
+          {/* </ScrollView> */}
         </Block>
         <View style={styles.bottom}>
           <Block flex row>
@@ -127,19 +130,6 @@ class AddBarbers extends React.Component {
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
                 this.continueToNext();
-                // this.setState({ loading: true });
-                //  setTimeout(() => {
-                //   this.setState({ loading: false });
-                //   // this.onRegister(true);
-                  
-
-                //   // const {navigation} = this.props;
-                //   // navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
-                //   // barberShop.email = email;
-                //   // barberShop.shopName = name;
-                //   // barberShop.address = address;
-                //   // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
-                // }, 300);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -177,7 +167,8 @@ class AddBarbers extends React.Component {
             </TouchableOpacity>
           </Block>
         </View>
-      </Block>
+        </Block>
+      </Background>
     );
   }
 }
@@ -185,6 +176,9 @@ class AddBarbers extends React.Component {
 const styles = StyleSheet.create({
   child: {
     width: "100%",
+  },
+  addServices: {
+    marginTop: height*0.05,  
   },
   centeredView: {
     // position: "relative",
@@ -204,6 +198,12 @@ const styles = StyleSheet.create({
     width: width,
     height: height / 9,
     backgroundColor: argonTheme.COLORS.HEADER,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   },
   
 });
