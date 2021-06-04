@@ -91,8 +91,15 @@ class AddBarbers extends React.Component {
     const {navigation} = this.props;
     console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
     var shop = {...this.state.barberShop};
-    shop.services = []
-    navigation.navigate('CreateAccount', {barberShop: shop});
+    if(!shop.services){
+      shop.services = []
+    }
+    this.setState({ loading: true });
+    setTimeout(() => {
+      this.setState({ loading: false });
+      navigation.navigate('CreateAccount', {barberShop: shop});
+    }, 200);
+    
   }
 
   render() {
@@ -106,7 +113,7 @@ class AddBarbers extends React.Component {
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block flex style={styles.addServices}>
+        <Block flex style={styles.addBarbers}>
           <Text bold size={28} style={styles.title}>
             Add Barbers
           </Text>
@@ -177,18 +184,14 @@ const styles = StyleSheet.create({
   child: {
     width: "100%",
   },
-  addServices: {
-    marginTop: height*0.05,  
-  },
-  centeredView: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
+  addBarbers: {
+    marginTop: height*0.05, 
   },
   title: {
     paddingBottom: argonTheme.SIZES.BASE,
     paddingHorizontal: 15,
+    marginTop: 22,
     color: argonTheme.COLORS.HEADER,
-    textAlign: "left",
   },
   bottom: {
     flex: 1,
@@ -199,11 +202,12 @@ const styles = StyleSheet.create({
     height: height / 9,
     backgroundColor: argonTheme.COLORS.HEADER,
   },
+  
   centeredView: {
+    padding: theme.SIZES.BASE,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
   },
   
 });

@@ -123,6 +123,7 @@ class CreateAccount extends React.Component {
             {/* <View> */}
             <OnboardingForm
               action={(confirmPass, pass, email) => {
+                console.log(this.state.barberShop)
                  this.setState({ loading: true });
                  setTimeout(() => {
                   this.setState({ loading: false });

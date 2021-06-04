@@ -13,7 +13,7 @@ import { Block, Text, theme } from "galio-framework";
 import { argonTheme, tabs, Service, ServiceList } from "../../constants";
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
-import { Button } from "../../components/";
+import { Button, HeaderSpecial } from "../../components/";
 const { width, height } = Dimensions.get("screen");
 import Icon from "../../components/Icon";
 import Modal from "react-native-modal";
@@ -538,7 +538,7 @@ class AddServices extends React.Component {
                  shop.services = this.state.services; 
                  this.setState({barberShop: shop})
                  navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
-               }, 300);
+               }, 200);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -568,12 +568,6 @@ const styles = StyleSheet.create({
   centeredView: {
     // position: "relative",
     padding: theme.SIZES.BASE,
-  },
-  title: {
-    paddingBottom: argonTheme.SIZES.BASE,
-    paddingHorizontal: 15,
-    color: argonTheme.COLORS.HEADER,
-    textAlign: "left",
   },
   button: {
     marginBottom: theme.SIZES.BASE,
@@ -627,7 +621,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    padding: theme.SIZES.BASE,
   },
   modalView: {
     margin: 20,
