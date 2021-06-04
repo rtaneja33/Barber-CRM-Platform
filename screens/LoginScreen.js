@@ -11,12 +11,15 @@ import { theme } from '../core/theme'
 import { emailValidator } from './helpers/emailValidator'
 import { passwordValidator } from './helpers/passwordValidator'
 import { firebase } from '../src/firebase/config';
+import { argonTheme } from '../constants'
 
-export default function LoginScreen({ navigation }) {
+
+export default function LoginScreen({ navigation, route }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
 
   const onLoginPressed = () => {
+    console.log("route params isBarber?",route.params.isBarber)
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError) {
@@ -95,12 +98,16 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.forgot}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
-      <ButtonSpecial mode="contained" onPress={onLoginPressed}>
+      <ButtonSpecial mode="contained" style={{backgroundColor: route.params.isBarber ? argonTheme.COLORS.BARBERBLUE : argonTheme.COLORS.BARBERRED}} onPress={onLoginPressed}> 
         Login
       </ButtonSpecial>
       <View style={styles.row}>
         <Text>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('CreateBarbershop', {email: email.value, password: password.value})}>
+        <TouchableOpacity onPress={() => {
+          route.params.isBarber ?
+            navigation.navigate('CreateBarbershop') :
+            navigation.navigate('CreateCustomer2')
+      }}>
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
       </View>

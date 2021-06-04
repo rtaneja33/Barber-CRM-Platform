@@ -15,14 +15,15 @@ export default function StartScreen({ navigation }) {
       </Paragraph> */}
       <ButtonSpecial
         mode="contained"
-        onPress={() => navigation.navigate('SignUp')}
+        onPress={() => navigation.navigate("SignUp",{isBarber: true})}
       >
         Barbershop/Salon Login
       </ButtonSpecial>
       <ButtonSpecial
-        mode="outlined"
-        style={{borderColor: argonTheme.COLORS.BARBERBLUE }}
-        onPress={() => navigation.navigate('SignUp')}
+        mode="contained"
+        style={{backgroundColor: argonTheme.COLORS.BARBERRED}}
+        // style={{borderColor: argonTheme.COLORS.BARBERBLUE, textC }}
+        onPress={() => navigation.navigate('SignUp', {isBarber: false})}
       >
         Customer Login
       </ButtonSpecial>

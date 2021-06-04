@@ -59,7 +59,7 @@ class Profile extends React.Component {
             this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
         } else {
             Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
-                console.log(customer);
+                console.log("CUSTOMER IS", customer);
                 this.setState({name: customer.name, phoneNumber: customer.phonenumber});
                 this.loadAppointments()
             })
@@ -275,6 +275,17 @@ class Profile extends React.Component {
     );
   };
 
+  getInitials(name) {
+    if(!name || name.length < 0){
+      return ["", ""]
+    }
+    var initials = []
+    console.log("this.state.name is", this.state.name)
+    initials.push(name[0])
+    var tempName = name
+    var name_pieces = tempName.split(" ")
+    return [name_pieces[0][0], name_pieces[1][0]]
+  }
   render() {
     console.log("before finding fullname");
     console.log(this.props);
@@ -309,7 +320,7 @@ class Profile extends React.Component {
               <Avatar
             size="large"
             rounded
-            title= {(this.props.route.params.firstName ? this.props.route.params.firstName[0]: "") + (this.props.route.params.lastName ? this.props.route.params.lastName[0]: "")}
+            title= {(this.props.route.params && this.props.route.params.firstName ? this.props.route.params.firstName[0]: this.getInitials(this.state.name)[0]) + (this.props.route.params && this.props.route.params.lastName ? this.props.route.params.lastName[0]: this.getInitials(this.state.name)[1])}
             overlayContainerStyle={{backgroundColor: argonTheme.COLORS.HEADER, borderColor: argonTheme.COLORS.BORDER_COLOR, borderWidth: 4  }}
             activeOpacity={0.9}
           />

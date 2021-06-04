@@ -27,8 +27,6 @@ class CreateBarbershop extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
       barberShop: null,
     };
   }
@@ -68,7 +66,7 @@ class CreateBarbershop extends React.Component {
                   barberShop.email = email;
                   barberShop.shopName = name;
                   barberShop.address = address;
-                  navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                  navigation.navigate('AddServices', {barberShop: barberShop});
                 }, 300);
               }}
               afterSubmit={() => console.log("afterSubmit!")}

@@ -25,8 +25,8 @@ class CreateCustomer extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
+      email: "fakeemail",
+      password: "fakepass",
     };
   }
 
@@ -34,9 +34,9 @@ class CreateCustomer extends React.Component {
   //     this.setState({loading: false})
   // },);
 
-    onRegister = (name, phoneNumber) => {
+    onRegisterCustomer = (name, phoneNumber) => {
       console.log("IN ON REGISTER");
-      const { email, password } = this.props.route.params;
+      const { email, password } = this.state;
       // try {
       return new Promise((resolve, reject) => {
         firebase
@@ -86,12 +86,12 @@ class CreateCustomer extends React.Component {
                  setTimeout(() => {
                   this.setState({ loading: false });
                   const {navigation} = this.props;
-
-                     this.onRegister(customerName, customerPhoneNumber).done(response => {
-                         console.log("hey!")
-                         //navigation.navigate('UserProfile', {fullName: customerName});
-                     })
-                }, 500);
+                  navigation.navigate('CreateAccount', {customerName: customerName, customerPhoneNumber: customerPhoneNumber, isBarber: false});
+                    //  this.onRegisterCustomer(customerName, customerPhoneNumber).done(response => {
+                    //      console.log("hey! Customer has been registered.")
+                    //      //navigation.navigate('UserProfile', {fullName: customerName});
+                    //  })
+                }, 200);
               }}
               afterSubmit={() => console.log("afterSubmit!")}
               buttonText="Create Account"

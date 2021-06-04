@@ -16,10 +16,10 @@ import Profile from "../screens/Profile";
 import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import BarbershopPage from "../screens/BarbershopPage";
-import BarberLoginScreen from "../screens/BarberLoginScreen";
+import LoginScreen from "../screens/LoginScreen";
 import EditServices from "../screens/EditServices";
 import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
-import CreateCustomer from "../screens/Onboarding/CreateCustomer";
+import CreateCustomer2 from "../screens/Onboarding/CreateCustomer2";
 import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
 import Customer from "../models/Customer";
@@ -356,6 +356,8 @@ export default function AppStack(props) { // if this causes an error, try expo s
     return null
   }
   if(user && isBarber){
+    console.log("IN BARBER SIDE");        
+
     return (
       <Tab.Navigator>
         <Tab.Screen name="Home" component={RecentCutsStack} options ={{
@@ -393,8 +395,8 @@ export default function AppStack(props) { // if this causes an error, try expo s
       </Tab.Navigator>
     )
   } else if (user && !isBarber) {
-      return (
-              
+    console.log("IN CUSTOMER SIDE");  
+      return (      
       <Tab.Navigator>
           <Tab.Screen name="Explore" component={ExploreStack} options ={{
             tabBarLabel: "Explore",
@@ -444,26 +446,29 @@ export default function AppStack(props) { // if this causes an error, try expo s
         />
         <Stack.Screen
           name="SignUp"
-          component={BarberLoginScreen}
+          component={LoginScreen}
           options={{
             headerShown: false
           }}
         />
             <Stack.Screen
-              name="CreateCustomer"
-              component={CreateCustomer}
+              name="CreateCustomer2"
+              component={CreateCustomer2}
               options={{
-                header: ({ navigation, scene }) => (
-                  <Header
-                    title=""
-                    back
-                    black
-                    transparent
-                    navigation={navigation}
-                    scene={scene}
-                  />
-                ),
+                headerShown: false
               }}
+              // options={{
+              //   header: ({ navigation, scene }) => (
+              //     <Header
+              //       title=""
+              //       back
+              //       black
+              //       transparent
+              //       navigation={navigation}
+              //       scene={scene}
+              //     />
+              //   ),
+              // }}
             />
         <Stack.Screen
           name="CreateBarbershop"

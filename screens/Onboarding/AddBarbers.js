@@ -26,9 +26,7 @@ class AddBarbers extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      email: this.props.route.params.email,
       barberShop: this.props.route.params.barberShop,
-      password: this.props.route.params.password,
     };
   }
 
@@ -97,7 +95,7 @@ class AddBarbers extends React.Component {
     this.setState({ loading: true });
     setTimeout(() => {
       this.setState({ loading: false });
-      navigation.navigate('CreateAccount', {barberShop: shop});
+      navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
     }, 200);
     
   }
@@ -151,7 +149,6 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                console.log("EMAIL AND PASSWORD ARE", this.state.email, this.state.password)
                 console.log("addbarbers- this.props is", this.props);
                 // this.onRegister(false);
                 this.continueToNext();

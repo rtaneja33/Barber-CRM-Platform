@@ -20,7 +20,6 @@ export default function App() {
     await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
       setBarberContext(barber);
     })
-    console.log("barber context isss", barberContext)
   }
   function onAuthStateChanged(user) {
     if(user !== null){

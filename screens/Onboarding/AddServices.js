@@ -35,8 +35,6 @@ class AddServices extends React.Component {
     this.state = {
       loading: false,
       services: [],
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
       serviceField: null,
       modalVisible: false,
       serviceModified: null,
@@ -385,7 +383,7 @@ class AddServices extends React.Component {
   render() {
     return (
       <Background>
-      <BackButton goBack={this.props.navigation.goBack} />
+      <BackButton goBack={()=>{console.log("back button hit"); this.props.navigation.goBack();}} />
       <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
@@ -514,7 +512,7 @@ class AddServices extends React.Component {
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
                 const {navigation} = this.props;
-                navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
+                navigation.navigate('AddBarbers', {barberShop: this.state.barberShop});
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
