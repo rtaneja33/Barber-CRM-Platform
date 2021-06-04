@@ -20,6 +20,7 @@ import { firebase } from "../src/firebase/config";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { FlatGrid } from "react-native-super-grid";
 import AppointmentPhoto from "../models/AppointmentPhoto";
+import {CacheManager} from "react-native-expo-image-cache";
 
 const BASE_SIZE = theme.SIZES.BASE;
 import ImageLoad from "react-native-image-placeholder";
@@ -34,6 +35,10 @@ class AppointmentCard extends React.Component{
             activeSlide: 0,
             item: this.props.appointment
         }
+    }
+
+    async loadImage() {
+      this.setState({item: await CacheManager.get(this.state.item).getPath()})
     }
     parsePreferences = (serviceReceived) => {
         if (serviceReceived.length < 1) {

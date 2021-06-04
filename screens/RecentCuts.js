@@ -11,7 +11,6 @@ import { useContext } from 'react';
 // import { BarberContext } from '../App';
 import { AppointmentCards } from "../components";
 
-
 class RecentCuts extends React.Component {
 
     // static contextType = BarberContext;
@@ -118,6 +117,12 @@ class RecentCuts extends React.Component {
         
     }
 
+    isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+      const paddingToBottom = 20;
+      return layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom;
+    }
+
   render() {
     if(this.state.references)
       console.log("this.state.references.length is in render: ", this.state.references.length)
@@ -126,12 +131,14 @@ class RecentCuts extends React.Component {
         <ScrollView 
           showsVerticalScrollIndicator={false} 
           contentContainerStyle={{ paddingBottom: 30, width }}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.getReferencesOnRefresh}
-            />
-          }
+          scrollEventThrottle={50}
+          onScroll={({nativeEvent}) => {
+            if (this.isCloseToBottom(nativeEvent) && !this.state.refreshing) {
+              console.log("AT BOTTOM! LOAD MORE");
+              this.getReferencesOnRefresh();
+            }
+          }}
+          
         >
             <Block>
               {
