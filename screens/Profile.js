@@ -39,7 +39,7 @@ class Profile extends React.Component {
       appointments: [],
       activeSlide: 0,
       references: null,
-      name: "",
+      fullName: "",
       phoneNumber: "",
     };
     this.getReferences();
@@ -56,12 +56,11 @@ class Profile extends React.Component {
   }
     componentWillMount() {
         if (this.props.route.params != null && this.props.route.params.fullName != null && this.props.route.params.phoneNumber != null) {
-            this.setState({name: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
+            this.setState({fullName: this.props.route.params.fullName, phoneNumber: this.props.route.params.phoneNumber});
         } else {
             Customer.loadFromID(firebase.auth().currentUser.uid).then( customer => {
                 console.log("CUSTOMER IS", customer);
-                this.setState({name: customer.name, phoneNumber: customer.phonenumber});
-                this.loadAppointments()
+                this.setState({fullName: customer.name, phoneNumber: customer.phonenumber});
             })
         }
      console.log(this.props.route)
@@ -115,13 +114,16 @@ class Profile extends React.Component {
   
 
   getReferences = async () => {
-    const { fullName, phoneNumber } = this.props.route.params;
+    const { fullName, phoneNumber } = this.props.route.params ? this.props.route.params : this.state;
     console.log(
       "load appoinmtnets recieved fullname and phone num of",
       fullName,
       phoneNumber
     );
-    // fullName = this.state.name;
+    if(phoneNumber.length < 1 && fullName.length < 1){
+      return
+    }
+    // fullName = this.state.fullName;
     // const phoneNumber = this.props.route.params.phoneNumber;
     var extractedNumber = phoneNumber.match(/\d/g);
     extractedNumber = extractedNumber.join("");
@@ -280,7 +282,7 @@ class Profile extends React.Component {
       return ["", ""]
     }
     var initials = []
-    console.log("this.state.name is", this.state.name)
+    console.log("this.state.fullName is", this.state.fullName)
     initials.push(name[0])
     var tempName = name
     var name_pieces = tempName.split(" ")
@@ -290,7 +292,7 @@ class Profile extends React.Component {
     console.log("before finding fullname");
     console.log(this.props);
 
-    const fullName = this.state.name;
+    const fullName = this.state.fullName;
     const phoneNumber = this.state.phoneNumber;
     console.log("full name and phone are", fullName, phoneNumber);
     const { navigation } = this.props;
@@ -320,7 +322,7 @@ class Profile extends React.Component {
               <Avatar
             size="large"
             rounded
-            title= {(this.props.route.params && this.props.route.params.firstName ? this.props.route.params.firstName[0]: this.getInitials(this.state.name)[0]) + (this.props.route.params && this.props.route.params.lastName ? this.props.route.params.lastName[0]: this.getInitials(this.state.name)[1])}
+            title= {(this.props.route.params && this.props.route.params.firstName ? this.props.route.params.firstName[0]: this.getInitials(this.state.fullName)[0]) + (this.props.route.params && this.props.route.params.lastName ? this.props.route.params.lastName[0]: this.getInitials(this.state.fullName)[1])}
             overlayContainerStyle={{backgroundColor: argonTheme.COLORS.HEADER, borderColor: argonTheme.COLORS.BORDER_COLOR, borderWidth: 4  }}
             activeOpacity={0.9}
           />
