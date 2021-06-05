@@ -9,7 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 enableScreens();
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
-import BarberShops from '../barber-crm-app/models/BarberShop';
+import BarberShops from './models/BarberShop';
 
 export const BarberContext = React.createContext({});
 

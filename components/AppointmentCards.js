@@ -43,17 +43,6 @@ class AppointmentCards extends React.Component{
 
     onMomentumScrollBegin = () => { this.onEndReachedCalledDuringMomentum = false; }
 
-    getSnapshotBeforeUpdate(prevProps, prevState) {
-      // Are we adding new items to the list?
-      // Capture the scroll position so we can adjust scroll later.
-      // console.log("prev props", prevProps.references.size, "current props", this.props.references.size);
-      console.log("GETTING SNAPSHOT", this.state.appointments.length)
-      if(this.props.references.length > this.state.appointments.length){
-        //this.loadAppointments(this.props.references);
-      }
-      return null;
-    }
-
     componentDidMount(){
         console.log("in apt cards, references passed in were this long", this.state.references.length, "and were", this.state.references)
         this.loadAppointments(this.state.references).then((response)=>{console.log(response); });

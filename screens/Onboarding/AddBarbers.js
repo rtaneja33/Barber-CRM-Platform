@@ -1,23 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
   View,
+  Image,
   SafeAreaView,
   Dimensions,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { firebase } from "../../src/firebase/config";
-import { Block, Button as GaButton, theme, Text } from "galio-framework";
-import { argonTheme, tabs } from "../../constants";
-import OnboardingForm from "../../components/OnboardingForm";
-import { validateContent } from "../../constants/utils";
-const { width, height } = Dimensions.get("screen");
+import { Avatar } from 'react-native-elements';
+import { Block, Text, theme } from "galio-framework";
+import { Images, argonTheme, tabs, barber } from "../../constants";
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
 import { BackButton, Background } from '../../components'
+import { Button } from "../../components/";
+const { width, height } = Dimensions.get("screen");
+import Icon from "../../components/Icon";
+import Modal from "react-native-modal";
+import { Accordian, renderSeparator } from "../../components/";
+import { HeaderHeight } from "../../constants/utils";
+import CustomForm from "../../components/CustomForm";
+import { validateContent } from "../../constants/utils";
 
+const BASE_SIZE = theme.SIZES.BASE;
+const COLOR_WHITE = theme.COLORS.WHITE;
+const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
+
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
+// import firebase from "react-native-firebase";
 
 class AddBarbers extends React.Component {
   constructor(props) {
@@ -26,9 +42,125 @@ class AddBarbers extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      barberShop: this.props.route.params.barberShop,
+      barbers: [],
+      email: this.props.route.params.email,
+      password: this.props.route.params.password,
+      barberField: null,
+      modalVisible: false,
+      barberModified: null,
+      barberShop: this.props.route.params.barberShop, // this should be passed in as a prop;
+      changeMade: false,
     };
   }
+  // componentDidUpdate(){
+  //   console.log(this.state.barbers);
+  // }
+  renderAccordions = (barbers) => {
+    console.log("accordian", barbers);
+    const items = [];
+    barbers.map((item) => {
+      //need validation for this
+      item.firstName = item.barberName.split(" ")[0];
+      item.lastName = item.barberName.split(" ")[1];
+      items.push(
+        // make this into a component
+        <View style={{minHeight:70, padding:5, }}>
+     
+        <TouchableOpacity onPress={() => {}}>
+        <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
+          <Block style={styles.left}>
+            <Avatar
+              size="medium"
+              rounded
+              title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
+              overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
+              activeOpacity={0.4}
+            />
+          </Block>
+          <Block flex>
+            <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.firstName} {item.lastName}</Text>
+            <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{(item.barberLocation && item.barberLocation.length > 0) ? item.barberLocation: "no location"}</Text>
+          </Block>
+          <View style={styles.right}>
+            <Icon
+                name="nav-right"
+                family="ArgonExtra"
+                size={BASE_SIZE}
+                color={COLOR_GREY}
+            />
+          </View>
+        </Block>
+        </TouchableOpacity>
+      </View>
+      );
+    });
+    return items;
+  };
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible });
+  };
+
+  setbarberField = (field) => {
+    this.setState({ barberField: field });
+  };
+
+  setbarberModified = (oldKey) => {
+    this.setState({ barberModified: oldKey });
+  };
+
+  closeModal = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        modalVisible: false,
+      };
+    });
+  };
+
+  deletebarberItem = () => {
+    this.setState({ loading: true, changeMade: true });
+    let barberLocation = { ...this.state.barberModified };
+    var tempArr = this.state.barbers;
+    tempArr.map((obj) => {
+      if (obj.barberType === barberLocation.barberCategory) {
+        obj.barbers.splice(barberLocation.barberIndex, 1);
+      }
+    });
+    const timer = setTimeout(() => {
+      this.setState({ loading: false });
+      this.closeModal();
+      showMessage({
+        message: "barber Item has been deleted!",
+        type: "danger",
+        icon: "success",
+      });
+    }, 300);
+  };
+
+  submitbarberItem = (location, nameOfbarber) => {
+    let newbarberObj = {
+      barberLocation: location,
+      barberName: nameOfbarber,
+    };
+    this.setState({ loading: true, changeMade: true });
+
+    var tempArr = this.state.barbers.concat(newbarberObj);
+
+    this.setState({barbers: tempArr});
+    
+
+    //this doesn't work
+    const timer = setTimeout(() => {
+      this.setState({ loading: false });
+      this.closeModal();
+      console.log("timer");
+      showMessage({
+        message: "barber has been updated!",
+        type: "success",
+        icon: "success",
+      });
+    }, 300);
+  };
 
   toFirestore(services){
     var firestoreServices = []
@@ -99,9 +231,157 @@ class AddBarbers extends React.Component {
     }, 200);
     
   }
+  renderModal = (barberField = null) => {
+    {
+      if (!barberField || Object.keys(barberField).length <= 0) {
+        return <></>;
+      }
+      const categoryModal = Object.keys(barberField)[0];
+      var modalTitle = "";
+      var dropdownItems = [];
+      switch (categoryModal) {
+        case "barberType":
+          modalTitle = "Edit Category";
+          break;
+        case "barberName":
+          modalTitle = "Edit barber";
+          break;
+        case "addbarberName":
+          //breaks here ! Emerson
+          modalTitle = "Add barber";
+          // this.state.barbers.map((category) => {
+          //   console.log(
+          //     "ADD CATEGORY, barberField keys are",
+          //     category.barberType
+          //   );
+          //   dropdownItems.push({
+          //     label: category.barberType,
+          //     value: category.barberType,
+          //   });
+          // });
+          break;
+        default:
+          this.submitbarberItem(result, nameOfbarber); //maybe to error handling here
+          break;
+      }
+      // const categoryModal =
+      //   Object.keys(barberField).length > 0 &&
+      //   Object.keys(barberField)[0] === "barberType";
+      return (
+        <View
+          style={styles.centeredView}
+          //   renderToHardwareTextureAndroid
+          //   shouldRasterizeIOS
+        >
+          <Modal
+            animationType="fade"
+            transparent={true}
+            backdropOpacity={0.5}
+            useNativeDriver={false}
+            isVisible={this.state.modalVisible} //this.state.modalVisible
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Spinner
+                  // textContent={"Loading..."}
+                  textStyle={styles.spinnerTextStyles}
+                  visible={this.state.loading}
+                />
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    right: 23,
+                    top: 23,
+                    zIndex: 0,
+                    color: "#00000080",
+                  }}
+                  hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+                  onPress={() => {
+                    this.setState((prevState) => {
+                      return {
+                        ...prevState,
+                        modalVisible: !prevState.modalVisible,
+                      };
+                    });
+                  }}
+                >
+                  <Icon
+                    name="close"
+                    family="AntDesign"
+                    size={25}
+                    style={{
+                      color: "#00000080",
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.modalText}>{modalTitle}</Text>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={styles.child}
+                >
+                  <View style={{ marginTop: 30 }}>
+                    <CustomForm
+                      action={(result, barberCategory) => {
+                        console.log("result",result)
+                        console.log("categoryModal",categoryModal)
+                        switch (categoryModal) {
+                          case "barberType":
+                            this.submitbarberCategory(result["barberType"]);
+                            break;
+                          case "barberName":
+                            this.submitbarberItem(
+                              result["price"],
+                              result["barberName"]
+                            );
+                            break;
+                          case "addbarberName":
+                            this.submitbarberItem(
+                              result["addbarberLocation"],
+                              result["addbarberName"]
+                            ); //maybe to error handling here
+                          default:
+                            this.submitbarberItem(
+                              result["addbarberLocation"],
+                              result["addbarberName"]
+                            ); //maybe to error handling here
+                            break;
+                        }
+                      }}
+                      afterSubmit={() => console.log("afterSubmit!")}
+                      buttonText="Save Changes"
+                      closeModalText={
+                        categoryModal === "barberType"
+                          ? "Delete Category"
+                          : "Delete barber"
+                      }
+                      dropdownItems={dropdownItems}
+                      fields={barberField}
+                      deleteButton={
+                        categoryModal === "barberType"
+                          ? (result) => {
+                              this.deletebarberCategory();
+                            }
+                          : categoryModal === "barberName"
+                          ? (result) => {
+                              this.deletebarberItem();
+                            }
+                          : undefined
+                      }
+                    ></CustomForm>
+                  </View>
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      );
+    }
+  };
 
   render() {
-    console.log(this.props)
     return (
       <Background>
       <BackButton goBack={this.props.navigation.goBack} />
@@ -113,7 +393,7 @@ class AddBarbers extends React.Component {
         />
         <Block flex style={styles.addBarbers}>
           <Text bold size={28} style={styles.title}>
-            Add Barbers
+            Add barbers
           </Text>
           {/* <ScrollView
             showsVerticalScrollIndicator={false}
@@ -171,6 +451,11 @@ class AddBarbers extends React.Component {
             </TouchableOpacity>
           </Block>
         </View>
+        <FlashMessage
+          statusBarHeight={1}
+          position="top"
+          style={{ elevation: 10 }}
+        />
         </Block>
       </Background>
     );
@@ -189,6 +474,99 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginTop: 22,
     color: argonTheme.COLORS.HEADER,
+  },
+  button: {
+    marginBottom: theme.SIZES.BASE,
+    height: 65,
+  },
+  disabled: {
+    marginBottom: theme.SIZES.BASE,
+    backgroundColor: "#ccc",
+    color: "red",
+    height: 65,
+  },
+  screen: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  accordionCard: {
+    justifyContent: "flex-start",
+    marginHorizontal: 8,
+    padding: theme.SIZES.BASE,
+    width: width,
+    marginTop: 0,
+    borderRadius: 6,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+  },
+  profileCard: {
+    // position: "relative",
+    marginHorizontal: 8,
+    padding: theme.SIZES.BASE,
+    marginTop: 7,
+    borderRadius: 6,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    backgroundColor: theme.COLORS.WHITE,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 0 },
+    //ios
+    shadowRadius: 8,
+    shadowOpacity: 0.15,
+    zIndex: 2,
+    //android
+    // elevation: 1,
+  },
+  title: {
+    paddingBottom: argonTheme.SIZES.BASE,
+    paddingHorizontal: 15,
+    marginTop: 22,
+    color: argonTheme.COLORS.HEADER,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    paddingTop: 40,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    width: "100%",
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 25,
+  },
+  spinnerTextStyles: {
+    color: "#FFF",
   },
   bottom: {
     flex: 1,

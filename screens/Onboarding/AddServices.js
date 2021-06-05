@@ -42,6 +42,9 @@ class AddServices extends React.Component {
       changeMade: false,
     };
   }
+  componentDidUpdate(){
+    console.log(this.state.services);
+  }
   renderAccordions = (services) => {
     const items = [];
     services.map((item) => {
