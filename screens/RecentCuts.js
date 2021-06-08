@@ -57,7 +57,7 @@ class RecentCuts extends React.Component {
         this.setState({
           references: docs,
           refreshing: false,
-          lastTimeStamp: querySnapshot.docs[querySnapshot.docs.length-1].data().timestamp
+          lastTimeStamp: querySnapshot && querySnapshot.docs && querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length-1].data().timestamp : null
         })
       })
     }

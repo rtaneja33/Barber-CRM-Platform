@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, Button, Animated, Dimensions } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Button, Animated, Dimensions } from "react-native";
 import { hasValidationError, validateFields } from "../constants/utils";
 import {argonTheme} from '../constants';
 const { width, height } = Dimensions.get("screen");

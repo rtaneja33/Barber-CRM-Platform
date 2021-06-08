@@ -15,6 +15,8 @@ import { validateContent } from "../../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
+import { BackButton, Logo, HeaderSpecial, Background } from '../../components'
+
 
 
 class CreateBarbershop extends React.Component {
@@ -25,8 +27,6 @@ class CreateBarbershop extends React.Component {
       loading: false,
       fullname: "",
       phone: "",
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
       barberShop: null,
     };
   }
@@ -35,53 +35,22 @@ class CreateBarbershop extends React.Component {
   //     this.setState({loading: false})
   // },);
 
-  onRegister = (address, shopEmail, name) => {
-    console.log("IN ON REGISTER");
-    const { email, password } = this.props.route.params;
-    // try {
-    return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((response) => {
-          const uid = response.user.uid;
-          return BarberShop.createNew(uid)
-            .then((barberShop) => {
-              barberShop.email = shopEmail;
-              barberShop.shopName = name;
-              barberShop.address = address;
-              barberShop.updateLatLongFromAddress();
-              // barberShop.update()
-              return barberShop
-                .update()
-                .then((updated) => {
-                  console.log("RESPONSE FROM UPDATE IS", updated);
-                  resolve(updated);
-                    
-                })
-                .catch((err) => {
-                  alert("error updating info", err);
-                });
-            })
-            .catch((error) => {
-              alert("Error occured with creating Barbershop", error);
-            });
-        })
-    }).catch((err)=> {alert(err); reject(err);});
-  };
-
   render() {
     return (
-      <Block flex>
+      <Background>
+      <BackButton goBack={this.props.navigation.goBack} />
+      
+      {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
+      <Block>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block style={styles.centeredView}>
-          <Text bold size={28} style={styles.title}>
+        <Text bold size={36} style={styles.title}>
             Create My Shop
           </Text>
+        <Block style={styles.centeredView}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             // contentContainerStyle={styles.child}
@@ -97,11 +66,11 @@ class CreateBarbershop extends React.Component {
                   barberShop.email = email;
                   barberShop.shopName = name;
                   barberShop.address = address;
-                  navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                  navigation.navigate('AddServices', {barberShop: barberShop});
                 }, 300);
               }}
               afterSubmit={() => console.log("afterSubmit!")}
-              buttonText="Create Account"
+              buttonText="Continue"
               fields={{
                 shopName: {
                   label: "Shop Name*",
@@ -130,6 +99,7 @@ class CreateBarbershop extends React.Component {
           </ScrollView>
         </Block>
       </Block>
+      </Background>
     );
   }
 }
@@ -139,14 +109,16 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   centeredView: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
+    // // position: "relative",
+    // padding: theme.SIZES.BASE,
+    flexDirection: 'row',
+  
   },
   title: {
     paddingBottom: argonTheme.SIZES.BASE,
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
-    textAlign: "left",
+    
   },
   
 });

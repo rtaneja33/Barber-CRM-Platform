@@ -15,6 +15,7 @@ import { Block, Text, theme } from "galio-framework";
 import { Images, argonTheme, tabs, barber } from "../../constants";
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
+import { BackButton, Background } from '../../components'
 import { Button } from "../../components/";
 const { width, height } = Dimensions.get("screen");
 import Icon from "../../components/Icon";
@@ -34,14 +35,17 @@ import FlashMessage, {
 } from "react-native-flash-message";
 // import firebase from "react-native-firebase";
 
+
+
+
 class AddBarbers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
       barbers: [],
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
+      email: "",
+      password: "",
       barberField: null,
       modalVisible: false,
       barberModified: null,
@@ -172,47 +176,19 @@ class AddBarbers extends React.Component {
     return firestoreServices
   }
 
-  onRegister = (isSkipped) => {
-    console.log("IN ON REGISTER");
-    const { email, password } = this.props.route.params;
-    // try {
-    return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((response) => {
-          const uid = response.user.uid;
-          return BarberShop.createNew(uid)
-            .then((barberShop) => {
-              barberShop.email = this.state.barberShop.email;
-              barberShop.services = this.toFirestore(this.state.barberShop.services); // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
-              barberShop.shopName = this.state.barberShop.shopName;
-              barberShop.address= this.state.barberShop.address;
-              barberShop.updateLatLongFromAddress();
-
-              if(!isSkipped){
-                barberShop.baberIDs = this.state.barberShop.baberIDs;
-              }
-              //can add more fields here when add barbers complete, or about description etc.! 
-              // barberShop.update()
-              return barberShop
-                .update()
-                .then((updated) => {
-                  console.log("RESPONSE FROM UPDATE IS", updated);
-                  resolve(updated);
-                })
-                .catch((err) => {
-                  console.log("ERROR UPDATING ROHAN ERROR", err);
-                  alert("error updating info", err);
-                });
-            })
-            .catch((error) => {
-              console.log("the create shop  error is", error)
-              alert("Error occured with creating Barbershop", error);
-            });
-        })
-    }).catch((err)=> {alert(err); reject(err);});
-  };
+  continueToNext = () => {
+    const {navigation} = this.props;
+    console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
+    var shop = {...this.state.barberShop};
+    if(!shop.services){
+      shop.services = []
+    }
+    this.setState({ loading: true });
+    setTimeout(() => {
+      this.setState({ loading: false });
+      navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
+    }, 200);
+  }
 
   renderModal = (barberField = null) => {
     {
@@ -227,21 +203,11 @@ class AddBarbers extends React.Component {
           modalTitle = "Edit Category";
           break;
         case "barberName":
-          modalTitle = "Edit barber";
+          modalTitle = "Edit Barber";
           break;
         case "addbarberName":
           //breaks here ! Emerson
-          modalTitle = "Add barber";
-          // this.state.barbers.map((category) => {
-          //   console.log(
-          //     "ADD CATEGORY, barberField keys are",
-          //     category.barberType
-          //   );
-          //   dropdownItems.push({
-          //     label: category.barberType,
-          //     value: category.barberType,
-          //   });
-          // });
+          modalTitle = "Add Barber";
           break;
         default:
           this.submitbarberItem(result, nameOfbarber); //maybe to error handling here
@@ -366,18 +332,20 @@ class AddBarbers extends React.Component {
 
   render() {
     return (
+      <Background>
+      <BackButton goBack={()=>{console.log("back button hit"); this.props.navigation.goBack();}} />
       <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block>
+        <Block flex style={styles.addBarbers}>
           <Text bold size={28} style={styles.title}>
-            Add barbers
+            Add Barbers
           </Text>
           <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
-            <Block>
+          <Block>
             <Button
                 color="primary"
                 style={styles.button}
@@ -412,10 +380,53 @@ class AddBarbers extends React.Component {
                       fontSize: 14,
                       textAlign: 'center'
                     }}
-                  >Add barber</Text>
+                  >Add Barber</Text>
                 </Block>
               </Button>
             </Block>
+            {/* <Block>
+              <Button
+                color="secondary"
+                disabled={this.state.barbers.length < 1}
+                style={
+                  this.state.barbers.length < 1
+                    ? styles.disabled
+                    : styles.button
+                }
+                onPress={() => {
+                  this.setModalVisible(true);
+                  // this.setServiceModified("Something");
+                  this.setServiceField({
+                    addServiceName: {
+                      label: "Service Name*",
+                      validators: [validateContent],
+                    },
+                    addServicePrice: {
+                      label: "Price",
+                      validators: [],
+                    },
+                  });
+                }}
+              >
+                <Block column center style={this.state.barbers.length < 1 ? {opacity:0.5} : {opacity: 1.0}}>
+                  <Icon
+                    name="edit"
+                    family="FontAwesome5"
+                    size={30}
+                    color={this.state.barbers.length < 1 ? 'white' : argonTheme.COLORS.HEADER}
+                    style={{ marginTop: 2, marginRight: 5 }}
+                  />
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      color: this.state.barbers.length < 1 ? 'white' : argonTheme.COLORS.HEADER,
+                      fontWeight: "800",
+                      fontSize: 14,
+                    }}
+                  >Add Service</Text>
+                </Block>
+              </Button>
+            </Block> */}
           </Block>
           <ScrollView
             ref={(ref) => (this.scrollView = ref)}
@@ -439,7 +450,6 @@ class AddBarbers extends React.Component {
             <View style={styles.modal}>
               {this.renderModal(this.state.barberField)}
             </View>
-            {/* </View> */}
           </ScrollView>
         </Block>
         <View style={styles.bottom}>
@@ -454,17 +464,7 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                this.setState({ loading: true });
-                 setTimeout(() => {
-                  this.setState({ loading: false });
-                  this.onRegister(true);
-                  // const {navigation} = this.props;
-                  // navigation.navigate('AddBarbers', {barberShop: this.state.barberShop,email: this.state.email, password: this.state.password });
-                  // barberShop.email = email;
-                  // barberShop.shopName = name;
-                  // barberShop.address = address;
-                  // navigation.navigate('CreateBarbershop', {barberShop: barberShop,email: this.state.email, password: this.state.password });
-                }, 300);
+                this.continueToNext();
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -479,9 +479,9 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                console.log("EMAIL AND PASSWORD ARE", this.state.email, this.state.password)
                 console.log("addbarbers- this.props is", this.props);
-                this.onRegister(false);
+                // this.onRegister(false);
+                this.continueToNext();
                 console.log("pressed CONTINUE!");
               //   this.setState({ loading: true });
               //   setTimeout(() => {
@@ -507,6 +507,7 @@ class AddBarbers extends React.Component {
           style={{ elevation: 10 }}
         />
       </Block>
+      </Background>
     );
   }
 }
@@ -515,19 +516,13 @@ const styles = StyleSheet.create({
   child: {
     width: "100%",
   },
-  centeredView: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
-  },
-  title: {
-    paddingBottom: argonTheme.SIZES.BASE,
-    paddingHorizontal: 15,
-    color: argonTheme.COLORS.HEADER,
-    textAlign: "left",
+  addBarbers: {
+    marginTop: height*0.05,
   },
   button: {
     marginBottom: theme.SIZES.BASE,
     height: 65,
+    width: width*0.88,
   },
   disabled: {
     marginBottom: theme.SIZES.BASE,
@@ -578,8 +573,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    // marginTop: 22,
+    // padding: theme.SIZES.BASE
   },
+  // centeredView: {
+  //   // position: "relative",
+  //   padding: theme.SIZES.BASE,
+  // },
   modalView: {
     margin: 20,
     backgroundColor: "white",
