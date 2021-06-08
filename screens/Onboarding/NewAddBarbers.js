@@ -3,17 +3,20 @@ import {
   StyleSheet,
   TextInput,
   View,
+  Image,
   SafeAreaView,
   Dimensions,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
 import { firebase } from "../../src/firebase/config";
+import { Avatar } from 'react-native-elements';
 import { Block, Text, theme } from "galio-framework";
-import { argonTheme, tabs, Service, ServiceList } from "../../constants";
+import { Images, argonTheme, tabs, barber } from "../../constants";
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
-import { Button, HeaderSpecial } from "../../components/";
+import { BackButton, Background } from '../../components'
+import { Button } from "../../components/";
 const { width, height } = Dimensions.get("screen");
 import Icon from "../../components/Icon";
 import Modal from "react-native-modal";
@@ -21,42 +24,74 @@ import { Accordian, renderSeparator } from "../../components/";
 import { HeaderHeight } from "../../constants/utils";
 import CustomForm from "../../components/CustomForm";
 import { validateContent } from "../../constants/utils";
-import { BackButton, Background } from '../../components'
+
+const BASE_SIZE = theme.SIZES.BASE;
+const COLOR_WHITE = theme.COLORS.WHITE;
+const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 
 import FlashMessage, {
   showMessage,
   hideMessage,
 } from "react-native-flash-message";
+// import firebase from "react-native-firebase";
 
-class AddServices extends React.Component {
+class AddBarbers extends React.Component {
   constructor(props) {
     super(props);
-    console.log("PROPS ARE", props);
     this.state = {
       loading: false,
-      services: [],
-      serviceField: null,
+      fullname: "",
+      phone: "",
+      barbers: [],
+      email: this.props.route.params.email,
+      password: this.props.route.params.password,
+      barberField: null,
       modalVisible: false,
-      serviceModified: null,
+      barberModified: null,
       barberShop: this.props.route.params.barberShop, // this should be passed in as a prop;
       changeMade: false,
     };
   }
-  componentDidUpdate(){
-    console.log(this.state.services);
-  }
-  renderAccordions = (services) => {
+  // componentDidUpdate(){
+  //   console.log(this.state.barbers);
+  // }
+  renderAccordions = (barbers) => {
+    console.log("accordian", barbers);
     const items = [];
-    services.map((item) => {
+    barbers.map((item) => {
+      //need validation for this
+      item.firstName = item.barberName.split(" ")[0];
+      item.lastName = item.barberName.split(" ")[1];
       items.push(
-        <Accordian
-          serviceType={item.serviceType}
-          services={item.services}
-          editable
-          setServiceModified={this.setServiceModified}
-          setServiceField={this.setServiceField}
-          setModalVisible={this.setModalVisible}
-        />
+        // make this into a component
+        <View style={{minHeight:70, padding:5, }}>
+     
+        <TouchableOpacity onPress={() => {}}>
+        <Block row center card shadow space="between" style={styles.card} key={item.firstName}>
+          <Block style={styles.left}>
+            <Avatar
+              size="medium"
+              rounded
+              title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
+              overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
+              activeOpacity={0.4}
+            />
+          </Block>
+          <Block flex>
+            <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.firstName} {item.lastName}</Text>
+            <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{(item.barberLocation && item.barberLocation.length > 0) ? item.barberLocation: "no location"}</Text>
+          </Block>
+          <View style={styles.right}>
+            <Icon
+                name="nav-right"
+                family="ArgonExtra"
+                size={BASE_SIZE}
+                color={COLOR_GREY}
+            />
+          </View>
+        </Block>
+        </TouchableOpacity>
+      </View>
       );
     });
     return items;
@@ -65,12 +100,12 @@ class AddServices extends React.Component {
     this.setState({ modalVisible: visible });
   };
 
-  setServiceField = (field) => {
-    this.setState({ serviceField: field });
+  setbarberField = (field) => {
+    this.setState({ barberField: field });
   };
 
-  setServiceModified = (oldKey) => {
-    this.setState({ serviceModified: oldKey });
+  setbarberModified = (oldKey) => {
+    this.setState({ barberModified: oldKey });
   };
 
   closeModal = () => {
@@ -82,191 +117,156 @@ class AddServices extends React.Component {
     });
   };
 
-  deleteServiceItem = () => {
+  deletebarberItem = () => {
     this.setState({ loading: true, changeMade: true });
-    let serviceLocation = { ...this.state.serviceModified };
-    var tempArr = this.state.services;
+    let barberLocation = { ...this.state.barberModified };
+    var tempArr = this.state.barbers;
     tempArr.map((obj) => {
-      if (obj.serviceType === serviceLocation.serviceCategory) {
-        obj.services.splice(serviceLocation.serviceIndex, 1);
+      if (obj.barberType === barberLocation.barberCategory) {
+        obj.barbers.splice(barberLocation.barberIndex, 1);
       }
     });
     const timer = setTimeout(() => {
       this.setState({ loading: false });
       this.closeModal();
       showMessage({
-        message: "Service Item has been deleted!",
+        message: "barber Item has been deleted!",
         type: "danger",
         icon: "success",
       });
     }, 300);
   };
 
-  submitServiceItem = (price, nameOfService) => {
-    let serviceLocation = { ...this.state.serviceModified };
-    let newServiceObj = {
-      price: price,
-      serviceName: nameOfService,
+  submitbarberItem = (location, nameOfbarber) => {
+    let newbarberObj = {
+      barberLocation: location,
+      barberName: nameOfbarber,
     };
     this.setState({ loading: true, changeMade: true });
-    var tempArr = this.state.services;
-    tempArr.map((obj) => {
-      if (obj.serviceType === serviceLocation.serviceCategory) {
-        obj.services[serviceLocation.serviceIndex] = newServiceObj;
-      }
-    });
+
+    var tempArr = this.state.barbers.concat(newbarberObj);
+
+    this.setState({barbers: tempArr});
+    
+
+    //this doesn't work
     const timer = setTimeout(() => {
       this.setState({ loading: false });
       this.closeModal();
+      console.log("timer");
       showMessage({
-        message: "Service has been updated!",
+        message: "barber has been updated!",
         type: "success",
         icon: "success",
       });
     }, 300);
   };
 
-  deleteServiceCategory = () => {
-    this.setState({ loading: true, changeMade: true });
-    var oldCategory = this.state.serviceModified;
-    this.setState((prevState) => ({
-      services: prevState.services.filter((obj) => {
-        return obj.serviceType !== oldCategory;
-      }),
-    }));
-    const timer = setTimeout(() => {
-      this.setState({ loading: false });
-      this.closeModal();
-      showMessage({
-        message: "Service Category has been deleted!",
-        type: "danger",
-        icon: "success",
-      });
-    }, 300);
-  };
+  toFirestore(services){
+    var firestoreServices = []
+    services.map((serviceList)=>{
+      var firestoreObj = { serviceType: serviceList.serviceType, services: []}
+      serviceList.services.map((serviceObj) =>{
+        firestoreObj.services.push({price: serviceObj.price, serviceName: serviceObj.serviceName})
+      })
+      firestoreServices.push(firestoreObj)
+    })
+    console.log("returning firestoreServices from toFirestore: ", firestoreServices)
+    return firestoreServices
+  }
 
-  submitServiceCategory = (result) => {
-    this.setState({ loading: true, changeMade: true });
-    var oldCategory = this.state.serviceModified;
-    this.setState((prevState) => ({
-      services: prevState.services.map((obj) =>
-        obj.serviceType === oldCategory
-          ? Object.assign(obj, {
-              serviceType: result,
+  onRegister = (isSkipped) => {
+    console.log("IN ON REGISTER");
+    const { email, password } = this.props.route.params;
+    // try {
+    return new Promise((resolve, reject) => {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then((response) => {
+          const uid = response.user.uid;
+          return BarberShop.createNew(uid)
+            .then((barberShop) => {
+              barberShop.email = this.state.barberShop.email;
+              barberShop.services = this.toFirestore(this.state.barberShop.services); // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
+              barberShop.shopName = this.state.barberShop.shopName;
+              barberShop.address= this.state.barberShop.address;
+              barberShop.updateLatLongFromAddress();
+
+              if(!isSkipped){
+                barberShop.baberIDs = this.state.barberShop.baberIDs;
+              }
+              //can add more fields here when add barbers complete, or about description etc.! 
+              // barberShop.update()
+              return barberShop
+                .update()
+                .then((updated) => {
+                  console.log("RESPONSE FROM UPDATE IS", updated);
+                  resolve(updated);
+                })
+                .catch((err) => {
+                  console.log("ERROR UPDATING ROHAN ERROR", err);
+                  alert("error updating info", err);
+                });
             })
-          : obj
-      ),
-      serviceModified: result,
-    }));
-    const timer = setTimeout(() => {
-      this.setState({ loading: false });
-      this.closeModal();
-      showMessage({
-        message: "Service Category has been updated!",
-        type: "success",
-        icon: "success",
-      });
-    }, 300);
+            .catch((error) => {
+              console.log("the create shop  error is", error)
+              alert("Error occured with creating Barbershop", error);
+            });
+        })
+    }).catch((err)=> {alert(err); reject(err);});
   };
 
-  addServiceCategory = (result) => {
-    this.setState({ loading: true, changeMade: true });
-    // var oldCategory = this.state.serviceModified;
-    var newServiceCategory = new ServiceList();
-    newServiceCategory.serviceType = result;
-    newServiceCategory.services = [];
-    var updatedServices = this.state.services.concat(newServiceCategory);
-    this.setState({ services: updatedServices });
-    const timer = setTimeout(() => {
-      this.setState({ loading: false });
-      this.closeModal();
-      showMessage({
-        message: "Service Category has been added!",
-        type: "success",
-        icon: "success",
-      });
-    }, 300);
-  };
-
-  addServiceName = (price, nameOfService, serviceCategory) => {
-    if (
-      !price ||
-      !nameOfService ||
-      !serviceCategory ||
-      price.length < 1 ||
-      nameOfService.length < 1 ||
-      serviceCategory.length < 1
-    ) {
-      const timer = setTimeout(() => {
-        this.setState({ loading: false });
-        this.closeModal();
-        showMessage({
-          message: "An error occurred. Please try again.",
-          type: "danger",
-          icon: "danger",
-        });
-      }, 300);
-      return;
+  continueToNext = () => {
+    const {navigation} = this.props;
+    console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
+    var shop = {...this.state.barberShop};
+    if(!shop.services){
+      shop.services = []
     }
-    let newServiceObj = new Service(nameOfService, price);
-    this.setState({ loading: true, changeMade: true });
-    var tempArr = this.state.services;
-    for (let obj of tempArr){
-      if (obj.serviceType === serviceCategory) {
-        console.log("pushing new service obj",obj.serviceType);
-        obj.services.push(newServiceObj);
-        break;
-      }
-    }
-    const timer = setTimeout(() => {
+    this.setState({ loading: true });
+    setTimeout(() => {
       this.setState({ loading: false });
-      this.closeModal();
-      showMessage({
-        message: "Service Name has been added!",
-        type: "success",
-        icon: "success",
-      });
-    }, 300);
-  };
-
-  renderModal = (serviceField = null) => {
+      navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
+    }, 200);
+    
+  }
+  renderModal = (barberField = null) => {
     {
-      if (!serviceField || Object.keys(serviceField).length <= 0) {
+      if (!barberField || Object.keys(barberField).length <= 0) {
         return <></>;
       }
-      const categoryModal = Object.keys(serviceField)[0];
+      const categoryModal = Object.keys(barberField)[0];
       var modalTitle = "";
       var dropdownItems = [];
       switch (categoryModal) {
-        case "serviceType":
+        case "barberType":
           modalTitle = "Edit Category";
           break;
-        case "addServiceType":
-          modalTitle = "Add Category";
+        case "barberName":
+          modalTitle = "Edit barber";
           break;
-        case "serviceName":
-          modalTitle = "Edit Service";
-          break;
-        case "addServiceName":
-          modalTitle = "Add Service";
-          this.state.services.map((category) => {
-            console.log(
-              "ADD CATEGORY, serviceField keys are",
-              category.serviceType
-            );
-            dropdownItems.push({
-              label: category.serviceType,
-              value: category.serviceType,
-            });
-          });
+        case "addbarberName":
+          //breaks here ! Emerson
+          modalTitle = "Add barber";
+          // this.state.barbers.map((category) => {
+          //   console.log(
+          //     "ADD CATEGORY, barberField keys are",
+          //     category.barberType
+          //   );
+          //   dropdownItems.push({
+          //     label: category.barberType,
+          //     value: category.barberType,
+          //   });
+          // });
           break;
         default:
-          this.submitServiceItem(result, nameOfService); //maybe to error handling here
+          this.submitbarberItem(result, nameOfbarber); //maybe to error handling here
           break;
       }
       // const categoryModal =
-      //   Object.keys(serviceField).length > 0 &&
-      //   Object.keys(serviceField)[0] === "serviceType";
+      //   Object.keys(barberField).length > 0 &&
+      //   Object.keys(barberField)[0] === "barberType";
       return (
         <View
           style={styles.centeredView}
@@ -324,30 +324,28 @@ class AddServices extends React.Component {
                 >
                   <View style={{ marginTop: 30 }}>
                     <CustomForm
-                      action={(result, serviceCategory) => {
+                      action={(result, barberCategory) => {
+                        console.log("result",result)
+                        console.log("categoryModal",categoryModal)
                         switch (categoryModal) {
-                          case "serviceType":
-                            this.submitServiceCategory(result["serviceType"]);
+                          case "barberType":
+                            this.submitbarberCategory(result["barberType"]);
                             break;
-                          case "addServiceType":
-                            this.addServiceCategory(result["addServiceType"]);
-                            break;
-                          case "serviceName":
-                            this.submitServiceItem(
+                          case "barberName":
+                            this.submitbarberItem(
                               result["price"],
-                              result["serviceName"]
+                              result["barberName"]
                             );
                             break;
-                          case "addServiceName":
-                            this.addServiceName(
-                              result["addServicePrice"],
-                              result["addServiceName"],
-                              serviceCategory
-                            );
+                          case "addbarberName":
+                            this.submitbarberItem(
+                              result["addbarberLocation"],
+                              result["addbarberName"]
+                            ); //maybe to error handling here
                           default:
-                            this.submitServiceItem(
-                              result["price"],
-                              result["serviceName"]
+                            this.submitbarberItem(
+                              result["addbarberLocation"],
+                              result["addbarberName"]
                             ); //maybe to error handling here
                             break;
                         }
@@ -355,20 +353,20 @@ class AddServices extends React.Component {
                       afterSubmit={() => console.log("afterSubmit!")}
                       buttonText="Save Changes"
                       closeModalText={
-                        categoryModal === "serviceType"
+                        categoryModal === "barberType"
                           ? "Delete Category"
-                          : "Delete Service"
+                          : "Delete barber"
                       }
                       dropdownItems={dropdownItems}
-                      fields={serviceField}
+                      fields={barberField}
                       deleteButton={
-                        categoryModal === "serviceType"
+                        categoryModal === "barberType"
                           ? (result) => {
-                              this.deleteServiceCategory();
+                              this.deletebarberCategory();
                             }
-                          : categoryModal === "serviceName"
+                          : categoryModal === "barberName"
                           ? (result) => {
-                              this.deleteServiceItem();
+                              this.deletebarberItem();
                             }
                           : undefined
                       }
@@ -386,29 +384,33 @@ class AddServices extends React.Component {
   render() {
     return (
       <Background>
-      <BackButton goBack={()=>{console.log("back button hit"); this.props.navigation.goBack();}} />
+      <BackButton goBack={this.props.navigation.goBack} />
       <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Block flex style={styles.addServices}>
+        <Block>
           <Text bold size={28} style={styles.title}>
-            Add Services
+            Add barbers
           </Text>
           <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
             <Block>
-              <Button
-                color="default"
+            <Button
+                color="primary"
                 style={styles.button}
                 onPress={() => {
                   this.setModalVisible(true);
-                  // this.setServiceModified("Something");
-                  this.setServiceField({
-                    addServiceType: {
-                      label: "Service Category*",
+                  // this.setbarberModified("Something");
+                  this.setbarberField({
+                    addbarberName: {
+                      label: "barber Name*",
                       validators: [validateContent],
+                    },
+                    addbarberLocation: {
+                      label: "Location",
+                      validators: [],
                     },
                   });
                 }}
@@ -429,50 +431,7 @@ class AddServices extends React.Component {
                       fontSize: 14,
                       textAlign: 'center'
                     }}
-                  >Add Category</Text>
-                </Block>
-              </Button>
-            </Block>
-            <Block>
-              <Button
-                color="secondary"
-                disabled={this.state.services.length < 1}
-                style={
-                  this.state.services.length < 1
-                    ? styles.disabled
-                    : styles.button
-                }
-                onPress={() => {
-                  this.setModalVisible(true);
-                  // this.setServiceModified("Something");
-                  this.setServiceField({
-                    addServiceName: {
-                      label: "Service Name*",
-                      validators: [validateContent],
-                    },
-                    addServicePrice: {
-                      label: "Price",
-                      validators: [],
-                    },
-                  });
-                }}
-              >
-                <Block column center style={this.state.services.length < 1 ? {opacity:0.5} : {opacity: 1.0}}>
-                  <Icon
-                    name="edit"
-                    family="FontAwesome5"
-                    size={30}
-                    color={this.state.services.length < 1 ? 'white' : argonTheme.COLORS.HEADER}
-                    style={{ marginTop: 2, marginRight: 5 }}
-                  />
-                  <Text
-                    style={{
-                      marginTop: 5,
-                      color: this.state.services.length < 1 ? 'white' : argonTheme.COLORS.HEADER,
-                      fontWeight: "800",
-                      fontSize: 14,
-                    }}
-                  >Add Service</Text>
+                  >Add barber</Text>
                 </Block>
               </Button>
             </Block>
@@ -485,19 +444,19 @@ class AddServices extends React.Component {
             showsVerticalScrollIndicator={true}
             contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
           >
-            <Block flex style={styles.accordionCard}>
+            <Block>
               <Block
                 style={{
                   paddingBottom: -HeaderHeight * 2,
                 }}
               >
-                <View style={styles.accordion}>
-                  {this.renderAccordions(this.state.services)}
+                <View style={styles.accordionCard}>
+                  {this.renderAccordions(this.state.barbers)}
                 </View>
               </Block>
             </Block>
             <View style={styles.modal}>
-              {this.renderModal(this.state.serviceField)}
+              {this.renderModal(this.state.barberField)}
             </View>
             {/* </View> */}
           </ScrollView>
@@ -514,8 +473,7 @@ class AddServices extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                const {navigation} = this.props;
-                navigation.navigate('AddBarbers', {barberShop: this.state.barberShop});
+                this.continueToNext();
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -530,16 +488,20 @@ class AddServices extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
+                console.log("addbarbers- this.props is", this.props);
+                // this.onRegister(false);
+                this.continueToNext();
                 console.log("pressed CONTINUE!");
-                this.setState({ loading: true });
-                setTimeout(() => {
-                 this.setState({ loading: false });
-                 const {navigation} = this.props;
-                 var shop = {...this.state.barberShop};
-                 shop.services = this.state.services; 
-                 this.setState({barberShop: shop})
-                 navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
-               }, 200);
+              //   this.setState({ loading: true });
+              //   setTimeout(() => {
+              //    this.setState({ loading: false });
+              //    const {navigation} = this.props;
+              //    var shop = {...this.state.barberShop};
+              //    shop.services = this.state.services; 
+              //    this.setState({barberShop: shop})
+              //    console.log("and this.state.barbershop.services looks like", this.state.barberShop.services)
+              //    navigation.navigate('AddBarbers', {barberShop: this.state.barberShop, email: this.state.email, password: this.state.password });
+              //  }, 300);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -553,7 +515,7 @@ class AddServices extends React.Component {
           position="top"
           style={{ elevation: 10 }}
         />
-      </Block>
+        </Block>
       </Background>
     );
   }
@@ -563,8 +525,8 @@ const styles = StyleSheet.create({
   child: {
     width: "100%",
   },
-  addServices: {
-    marginTop: height*0.05,  
+  addBarbers: {
+    marginTop: height*0.05, 
   },
   button: {
     marginBottom: theme.SIZES.BASE,
@@ -585,6 +547,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginHorizontal: 8,
     padding: theme.SIZES.BASE,
+    width: width,
     marginTop: 0,
     borderRadius: 6,
     borderTopLeftRadius: 6,
@@ -613,12 +576,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginTop: 22,
     color: argonTheme.COLORS.HEADER,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    // padding: theme.SIZES.BASE,
+    textAlign: 'left',
   },
   modalView: {
     margin: 20,
@@ -667,6 +625,14 @@ const styles = StyleSheet.create({
     height: height / 9,
     backgroundColor: argonTheme.COLORS.HEADER,
   },
+  
+  centeredView: {
+    padding: theme.SIZES.BASE,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
 });
 
-export default AddServices;
+export default AddBarbers;

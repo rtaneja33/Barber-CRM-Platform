@@ -35,16 +35,17 @@ import FlashMessage, {
 } from "react-native-flash-message";
 // import firebase from "react-native-firebase";
 
+
+
+
 class AddBarbers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      fullname: "",
-      phone: "",
       barbers: [],
-      email: this.props.route.params.email,
-      password: this.props.route.params.password,
+      email: "",
+      password: "",
       barberField: null,
       modalVisible: false,
       barberModified: null,
@@ -175,48 +176,6 @@ class AddBarbers extends React.Component {
     return firestoreServices
   }
 
-  onRegister = (isSkipped) => {
-    console.log("IN ON REGISTER");
-    const { email, password } = this.props.route.params;
-    // try {
-    return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((response) => {
-          const uid = response.user.uid;
-          return BarberShop.createNew(uid)
-            .then((barberShop) => {
-              barberShop.email = this.state.barberShop.email;
-              barberShop.services = this.toFirestore(this.state.barberShop.services); // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
-              barberShop.shopName = this.state.barberShop.shopName;
-              barberShop.address= this.state.barberShop.address;
-              barberShop.updateLatLongFromAddress();
-
-              if(!isSkipped){
-                barberShop.baberIDs = this.state.barberShop.baberIDs;
-              }
-              //can add more fields here when add barbers complete, or about description etc.! 
-              // barberShop.update()
-              return barberShop
-                .update()
-                .then((updated) => {
-                  console.log("RESPONSE FROM UPDATE IS", updated);
-                  resolve(updated);
-                })
-                .catch((err) => {
-                  console.log("ERROR UPDATING ROHAN ERROR", err);
-                  alert("error updating info", err);
-                });
-            })
-            .catch((error) => {
-              console.log("the create shop  error is", error)
-              alert("Error occured with creating Barbershop", error);
-            });
-        })
-    }).catch((err)=> {alert(err); reject(err);});
-  };
-
   continueToNext = () => {
     const {navigation} = this.props;
     console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
@@ -229,8 +188,8 @@ class AddBarbers extends React.Component {
       this.setState({ loading: false });
       navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
     }, 200);
-    
   }
+
   renderModal = (barberField = null) => {
     {
       if (!barberField || Object.keys(barberField).length <= 0) {
@@ -244,21 +203,11 @@ class AddBarbers extends React.Component {
           modalTitle = "Edit Category";
           break;
         case "barberName":
-          modalTitle = "Edit barber";
+          modalTitle = "Edit Barber";
           break;
         case "addbarberName":
           //breaks here ! Emerson
-          modalTitle = "Add barber";
-          // this.state.barbers.map((category) => {
-          //   console.log(
-          //     "ADD CATEGORY, barberField keys are",
-          //     category.barberType
-          //   );
-          //   dropdownItems.push({
-          //     label: category.barberType,
-          //     value: category.barberType,
-          //   });
-          // });
+          modalTitle = "Add Barber";
           break;
         default:
           this.submitbarberItem(result, nameOfbarber); //maybe to error handling here
@@ -384,7 +333,7 @@ class AddBarbers extends React.Component {
   render() {
     return (
       <Background>
-      <BackButton goBack={this.props.navigation.goBack} />
+      <BackButton goBack={()=>{console.log("back button hit"); this.props.navigation.goBack();}} />
       <Block flex style={styles.centeredView}>
         <Spinner
           // textContent={"Loading..."}
@@ -393,14 +342,115 @@ class AddBarbers extends React.Component {
         />
         <Block flex style={styles.addBarbers}>
           <Text bold size={28} style={styles.title}>
-            Add barbers
+            Add Barbers
           </Text>
-          {/* <ScrollView
-            showsVerticalScrollIndicator={false}
-            // contentContainerStyle={styles.child}
-          > */}
-            {/* <Text>Have a way to create barbers here / just add their names+create profiles? @Emerson</Text> */}
-          {/* </ScrollView> */}
+          <Block row style={{ paddingHorizontal: theme.SIZES.BASE }}>
+          <Block>
+            <Button
+                color="primary"
+                style={styles.button}
+                onPress={() => {
+                  this.setModalVisible(true);
+                  // this.setbarberModified("Something");
+                  this.setbarberField({
+                    addbarberName: {
+                      label: "barber Name*",
+                      validators: [validateContent],
+                    },
+                    addbarberLocation: {
+                      label: "Location",
+                      validators: [],
+                    },
+                  });
+                }}
+              >
+                <Block column center>
+                  <Icon
+                    name="grid"
+                    family="entypo"
+                    size={30}
+                    color={"white"}
+                    style={{ marginTop: 2, marginRight: 5 }}
+                  />
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      color: "white",
+                      fontWeight: "800",
+                      fontSize: 14,
+                      textAlign: 'center'
+                    }}
+                  >Add Barber</Text>
+                </Block>
+              </Button>
+            </Block>
+            {/* <Block>
+              <Button
+                color="secondary"
+                disabled={this.state.barbers.length < 1}
+                style={
+                  this.state.barbers.length < 1
+                    ? styles.disabled
+                    : styles.button
+                }
+                onPress={() => {
+                  this.setModalVisible(true);
+                  // this.setServiceModified("Something");
+                  this.setServiceField({
+                    addServiceName: {
+                      label: "Service Name*",
+                      validators: [validateContent],
+                    },
+                    addServicePrice: {
+                      label: "Price",
+                      validators: [],
+                    },
+                  });
+                }}
+              >
+                <Block column center style={this.state.barbers.length < 1 ? {opacity:0.5} : {opacity: 1.0}}>
+                  <Icon
+                    name="edit"
+                    family="FontAwesome5"
+                    size={30}
+                    color={this.state.barbers.length < 1 ? 'white' : argonTheme.COLORS.HEADER}
+                    style={{ marginTop: 2, marginRight: 5 }}
+                  />
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      color: this.state.barbers.length < 1 ? 'white' : argonTheme.COLORS.HEADER,
+                      fontWeight: "800",
+                      fontSize: 14,
+                    }}
+                  >Add Service</Text>
+                </Block>
+              </Button>
+            </Block> */}
+          </Block>
+          <ScrollView
+            ref={(ref) => (this.scrollView = ref)}
+            onContentSizeChange={() => {
+              this.scrollView.scrollToEnd(true);
+            }}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
+          >
+            <Block>
+              <Block
+                style={{
+                  paddingBottom: -HeaderHeight * 2,
+                }}
+              >
+                <View style={styles.accordionCard}>
+                  {this.renderAccordions(this.state.barbers)}
+                </View>
+              </Block>
+            </Block>
+            <View style={styles.modal}>
+              {this.renderModal(this.state.barberField)}
+            </View>
+          </ScrollView>
         </Block>
         <View style={styles.bottom}>
           <Block flex row>
@@ -456,7 +506,7 @@ class AddBarbers extends React.Component {
           position="top"
           style={{ elevation: 10 }}
         />
-        </Block>
+      </Block>
       </Background>
     );
   }
@@ -467,17 +517,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   addBarbers: {
-    marginTop: height*0.05, 
-  },
-  title: {
-    paddingBottom: argonTheme.SIZES.BASE,
-    paddingHorizontal: 15,
-    marginTop: 22,
-    color: argonTheme.COLORS.HEADER,
+    marginTop: height*0.05,
   },
   button: {
     marginBottom: theme.SIZES.BASE,
     height: 65,
+    width: width*0.88,
   },
   disabled: {
     marginBottom: theme.SIZES.BASE,
@@ -528,8 +573,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
+    // marginTop: 22,
+    // padding: theme.SIZES.BASE
   },
+  // centeredView: {
+  //   // position: "relative",
+  //   padding: theme.SIZES.BASE,
+  // },
   modalView: {
     margin: 20,
     backgroundColor: "white",
@@ -577,14 +627,36 @@ const styles = StyleSheet.create({
     height: height / 9,
     backgroundColor: argonTheme.COLORS.HEADER,
   },
-  
-  centeredView: {
-    padding: theme.SIZES.BASE,
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  rounded: {
+    borderRadius: theme.SIZES.BASE * 0.1875,
   },
-  
+  gradient: {
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 90,
+    position: 'absolute',
+    overflow: 'hidden',
+    borderBottomRightRadius: theme.SIZES.BASE * 0.5,
+    borderBottomLeftRadius: theme.SIZES.BASE * 0.5,
+  },
+  card: {
+    borderColor: 'transparent',
+    // marginVertical: BASE_SIZE / 2,
+    marginVertical: 1,
+    padding: BASE_SIZE+10,
+    backgroundColor: COLOR_WHITE,
+    shadowOpacity: .9,
+  },
+  left: {
+    marginRight: BASE_SIZE,
+  },
+  right: {
+    width: BASE_SIZE * 2,
+    backgroundColor: 'transparent',
+    elevation: 10, justifyContent:'center', alignItems: 'center',
+  },
+
 });
 
 export default AddBarbers;
