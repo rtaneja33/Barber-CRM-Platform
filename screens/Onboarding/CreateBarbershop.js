@@ -57,13 +57,13 @@ class CreateBarbershop extends React.Component {
           >
             {/* <View> */}
             <OnboardingForm
-              action={(address, email, name) => {
+              action={(address, name) => {
+                 console.log("address is", address, "name is", name);
                  this.setState({ loading: true });
                  setTimeout(() => {
                   this.setState({ loading: false });
                   const {navigation} = this.props;
                   var barberShop = new BarberShop();
-                  barberShop.email = email;
                   barberShop.shopName = name;
                   barberShop.address = address;
                   navigation.navigate('AddServices', {barberShop: barberShop});
@@ -79,13 +79,13 @@ class CreateBarbershop extends React.Component {
                     backgroundColor: "transparent",
                   },
                 },
-                shopEmail: {
-                  label: "Shop Email*",
-                  validators: [validateContent],
-                  inputProps: {
-                    backgroundColor: "transparent",
-                  },
-                },
+                // shopEmail: {
+                //   label: "Shop Email*",
+                //   validators: [validateContent],
+                //   inputProps: {
+                //     backgroundColor: "transparent",
+                //   },
+                // },
                 shopAddress: {
                   label: "Shop Address*",
                   validators: [validateContent],
