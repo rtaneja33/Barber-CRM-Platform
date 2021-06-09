@@ -43,7 +43,7 @@ class SignupScreen extends React.Component {
     }
     signupCustomerPressed = () => {
         const {navigation} = this.props;
-        navigation.navigate('CreateCustomer', {email: this.state.email, password: this.state.password });
+        navigation.navigate('CreateCustomer2', {email: this.state.email, password: this.state.password });
     }
     
     signinPressed = () => {
