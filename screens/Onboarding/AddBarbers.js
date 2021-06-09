@@ -176,13 +176,15 @@ class AddBarbers extends React.Component {
     return firestoreServices
   }
 
-  continueToNext = () => {
+  continueToNext = (isSkipped) => {
     const {navigation} = this.props;
     console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
     var shop = {...this.state.barberShop};
     if(!shop.services){
       shop.services = []
     }
+    if(!isSkipped)
+      shop.barberIDs = this.state.barbers
     this.setState({ loading: true });
     setTimeout(() => {
       this.setState({ loading: false });
@@ -464,7 +466,7 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                this.continueToNext();
+                this.continueToNext(true);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -481,7 +483,7 @@ class AddBarbers extends React.Component {
               onPress={() => {
                 console.log("addbarbers- this.props is", this.props);
                 // this.onRegister(false);
-                this.continueToNext();
+                this.continueToNext(false);
                 console.log("pressed CONTINUE!");
               //   this.setState({ loading: true });
               //   setTimeout(() => {

@@ -74,7 +74,7 @@ class CreateAccount extends React.Component {
               barberShop.address= this.state.barberShop.address;
               barberShop.updateLatLongFromAddress();
 
-              barberShop.baberIDs = this.state.barberShop.baberIDs || null;
+              barberShop.barberIDs = this.state.barberShop.barberIDs || null;
               
               //can add more fields here when add barbers complete, or about description etc.! 
               // barberShop.update()
@@ -97,6 +97,7 @@ class CreateAccount extends React.Component {
   };
 
   render() {
+    console.log("this.state.barberShop in CreateMyAccount is", this.state.barberShop);
     return (
       <Background>
       <BackButton goBack={this.props.navigation.goBack} />
