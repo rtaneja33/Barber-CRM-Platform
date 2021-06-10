@@ -22,7 +22,7 @@ import { BackButton, Logo, HeaderSpecial, Background } from '../../components'
 class CreateAccount extends React.Component {
   constructor(props) {
     super(props);
-    console.log("PROPS ARE", props);
+    console.log("PROPS in CreateAccount ARE", props);
     this.state = {
       loading: false,
     //   fullname: "",
