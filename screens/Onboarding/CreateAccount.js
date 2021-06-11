@@ -22,7 +22,7 @@ import { BackButton, Logo, HeaderSpecial, Background } from '../../components'
 class CreateAccount extends React.Component {
   constructor(props) {
     super(props);
-    console.log("PROPS ARE", props);
+    console.log("PROPS in CreateAccount ARE", props);
     this.state = {
       loading: false,
     //   fullname: "",
@@ -71,10 +71,11 @@ class CreateAccount extends React.Component {
               
               barberShop.services = this.state.barberShop.services ? this.toFirestore(this.state.barberShop.services) : []; // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
               barberShop.shopName = this.state.barberShop.shopName;
+              barberShop.barberIDs = this.state.barberShop.barberIDs;
               barberShop.address= this.state.barberShop.address;
               barberShop.updateLatLongFromAddress();
 
-              barberShop.baberIDs = this.state.barberShop.baberIDs || null;
+              barberShop.barberIDs = this.state.barberShop.barberIDs || null;
               
               //can add more fields here when add barbers complete, or about description etc.! 
               // barberShop.update()
@@ -97,6 +98,7 @@ class CreateAccount extends React.Component {
   };
 
   render() {
+    console.log("this.state.barberShop in CreateMyAccount is", this.state.barberShop);
     return (
       <Background>
       <BackButton goBack={this.props.navigation.goBack} />

@@ -62,7 +62,7 @@ class AddBarbers extends React.Component {
     barbers.map((item) => {
       //need validation for this
       item.firstName = item.barberName.split(" ")[0];
-      item.lastName = item.barberName.split(" ")[1];
+      item.lastName = item.barberName.split(" ")[1] || "";
       items.push(
         // make this into a component
         <View style={{minHeight:70, padding:5, }}>
@@ -80,7 +80,7 @@ class AddBarbers extends React.Component {
           </Block>
           <Block flex>
             <Text style={{ color: "#2f363c",fontSize: 20, fontWeight: '600' }} size={BASE_SIZE * 1.125}>{item.firstName} {item.lastName}</Text>
-            <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{(item.barberLocation && item.barberLocation.length > 0) ? item.barberLocation: "no location"}</Text>
+            <Text style={{ color: "#808080", paddingTop: 2 }} size={BASE_SIZE * 0.875} muted>{(item.barberLocation && item.barberLocation.length > 0) ? item.barberLocation: "No location"}</Text>
           </Block>
           <View style={styles.right}>
             <Icon
@@ -176,13 +176,15 @@ class AddBarbers extends React.Component {
     return firestoreServices
   }
 
-  continueToNext = () => {
+  continueToNext = (isSkipped) => {
     const {navigation} = this.props;
     console.log("before navigation to CreateAccount, we are passing barberShop: ", this.state.barberShop)
     var shop = {...this.state.barberShop};
     if(!shop.services){
       shop.services = []
     }
+    if(!isSkipped)
+      shop.barberIDs = this.state.barbers
     this.setState({ loading: true });
     setTimeout(() => {
       this.setState({ loading: false });
@@ -304,7 +306,7 @@ class AddBarbers extends React.Component {
                       closeModalText={
                         categoryModal === "barberType"
                           ? "Delete Category"
-                          : "Delete barber"
+                          : "Delete Barber"
                       }
                       dropdownItems={dropdownItems}
                       fields={barberField}
@@ -354,7 +356,7 @@ class AddBarbers extends React.Component {
                   // this.setbarberModified("Something");
                   this.setbarberField({
                     addbarberName: {
-                      label: "barber Name*",
+                      label: "Barber Name*",
                       validators: [validateContent],
                     },
                     addbarberLocation: {
@@ -464,7 +466,7 @@ class AddBarbers extends React.Component {
               }}
               hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               onPress={() => {
-                this.continueToNext();
+                this.continueToNext(true);
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>SKIP</Text>
@@ -481,7 +483,7 @@ class AddBarbers extends React.Component {
               onPress={() => {
                 console.log("addbarbers- this.props is", this.props);
                 // this.onRegister(false);
-                this.continueToNext();
+                this.continueToNext(false);
                 console.log("pressed CONTINUE!");
               //   this.setState({ loading: true });
               //   setTimeout(() => {
