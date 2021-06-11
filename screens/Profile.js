@@ -300,12 +300,11 @@ class Profile extends React.Component {
     console.log("IN RENDER PROFILE, full name is", fullName);
     return (
       <Block flex style={styles.profile}>
-        <Block flex>
           <LinearGradient
             // Background Linear Gradient
             colors={['rgba(255,255,255,1)','rgba(97,181,255,.6)']}
             //colors={['rgba(97,181,255,1)', 'rgba(82,95,127,1)']}
-            style={styles.background}
+            style={{flex:1}}
           >
           {/* <ImageBackground
             source={Images.ProfileBackground}
@@ -315,17 +314,17 @@ class Profile extends React.Component {
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 100 }}
-            style={{ width, marginTop: "20%", paddingTop: 50 }}
+            style={{ width, marginTop: "20%", paddingTop: 50}}
           >
             <Block flex style={styles.profileCard}>
               <Block middle style={styles.avatarContainer}>
               <Avatar
-            size="large"
-            rounded
-            title= {(this.props.route.params && this.props.route.params.firstName ? this.props.route.params.firstName[0]: this.getInitials(this.state.fullName)[0]) + (this.props.route.params && this.props.route.params.lastName ? this.props.route.params.lastName[0]: this.getInitials(this.state.fullName)[1])}
-            overlayContainerStyle={{backgroundColor: argonTheme.COLORS.HEADER, borderColor: argonTheme.COLORS.BORDER_COLOR, borderWidth: 4  }}
-            activeOpacity={0.9}
-          />
+              size="large"
+              rounded
+              title= {(this.props.route.params && this.props.route.params.firstName ? this.props.route.params.firstName[0]: this.getInitials(this.state.fullName)[0]) + (this.props.route.params && this.props.route.params.lastName ? this.props.route.params.lastName[0]: this.getInitials(this.state.fullName)[1])}
+              overlayContainerStyle={{backgroundColor: argonTheme.COLORS.HEADER, borderColor: argonTheme.COLORS.BORDER_COLOR, borderWidth: 4  }}
+              activeOpacity={0.9}
+              />
                 {/* <Image
                   source={{ uri: Images.ProfilePicture }}
                   style={styles.avatar}
@@ -423,7 +422,6 @@ class Profile extends React.Component {
           </ScrollView>
           </LinearGradient>
           {/* </ImageBackground> */}
-        </Block>
       </Block>
     );
   }
