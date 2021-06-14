@@ -11,7 +11,7 @@ import { firebase } from "../../src/firebase/config";
 import { Block, Button as GaButton, theme, Text } from "galio-framework";
 import { argonTheme, tabs } from "../../constants";
 import OnboardingForm from "../../components/OnboardingForm";
-import { validateContent } from "../../constants/utils";
+import { validateContent, validateAddress } from "../../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
@@ -69,11 +69,10 @@ class CreateAccount extends React.Component {
               console.log("ROHAN THIS>BARBER is", this.state.barberShop);
               barberShop.email = email;
               
-              barberShop.services = this.state.barberShop.services ? this.toFirestore(this.state.barberShop.services) : []; // this won't work, need to convert back by doing opposite of loadServices. or try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
+              barberShop.services = this.state.barberShop.services ? this.toFirestore(this.state.barberShop.services) : []; //if this does not work, try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
               barberShop.shopName = this.state.barberShop.shopName;
               barberShop.barberIDs = this.state.barberShop.barberIDs;
               barberShop.address= this.state.barberShop.address;
-              barberShop.updateLatLongFromAddress();
 
               barberShop.barberIDs = this.state.barberShop.barberIDs || null;
               

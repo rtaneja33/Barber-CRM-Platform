@@ -31,21 +31,41 @@ export default class BarberShop {
           });
     }
     
+    // validateLatLongFromAddress() {
+    //     firebase.firestore().collection("Global").doc("AccessTokens").get().then(documentSnapshot => {
+    //         console.log('start of validation')
+    //         let data = documentSnapshot.data();
+    //         let accesstoken = data["mapbox"];
+    //         let encodedAddress = encodeURIComponent(this.address.trim());
+    //         let request = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodedAddress + ".json?types=address&access_token=" + accesstoken;
+    //         fetch(request).then((response) => response.json()).then((json) => {
+    //             console.log("json response is", json)
+    //             let longitude = json.features[0].center[0];
+    //             let latitude = json.features[0].center[1];
+    //             this.lat = Number(latitude);
+    //             this.long = Number(longitude);
+    //             return "did it work?"
+    //         }).catch((error) => {
+    //             console.error(error);
+    //         });
+    //     })
+    // }
+
     updateLatLongFromAddress() {
         console.log("Getting lat long")
         firebase.firestore().collection("Global").doc("AccessTokens").get().then(documentSnapshot => {
-            
+            console.log('before error?')
             let data = documentSnapshot.data();
             let accesstoken = data["mapbox"];
             let encodedAddress = encodeURIComponent(this.address.trim());
             let request = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + encodedAddress + ".json?types=address&access_token=" + accesstoken;
-                        
             fetch(request).then((response) => response.json()).then((json) => {
+                console.log("still before error?")
                 let longitude = json.features[0].center[0];
                 let latitude = json.features[0].center[1];
                 this.lat = Number(latitude);
                 this.long = Number(longitude);
-                this.update();
+                return this.update();
             }).catch((error) => {
                 console.error(error);
             });
