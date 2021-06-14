@@ -108,7 +108,7 @@ class CreateBarbershop extends React.Component {
               textContentType="fullStreetAddress"
               autoCompleteType="street-address"
             />
-            <ButtonSpecial disabled = {this.state.shopName.value.length <1}
+            <ButtonSpecial disabled = {this.state.shopName.value.length <1 || this.state.address.value.length <1}
              mode="contained" 
              style={
               (this.state.shopName.value.length >0)

@@ -185,11 +185,12 @@ class AddBarbers extends React.Component {
     }
     if(!isSkipped)
       shop.barberIDs = this.state.barbers
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false });
-      navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
-    }, 200);
+    navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
+    // this.setState({ loading: true });
+    // setTimeout(() => {
+    //   this.setState({ loading: false });
+    //   
+    // }, 200);
   }
 
   renderModal = (barberField = null) => {
