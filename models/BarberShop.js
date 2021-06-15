@@ -9,7 +9,7 @@ export default class BarberShop {
     shopName = ""
     barberIDs = []
     admin = ""
-    services = {}
+    services = []
     long = 0.0
     lat = 0.0
     
