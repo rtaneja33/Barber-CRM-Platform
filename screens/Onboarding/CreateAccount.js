@@ -78,7 +78,7 @@ class CreateAccount extends React.Component {
   onRegister = () => {
     const email = this.state.email.value;
     const password = this.state.password.value;
-
+    this.setState({loading:true})
     return new Promise((resolve, reject) => {
       firebase
         .auth()
@@ -101,19 +101,41 @@ class CreateAccount extends React.Component {
               return barberShop
                 .update()
                 .then((updated) => {
+                  this.setState({loading:false})
                   resolve(updated);
                 })
                 .catch((err) => {
+                  this.setState({loading:false})
                   console.log("ERROR UPDATING ERROR", err);
                   alert("error updating info", err);
                 });
             })
             .catch((error) => {
+              this.setState({loading:false})
               console.log("the create shop error is", error)
               alert("Error occured with creating Barbershop", error);
             });
+        }).catch(error => {
+          alert(error.code)
+          switch(error.code) {
+            case 'auth/email-already-in-use':
+              this.setState({email: { ...this.state.email, error: 'An account with this email already exists.' }, loading: false})
+              break;
+            case 'auth/invalid-email':
+              this.setState({email: { ...this.state.email, error: 'Please enter a valid email'}, loading: false})
+              break;
+            case 'auth/internal-error':
+              this.setState({email: { ...this.state.email, error: 'An error occured. Please try again later.' }, loading: false})
+              break;
+            case 'auth/invalid-password':
+              this.setState({password: { ...this.state.password, error: 'Password must be at least six characters.' }, loading: false})
+              break;
+            default:
+              this.setState({email: { ...this.state.email, error: 'An error occured. Please try again later.' }, loading: false})
+            }
+            // alert( error.code)
         })
-    }).catch((err)=> {alert(err);});
+    })
   };
 
   render() {
