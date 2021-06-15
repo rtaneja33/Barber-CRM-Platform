@@ -73,7 +73,7 @@ const OnboardingForm = ({ fields, buttonText, action, afterSubmit, deleteButton,
     return fieldKeys.sort().map((key) => values[key]);
   }
 
-  const submit = () => {
+  const submit = async () => {
     setValidationErrors(getInitialErrorsState(fieldKeys));
     const errors = validateFields(fields, values);
     if (hasValidationError(errors)) {

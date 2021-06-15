@@ -163,18 +163,7 @@ class AddBarbers extends React.Component {
     }, 300);
   };
 
-  toFirestore(services){
-    var firestoreServices = []
-    services.map((serviceList)=>{
-      var firestoreObj = { serviceType: serviceList.serviceType, services: []}
-      serviceList.services.map((serviceObj) =>{
-        firestoreObj.services.push({price: serviceObj.price, serviceName: serviceObj.serviceName})
-      })
-      firestoreServices.push(firestoreObj)
-    })
-    console.log("returning firestoreServices from toFirestore: ", firestoreServices)
-    return firestoreServices
-  }
+ 
 
   continueToNext = (isSkipped) => {
     const {navigation} = this.props;
@@ -185,11 +174,12 @@ class AddBarbers extends React.Component {
     }
     if(!isSkipped)
       shop.barberIDs = this.state.barbers
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false });
-      navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
-    }, 200);
+    navigation.navigate('CreateAccount', {barberShop: shop, isBarber: true});
+    // this.setState({ loading: true });
+    // setTimeout(() => {
+    //   this.setState({ loading: false });
+    //   
+    // }, 200);
   }
 
   renderModal = (barberField = null) => {

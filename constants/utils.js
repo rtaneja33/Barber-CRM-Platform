@@ -10,6 +10,7 @@ export const validateContent = (text) => {
         return "Field cannot be blank";
     }
 }
+
 // Below helper methods courtesy of https://scottdomes.com/react-native-sexy-forms/
 export const validateField = (validators, value) => {
     let error = '';
