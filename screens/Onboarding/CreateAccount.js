@@ -167,10 +167,10 @@ class CreateAccount extends React.Component {
           errorText={this.state.confirmPassword.error}
           secureTextEntry
         />
-            <ButtonSpecial disabled = {!this.state.email.value || !this.state.password.value}
+            <ButtonSpecial disabled = {!this.state.email.value || !this.state.password.value || !this.state.confirmPassword.value}
              mode="contained" 
              style={
-              (this.state.email.value && this.state.password.value)
+              (this.state.email.value && this.state.password.value && this.state.confirmPassword.value)
               ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
               : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
              }
