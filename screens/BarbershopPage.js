@@ -43,7 +43,7 @@ const BarbershopPage = ({navigation, route}) => {
   const [spinner, setSpinner] = React.useState(true);
   const [isOwner, setIsOwner] = React.useState(false);
   const [shopInformation, setShopInformation] = useState({});
-
+  const [clickedBarber, setClickedBarber] = useState(-1);
   useEffect(() => {
     setSpinner(true);
     if (route != null && route.params != null && route.params.shopID != null) {
@@ -104,6 +104,24 @@ const BarbershopPage = ({navigation, route}) => {
     return firestoreServices
   }
 
+  const saveUpdatedBarberInfo = (result, clickedBarber)=>{
+    var shopInfo = {...shopInformation}
+    var newBarbers = shopInfo.barberIDs
+      .sort((a, b) => (a.firstName > b.firstName) ? 1 : -1)
+    newBarbers[clickedBarber].barberLocation = result.barberLocation
+    newBarbers[clickedBarber].barberName = result.barberName
+    setSpinner(true)
+    setShopInformation(shopInfo)
+    console.log("shopInfo right before update is", shopInformation)
+    shopInformation.update().then((result)=>{
+      console.log("shop info UPDATED", shopInfo)
+      setSpinner(false)
+      setBarberModalVisible(!barberModalVisible)
+    })
+    
+
+  }
+
   const loadServices = (servicesMap) => {
     var fromFirestore = []
     servicesMap.map((serviceList)=>{
@@ -145,7 +163,7 @@ const BarbershopPage = ({navigation, route}) => {
   };
 
  
-  const renderBarberModal = () => {
+  const renderBarberModal = (barberModalVisible) => {
     {
       // if (!barberField || Object.keys(barberField).length <= 0) {
       //   return <></>;
@@ -153,7 +171,9 @@ const BarbershopPage = ({navigation, route}) => {
       // const categoryModal = Object.keys(barberField)[0];
       var modalTitle = "Edit Barber";
       var dropdownItems = [];
-      console.log("renderBarberModalCalled")
+      console.log("renderBarberModalCalled", shopInformation)
+      var clickedBarberObj = shopInformation && shopInformation.barberIDs ? shopInformation.barberIDs
+      .sort((a, b) => (a.firstName > b.firstName) ? 1 : -1)[clickedBarber] : null
       // const categoryModal =
       //   Object.keys(barberField).length > 0 &&
       //   Object.keys(barberField)[0] === "barberType";
@@ -191,6 +211,7 @@ const BarbershopPage = ({navigation, route}) => {
                   hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
                   onPress={() => {
                     setBarberModalVisible(!barberModalVisible)
+                    // setSpinner(false)
                   }}
                 >
                   <Icon
@@ -208,10 +229,13 @@ const BarbershopPage = ({navigation, route}) => {
                   contentContainerStyle={styles.child}
                 >
                   <View style={{ marginTop: 30 }}>
-                    <CustomForm
-                      action={(result, barberCategory) => {
-                        console.log("result",result, "is barber category a thing? lol", barberCategory)
+                    {
+                      clickedBarberObj ? 
+                      <CustomForm
+                      action={(result) => {
+                        console.log("result",result)
                         console.log("pressed barberModal submit")
+                        saveUpdatedBarberInfo(result, clickedBarber)
                       }}
                       afterSubmit={() => console.log("afterSubmit!")}
                       buttonText="Save Changes"
@@ -220,19 +244,24 @@ const BarbershopPage = ({navigation, route}) => {
                       }
                       dropdownItems={dropdownItems}
                       fields={{
-                        addbarberName: {
+                        barberName: {
                           label: "Barber Name*",
                           validators: [validateContent],
+                          defaultValue: clickedBarberObj.barberName
                         },
-                        addbarberLocation: {
+                        barberLocation: {
                           label: "Location",
                           validators: [],
+                          defaultValue: clickedBarberObj.barberLocation
                         },
                       }}
                       deleteButton={
                         console.log("wants to delete!")
                       }
                     ></CustomForm>
+                      :
+                      <></>
+                    }
                   </View>
                 </ScrollView>
               </View>
@@ -413,9 +442,9 @@ const BarbershopPage = ({navigation, route}) => {
           <View >
             {renderModal()}
           </View>
-          {/* <View >
-            {renderBarberModal()}
-          </View> */}
+          <View >
+            {renderBarberModal(barberModalVisible)}
+          </View>
           <Block flex={1}>
             <ImageBackground
               source={Images.BarberBackground}
@@ -602,8 +631,8 @@ const BarbershopPage = ({navigation, route}) => {
                         // key={`product-${item.firstName}-${index}`}
                         key={`product-${index}`}
                         onPress={() => {
-                          // console.log("Clicked barber!!")
                           // console.log("this.state.barberShop is", shopInformation)
+                          setClickedBarber(index)
                           setBarberModalVisible(true);
                         }}
                       >
