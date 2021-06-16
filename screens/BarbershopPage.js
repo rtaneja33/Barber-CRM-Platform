@@ -32,23 +32,22 @@ import {
   argonTheme,
 } from "../constants";
 import { HeaderHeight } from "../constants/utils";
+import { Avatar } from "react-native-elements";
 const { width, height } = Dimensions.get("screen");
-
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
 
 const BarbershopPage = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [barberModalVisible, setBarberModalVisible] = React.useState(false);
   const [spinner, setSpinner] = React.useState(true);
   const [isOwner, setIsOwner] = React.useState(false);
   const [shopInformation, setShopInformation] = useState({});
 
   useEffect(() => {
     setSpinner(true);
-
     if (route != null && route.params != null && route.params.shopID != null) {
       setIsOwner(false);
-
       BarberShops.loadFromID(route.params.shopID).then((shopInfo) => {
         setShopInformation(shopInfo);
         console.log("shop info is", shopInfo)
@@ -145,14 +144,105 @@ const BarbershopPage = ({navigation, route}) => {
     return items;
   };
 
-  const closeModal = () => {
-    this.setState((prevState) => {
-        return {
-          ...prevState,
-          modalVisible: !prevState.modalVisible,
-        };
-    });
-  }
+ 
+  const renderBarberModal = () => {
+    {
+      // if (!barberField || Object.keys(barberField).length <= 0) {
+      //   return <></>;
+      // }
+      // const categoryModal = Object.keys(barberField)[0];
+      var modalTitle = "Edit Barber";
+      var dropdownItems = [];
+      console.log("renderBarberModalCalled")
+      // const categoryModal =
+      //   Object.keys(barberField).length > 0 &&
+      //   Object.keys(barberField)[0] === "barberType";
+      return (
+        <View
+          style={styles.centeredView}
+          //   renderToHardwareTextureAndroid
+          //   shouldRasterizeIOS
+        >
+          <Modal
+            animationType="fade"
+            transparent={true}
+            backdropOpacity={0.5}
+            useNativeDriver={false}
+            isVisible={barberModalVisible} 
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Spinner
+                  // textContent={"Loading..."}
+                  textStyle={styles.spinnerTextStyles}
+                  visible={spinner}
+                />
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    right: 23,
+                    top: 23,
+                    zIndex: 0,
+                    color: "#00000080",
+                  }}
+                  hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+                  onPress={() => {
+                    setBarberModalVisible(!barberModalVisible)
+                  }}
+                >
+                  <Icon
+                    name="close"
+                    family="AntDesign"
+                    size={25}
+                    style={{
+                      color: "#00000080",
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.modalText}>{modalTitle}</Text>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={styles.child}
+                >
+                  <View style={{ marginTop: 30 }}>
+                    <CustomForm
+                      action={(result, barberCategory) => {
+                        console.log("result",result, "is barber category a thing? lol", barberCategory)
+                        console.log("pressed barberModal submit")
+                      }}
+                      afterSubmit={() => console.log("afterSubmit!")}
+                      buttonText="Save Changes"
+                      closeModalText={
+                        "Delete Barber"
+                      }
+                      dropdownItems={dropdownItems}
+                      fields={{
+                        addbarberName: {
+                          label: "Barber Name*",
+                          validators: [validateContent],
+                        },
+                        addbarberLocation: {
+                          label: "Location",
+                          validators: [],
+                        },
+                      }}
+                      deleteButton={
+                        console.log("wants to delete!")
+                      }
+                    ></CustomForm>
+                  </View>
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      );
+    }
+  };
+
   const renderModal = () => {
     {
       // console.log(serviceField);
@@ -242,33 +332,66 @@ const BarbershopPage = ({navigation, route}) => {
     }
   };
   const categories = [
-    //barbers
     {
-      image:
-        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
-      price: "Trieu",
+      barberLocation: "Fairfax",
+      barberName: "Vinny",
+      firstName: "Vinny",
+      lastName: "",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-      price: "Vinny",
+      barberLocation: "Fairfax",
+      barberName: "Bob",
+      firstName: "Bob",
+      lastName: "Smith",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-      price: "Cathy",
+      barberLocation: "Fairfax",
+      barberName: "Trieu",
+      firstName: "Trieu",
+      lastName: "Roberts",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-      price: "John",
+      barberLocation: "Fairfax",
+      barberName: "Cathy",
+      firstName: "Cathy",
+      lastName: "Lao",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
-      price: "Tim",
+      barberLocation: "Vienna",
+      barberName: "Tim",
+      firstName: "Tim",
+      lastName: "",
     },
-  ];
+
+  ]
+  // const categories = [
+  //   //barbers
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80",
+  //     price: "Trieu",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+  //     price: "Vinny",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+  //     price: "Cathy",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+  //     price: "John",
+  //   },
+  //   {
+  //     image:
+  //       "https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=840&q=80",
+  //     price: "Tim",
+  //   },
+  // ];
 
   return (
     <Block
@@ -290,6 +413,9 @@ const BarbershopPage = ({navigation, route}) => {
           <View >
             {renderModal()}
           </View>
+          {/* <View >
+            {renderBarberModal()}
+          </View> */}
           <Block flex={1}>
             <ImageBackground
               source={Images.BarberBackground}
@@ -467,19 +593,38 @@ const BarbershopPage = ({navigation, route}) => {
                     paddingHorizontal: 10,
                   }}
                 >
-                  {categories &&
-                    categories.map((item, index) => (
+                  {shopInformation.barberIDs &&
+                    shopInformation.barberIDs
+                    .sort((a, b) => (a.firstName > b.firstName) ? 1 : -1)
+                    .map((item, index) => (
                       <TouchableWithoutFeedback
                         style={{ zIndex: 3 }}
-                        key={`product-${item.title}`}
-                        onPress={() => alert("clicked Barber")}
+                        // key={`product-${item.firstName}-${index}`}
+                        key={`product-${index}`}
+                        onPress={() => {
+                          // console.log("Clicked barber!!")
+                          // console.log("this.state.barberShop is", shopInformation)
+                          setBarberModalVisible(true);
+                        }}
                       >
                         <Block center style={styles.productItem}>
-                          <Image
+                        <Avatar
+                          size={70}
+                          // source={{
+                          //   uri:
+                          //     'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=840&q=80',
+                          // }}
+                          rounded
+                          title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
+                          overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
+                          activeOpacity={0.4}
+                        />
+                        
+                          {/* <Image
                             resizeMode="cover"
                             style={styles.productImage}
                             source={{ uri: item.image }}
-                          />
+                          /> */}
                           <Block
                             center
                             // style={{ paddingHorizontal: theme.SIZES.BASE }}
@@ -490,7 +635,7 @@ const BarbershopPage = ({navigation, route}) => {
                               color={theme.COLORS.MUTED}
                               style={styles.productPrice}
                             >
-                              {item.price}
+                              {item.barberName}
                             </Text>
                             {/* <Text center size={34}>
                               {item.title}

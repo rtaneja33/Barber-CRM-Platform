@@ -97,7 +97,6 @@ const CustomForm = ({
     if (hasValidationError(errors)) {
       return setValidationErrors(errors);
     }
-    console.log("Gayboi ROHAN values look like", values);
     const result = action(values, dropdownValue);//replaced ...getValues()
     const afterSubmitResult = afterSubmit(result);
   };
