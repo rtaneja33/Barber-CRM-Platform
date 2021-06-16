@@ -33,6 +33,7 @@ import {
 } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import { Avatar } from "react-native-elements";
+import BarberShop from "../models/BarberShop";
 const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const cardWidth = width - nowTheme.SIZES.BASE * 2;
@@ -103,13 +104,30 @@ const BarbershopPage = ({navigation, route}) => {
     console.log("returning firestoreServices from toFirestore: ", firestoreServices)
     return firestoreServices
   }
+  
+  const getInitials = (name) => {
+    if(!name || name.length < 0){
+      return ["", ""]
+    }
+    var initials = []
+    initials.push(name[0])
+    var tempName = name
+    console.log("getInitials name is", tempName)
+    var name_pieces = tempName.split(" ")
+    console.log("name pieces are", name_pieces);
+    return [name_pieces[0][0], name_pieces[1][0]]
+  }
 
   const saveUpdatedBarberInfo = (result, clickedBarber)=>{
-    var shopInfo = {...shopInformation}
+    var shopInfo = Object.assign(new BarberShop(), {...shopInformation});
     var newBarbers = shopInfo.barberIDs
       .sort((a, b) => (a.firstName > b.firstName) ? 1 : -1)
     newBarbers[clickedBarber].barberLocation = result.barberLocation
     newBarbers[clickedBarber].barberName = result.barberName
+    // var fullNameTuple = getInitials(result.barberName) use this to update avatar
+    var splitName = result.barberName.split(" ")
+    newBarbers[clickedBarber].firstName= splitName[0]
+    newBarbers[clickedBarber].lastName= splitName.[splitName.length-1]
     setSpinner(true)
     setShopInformation(shopInfo)
     console.log("shopInfo right before update is", shopInformation)
@@ -664,7 +682,7 @@ const BarbershopPage = ({navigation, route}) => {
                               color={theme.COLORS.MUTED}
                               style={styles.productPrice}
                             >
-                              {item.barberName}
+                              {item.firstName}
                             </Text>
                             {/* <Text center size={34}>
                               {item.title}
