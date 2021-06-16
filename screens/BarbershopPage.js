@@ -32,7 +32,7 @@ import {
   argonTheme,
 } from "../constants";
 import { HeaderHeight } from "../constants/utils";
-import { Avatar } from "react-native-elements";
+import { Avatar, Accessory } from "react-native-elements";
 import BarberShop from "../models/BarberShop";
 const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -603,7 +603,7 @@ const BarbershopPage = ({navigation, route}) => {
               <Text bold size={18} style={styles.title}>
                 Barbers
               </Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 small
                 color="transparent"
                 style={{
@@ -621,7 +621,7 @@ const BarbershopPage = ({navigation, route}) => {
                   color={nowTheme.COLORS.DEFAULT}
                 />
                 }
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </Block>
             {/* <Text bold size={18} style={styles.title}>
               Barbers
@@ -665,8 +665,11 @@ const BarbershopPage = ({navigation, route}) => {
                           title= {(item.firstName ? item.firstName[0]: "") + (item.lastName ? item.lastName[0]: "")}
                           overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
                           activeOpacity={0.4}
-                        />
-                        
+                          showAccessory
+                        >
+                        <Avatar.Accessory size={20}/>
+                        </Avatar>
+                          
                           {/* <Image
                             resizeMode="cover"
                             style={styles.productImage}
@@ -844,6 +847,12 @@ const styles = StyleSheet.create({
     position: "relative",
     marginTop: -80,
   },
+  editIcon: {
+    backgroundColor: '#ccc',
+    position: 'absolute',
+    right: 0,
+    bottom: 0
+   },
   avatar: {
     width: thumbMeasure,
     height: thumbMeasure,
