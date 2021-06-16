@@ -127,7 +127,7 @@ const BarbershopPage = ({navigation, route}) => {
     // var fullNameTuple = getInitials(result.barberName) use this to update avatar
     var splitName = result.barberName.split(" ")
     newBarbers[clickedBarber].firstName= splitName[0]
-    newBarbers[clickedBarber].lastName= splitName.[splitName.length-1]
+    newBarbers[clickedBarber].lastName= splitName[splitName.length-1]
     setSpinner(true)
     setShopInformation(shopInfo)
     console.log("shopInfo right before update is", shopInformation)
