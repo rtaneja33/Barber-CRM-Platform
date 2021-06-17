@@ -644,8 +644,9 @@ const BarbershopPage = ({navigation, route}) => {
                     shopInformation.barberIDs
                     .sort((a, b) => (a.firstName > b.firstName) ? 1 : -1)
                     .map((item, index) => (
-                      <TouchableWithoutFeedback
+                      <TouchableOpacity
                         style={{ zIndex: 3 }}
+                        disabled={!isOwner}
                         // key={`product-${item.firstName}-${index}`}
                         key={`product-${index}`}
                         onPress={() => {
@@ -666,8 +667,10 @@ const BarbershopPage = ({navigation, route}) => {
                           overlayContainerStyle={{backgroundColor: argonTheme.COLORS.BARBERBLUE }}
                           activeOpacity={0.4}
                           showAccessory
-                        >
-                        <Avatar.Accessory size={20}/>
+                        >{
+                          isOwner &&
+                          <Avatar.Accessory size={20}/>
+                        }
                         </Avatar>
                           
                           {/* <Image
@@ -700,7 +703,7 @@ const BarbershopPage = ({navigation, route}) => {
                             </Text> */}
                           </Block>
                         </Block>
-                      </TouchableWithoutFeedback>
+                      </TouchableOpacity>
                     ))}
                 </ScrollView>
               </Block>
