@@ -24,7 +24,7 @@ import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
 import Customer from "../models/Customer";
 import BarberShop from "../models/BarberShop";
-
+import CustomerPhone from "../screens/Onboarding/CustomerPhone";
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -451,6 +451,13 @@ export default function AppStack(props) { // if this causes an error, try expo s
             headerShown: false
           }}
         />
+             <Stack.Screen
+              name="CustomerPhone"
+              component={CustomerPhone}
+              options={{
+                headerShown: false
+              }}
+            />
             <Stack.Screen
               name="CreateCustomer2"
               component={CreateCustomer2}

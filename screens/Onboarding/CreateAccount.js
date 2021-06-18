@@ -29,8 +29,7 @@ class CreateAccount extends React.Component {
       password: {value: "", error:""},
       confirmPassword: {value: "", error:""},
       barberShop: this.props.route.params.barberShop,
-      email: "",
-      password: "",
+      
     //   barberShop: null,
     };
   }
@@ -152,7 +151,7 @@ class CreateAccount extends React.Component {
           visible={this.state.loading}
         />
         <Text bold size={32} style={styles.title}>
-            Create My Account
+            Create My Shop
           </Text>
           {/* <Block center>
           <HeaderSpecial >One Last Step!</HeaderSpecial>
@@ -182,7 +181,7 @@ class CreateAccount extends React.Component {
         />
         <TextInput
           label="Confirm Password"
-          returnKeyType="next"
+          returnKeyType="done"
           value={this.state.confirmPassword.value}
           onChangeText={(text) => this.setState({confirmPassword: { value: text, error: '' }})}
           error={!!this.state.confirmPassword.error}

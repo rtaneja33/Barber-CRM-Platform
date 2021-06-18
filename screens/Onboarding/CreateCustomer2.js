@@ -1,7 +1,6 @@
 import React from "react";
 import {
   StyleSheet,
-  TextInput,
   View,
   SafeAreaView,
   Dimensions,
@@ -15,11 +14,13 @@ import { validateContent } from "../../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
-import { BackButton, Logo, HeaderSpecial, Background } from '../../components'
 import { ThermometerSun } from "react-bootstrap-icons";
 import Customer from "../../models/Customer";
-
-
+import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, fullNameInput } from '../../components'
+import { fullNameValidator } from '../helpers/fullNameValidator'
+import { passwordValidator } from '../helpers/passwordValidator'
+import { confirmPasswordValidator } from '../helpers/confirmPasswordValidator'
+// import PhoneInput from "react-native-phone-number-input";
 
 class CreateCustomer2 extends React.Component {
     constructor(props) {
@@ -27,28 +28,48 @@ class CreateCustomer2 extends React.Component {
         this.state = {
           loading: false,
           fullname: "",
-          phone: "",
-          email: "fakeemail",
-          password: "fakepass",
+          phone: this.stripPhoneNumber(this.props.route.params.phoneNumber),
+          fullName: {value: "", error:""},
+          password: {value: "", error:""},
+          confirmPassword: {value: "", error:""},
         };
       }
-
+  stripPhoneNumber = (phoneNum) => {
+    console.log(this.props.route.params.phoneNumber);
+    return phoneNum.replace(/\D/g, "").trim();
+  }
+  validateRegisterFields = () => {
+    // try {
+    
+    const fullNameError = fullNameValidator(this.state.fullName.value);
+    const passwordError = passwordValidator(this.state.password.value);
+    const confirmPasswordError = confirmPasswordValidator(this.state.password.value, this.state.confirmPassword.value);
+    if(fullNameError || passwordError || confirmPasswordError){
+      this.setState({
+        fullName: { ...this.state.fullName, error: fullNameError },
+        password: { ...this.state.password, error: passwordError },
+        confirmPassword: { ...this.state.confirmPassword, error: confirmPasswordError }
+      })
+      return
+    }
+    console.log("OK - THE CUSTOMER FIELDS ARE VALID!");
+  }
   //   const timer = setTimeout(() => {
   //     this.setState({loading: false})
   // },);
-  onRegisterCustomer = (email, password, name, phoneNumber) => {
+  onRegisterCustomer = (fullName, password, name) => {
     console.log("IN ON REGISTER");
     // try {
     return new Promise((resolve, reject) => {
       firebase
         .auth()
-        .createUserWithEmailAndPassword(email, password)
+        .createUserWithfullNameAndPassword(fullName, password)
         .then((response) => {
           const uid = response.user.uid;
           return Customer.createNew(uid)
             .then((customer) => {
               customer.name = name;
-              customer.phonenumber = phoneNumber;
+              customer.fullName = fullName;
               return customer.update().then((updated) => {
                   console.log("RESPONSE FROM UPDATE IS", updated);
                   resolve(updated);
@@ -70,7 +91,7 @@ class CreateCustomer2 extends React.Component {
       <BackButton goBack={this.props.navigation.goBack} />
       
       {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
-      <Block>
+      
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
@@ -79,29 +100,68 @@ class CreateCustomer2 extends React.Component {
         <Text bold size={36} style={styles.title}>
             Create My Account
           </Text>
-          <Block center>
-          {/* <HeaderSpecial >This information is stored securely.</HeaderSpecial> */}
-          </Block>
-        
-        <Block style={styles.centeredView}>
+          {/* <Block center>
+          <HeaderSpecial >This information is stored securely.</HeaderSpecial>
+          </Block> */}
+          <TextInput
+          
+          label="Full Name"
+          returnKeyType="next"
+          value={this.state.fullName.value}
+          onChangeText={(text) => this.setState({fullName: { value: text, error: '' }})}
+          error={!!this.state.fullName.error}
+          errorText={this.state.fullName.error}
+          autoCompleteType="name"
+          textContentType="name"
+        />
+        <TextInput
+          label="Password"
+          returnKeyType="next"
+          value={this.state.password.value}
+          onChangeText={(text) => this.setState({password: { value: text, error: '' }})}
+          error={!!this.state.password.error}
+          errorText={this.state.password.error}
+          textContentType="password"
+          secureTextEntry
+        />
+        <TextInput
+          label="Confirm Password"
+          returnKeyType="done"
+          value={this.state.confirmPassword.value}
+          onChangeText={(text) => this.setState({confirmPassword: { value: text, error: '' }})}
+          error={!!this.state.confirmPassword.error}
+          errorText={this.state.confirmPassword.error}
+          textContentType="password"
+          secureTextEntry
+        />
+            <ButtonSpecial disabled = {!this.state.fullName.value || !this.state.password.value || !this.state.confirmPassword.value}
+             mode="contained" 
+             style={
+              (this.state.fullName.value && this.state.password.value && this.state.confirmPassword.value)
+              ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
+              : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
+             }
+             onPress={this.validateRegisterFields}> 
+             Create Account</ButtonSpecial>
+        {/* <Block style={styles.centeredView}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             // contentContainerStyle={styles.child}
           >
             {/* <View> */}
-            <OnboardingForm
-              action={(email, fullName, pass, phoneNumber) => {
-                console.log("full name is", fullName, "phone number is", phoneNumber, "email is", email, "pass is", pass);
+            {/* <OnboardingForm
+              action={(fullName, fullName, pass, fullName) => {
+                console.log("full name is", fullName, "phone number is", fullName, "fullName is", fullName, "pass is", pass);
                  this.setState({ loading: true });
                  setTimeout(() => {
                   this.setState({ loading: false });
-                  this.onRegisterCustomer(email, pass, fullName, phoneNumber)
+                  this.onRegisterCustomer(fullName, pass, fullName, fullName)
                   // const {navigation} = this.props;
                   // var barberShop = new BarberShop();
-                  // barberShop.email = email;
+                  // barberShop.fullName = fullName;
                   // barberShop.shopName = name;
                   // barberShop.address = address;
-                  // navigation.navigate('AddServices', {barberShop: barberShop,email: this.state.email, password: this.state.password });
+                  // navigation.navigate('AddServices', {barberShop: barberShop,fullName: this.state.fullName, password: this.state.password });
                 }, 200);
               }}
               afterSubmit={() => console.log("afterSubmit!")}
@@ -114,15 +174,15 @@ class CreateCustomer2 extends React.Component {
                     backgroundColor: "transparent",
                   },
                 },
-                phoneNumber: {
+                fullName: {
                   label: "Phone Number*",
                   validators: [validateContent],
                   inputProps: {
                     backgroundColor: "transparent",
                   },
                 },
-                email: {
-                    label: "Email*",
+                fullName: {
+                    label: "fullName*",
                     validators: [validateContent],
                     inputProps: {
                       backgroundColor: "transparent",
@@ -137,11 +197,11 @@ class CreateCustomer2 extends React.Component {
                     },
                 },
               }}
-            ></OnboardingForm>
+            ></OnboardingForm> */}
             {/* </View> */}
-          </ScrollView>
-        </Block>
-      </Block>
+          {/* </ScrollView>
+        </Block>  */}
+      
       </Background>
     );
   }
@@ -161,7 +221,6 @@ const styles = StyleSheet.create({
     paddingBottom: argonTheme.SIZES.BASE,
     // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
-    
   },
   
 });

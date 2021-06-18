@@ -106,7 +106,7 @@ export default function LoginScreen({ navigation, route }) {
         <TouchableOpacity onPress={() => {
           route.params.isBarber ?
             navigation.navigate('CreateBarbershop') :
-            navigation.navigate('CreateCustomer2')
+            navigation.navigate('CustomerPhone')
       }}>
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
