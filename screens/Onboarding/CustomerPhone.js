@@ -1,14 +1,15 @@
-import React from "react";
+import React, {useRef} from "react";
 import {
   StyleSheet,
   View,
   SafeAreaView,
   Dimensions,
+  Button,
   ScrollView,
   Keyboard,
   TouchableWithoutFeedback
 } from "react-native";
-import { firebase } from "../../src/firebase/config";
+import { firebase, firebaseConfig } from "../../src/firebase/config";
 import { Block, Button as GaButton, theme, Text } from "galio-framework";
 import { argonTheme, tabs } from "../../constants";
 import OnboardingForm from "../../components/OnboardingForm";
@@ -22,6 +23,10 @@ import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, 
 import { phoneNumberValidator } from '../helpers/phoneNumberValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { confirmPasswordValidator } from '../helpers/confirmPasswordValidator'
+import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
+import { Platform } from "react-native";
+import PhoneInput from "react-native-phone-number-input";
+
 // import PhoneInput from "react-native-phone-number-input";
 
 class CreateCustomer2 extends React.Component {
@@ -30,10 +35,19 @@ class CreateCustomer2 extends React.Component {
         this.state = {
           loading: false,
           phoneNumber: {value: "", error:""},
+          recaptchaVerifier: React.createRef(null),
+          formattedNum: "",
+          verificationId: "",
+          verificationCode: "",
+          firebaseConfig: firebaseConfig,
+        //   message: !firebase || Platform.OS === 'web' ? { text: 'To get started, provide a valid firebase config boi' } : undefined,
+          attemptInvisibleVerification : true,
         };
       }
 
   validatePhoneField = () => {
+    console.log("calling code is", this.state.formattedNum);
+    return  
     const phoneNumberError = phoneNumberValidator(this.state.phoneNumber.value)
     if (phoneNumberError){
       this.setState({
@@ -50,6 +64,11 @@ class CreateCustomer2 extends React.Component {
   render() {
     return (
       <Background>
+        <FirebaseRecaptchaVerifierModal
+        ref={this.state.recaptchaVerifier}
+        firebaseConfig={this.state.firebaseConfig}
+        attemptInvisibleVerification={this.state.attemptInvisibleVerification}
+      />
       <BackButton goBack={this.props.navigation.goBack} />
       
       {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
@@ -72,11 +91,69 @@ class CreateCustomer2 extends React.Component {
             onChangeText={(text) => this.setState({phoneNumber: { value: text, error: '' }})}
             error={!!this.state.phoneNumber.error}
             errorText={this.state.phoneNumber.error}
-            // onChangeFormattedText={(text) => {
-            //   setFormattedValue(text);
-            // }}
+            onChangeFormattedText={(text) => {
+                this.setState({formattedNum: text})
+            }}
             
           />
+          <Button
+        title="Send Verification Code"
+        disabled={!this.state.phoneNumber.value}
+        onPress={async () => {
+          // The FirebaseRecaptchaVerifierModal ref implements the
+          // FirebaseAuthApplicationVerifier interface and can be
+          // passed directly to `verifyPhoneNumber`.
+          try {
+            console.log("hit send verification code with this phoneNum", this.state.formattedNum)
+            console.log("and this ref",this.state.recaptchaVerifier.current )
+            const phoneProvider = new firebase.auth.PhoneAuthProvider();
+            const verificationId = await phoneProvider.verifyPhoneNumber(
+              this.state.formattedNum,
+              this.state.recaptchaVerifier.current
+            )
+            // .catch(error => {
+            //     // Handle Errors here.
+            //     console.log("ERROR ON VERIFY PHONE", error);
+            //     console.log("ERROR ON VERIFY PHONE MSG" ,error.message);
+            //   });;
+            console.log("verificationId is now", verificationId)
+            this.setState({verificationId: verificationId})
+            alert("text: 'Verification code has been sent to your phone.")
+          } catch (err) {
+            console.log("error occurred,",err)
+            console.log("err message is", err.message)
+            console.log("err description is", err.localizedDescription)
+
+            // alert("Error is ", err.message);
+          }
+        }}
+      />
+
+        <TextInput
+            style={{ marginVertical: 10, fontSize: 17 }}
+            editable={!!this.state.verificationId}
+            placeholder="123456"
+            onChangeText={(text)=>{ this.setState({verificationCode: text}) }}
+        />
+        <Button
+            title="Confirm Verification Code"
+            disabled={!this.state.verificationId}
+            onPress={async () => {
+            try {
+                const credential = firebase.auth.PhoneAuthProvider.credential(
+                this.state.verificationId,
+                this.state.verificationCode
+                );
+                await firebase.auth().signInWithCredential(credential);
+                alert('Phone authentication successful 👍')
+            } catch (err) {
+                alert('Error confirming code', err)
+            }
+            }}
+        />
+
+        {this.state.attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
+
             <ButtonSpecial disabled = {!this.state.phoneNumber.value }
              mode="contained" 
              style={
@@ -86,6 +163,8 @@ class CreateCustomer2 extends React.Component {
              }
              onPress={this.validatePhoneField}> 
              Continue</ButtonSpecial>
+
+             
       
       </Background>
     );

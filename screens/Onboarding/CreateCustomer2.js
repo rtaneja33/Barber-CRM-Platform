@@ -53,11 +53,12 @@ class CreateCustomer2 extends React.Component {
       return
     }
     console.log("OK - THE CUSTOMER FIELDS ARE VALID!");
+    this.onRegisterCustomer(this.state.fullName.value,this.state.password.value, this.state.phone )
   }
   //   const timer = setTimeout(() => {
   //     this.setState({loading: false})
   // },);
-  onRegisterCustomer = (fullName, password, name) => {
+  onRegisterCustomer = (fullName, password, phone) => {
     console.log("IN ON REGISTER");
     // try {
     return new Promise((resolve, reject) => {
