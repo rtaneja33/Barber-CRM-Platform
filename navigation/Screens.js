@@ -299,6 +299,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [isBarber, setIsBarber] = useState(false);
+  const [mounted, isMounted]= useState(true);
   // const getLoggedInBarbershop = async () => {
   //     // get User data
   //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
@@ -310,8 +311,9 @@ export default function AppStack(props) { // if this causes an error, try expo s
 
   function onAuthStateChanged(user) {
 
-      
+
       setUser(user);
+      console.log("user is", user);
       if(user == null)
         setInitializing(false);
       else {
@@ -351,7 +353,8 @@ export default function AppStack(props) { // if this causes an error, try expo s
   useEffect(() => {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, []);
+  }, [user]);
+
   if(initializing){
     return null
   }
