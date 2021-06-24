@@ -29,7 +29,7 @@ import PhoneInput from "react-native-phone-number-input";
 
 // import PhoneInput from "react-native-phone-number-input";
 
-class CustomerPhone extends React.Component {
+class CustomerVerifyPhone extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -46,9 +46,6 @@ class CustomerPhone extends React.Component {
       }
 
   validatePhoneField = () => {
-
-    const {navigation} = this.props;
-    navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value});
     console.log("calling code is", this.state.formattedNum);
     return  
     const phoneNumberError = phoneNumberValidator(this.state.phoneNumber.value)
@@ -58,6 +55,8 @@ class CustomerPhone extends React.Component {
       })
       return
     }
+    const {navigation} = this.props;
+    navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value});
   }
   
  
@@ -85,51 +84,6 @@ class CustomerPhone extends React.Component {
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>
           </Block> */}
-           <PhoneNumberInput
-            defaultValue={this.state.phoneNumber.value}
-            defaultCode="US"
-            layout="first"
-            onChangeText={(text) => this.setState({phoneNumber: { value: text, error: '' }})}
-            error={!!this.state.phoneNumber.error}
-            errorText={this.state.phoneNumber.error}
-            onChangeFormattedText={(text) => {
-                this.setState({formattedNum: text})
-            }}
-            
-          />
-          <Button
-        title="Send Verification Code"
-        disabled={!this.state.phoneNumber.value}
-        onPress={async () => {
-          // The FirebaseRecaptchaVerifierModal ref implements the
-          // FirebaseAuthApplicationVerifier interface and can be
-          // passed directly to `verifyPhoneNumber`.
-          try {
-            console.log("hit send verification code with this phoneNum", this.state.formattedNum)
-            console.log("and this ref",this.state.recaptchaVerifier.current )
-            const phoneProvider = new firebase.auth.PhoneAuthProvider();
-            const verificationId = await phoneProvider.verifyPhoneNumber(
-              this.state.formattedNum,
-              this.state.recaptchaVerifier.current
-            )
-            // .catch(error => {
-            //     // Handle Errors here.
-            //     console.log("ERROR ON VERIFY PHONE", error);
-            //     console.log("ERROR ON VERIFY PHONE MSG" ,error.message);
-            //   });;
-            console.log("verificationId is now", verificationId)
-            this.setState({verificationId: verificationId})
-            alert("text: 'Verification code has been sent to your phone.")
-          } catch (err) {
-            console.log("error occurred,",err)
-            console.log("err message is", err.message)
-            console.log("err description is", err.localizedDescription)
-
-            // alert("Error is ", err.message);
-          }
-        }}
-      />
-
         <TextInput
             style={{ marginVertical: 10, fontSize: 17 }}
             editable={!!this.state.verificationId}
@@ -190,4 +144,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default CustomerPhone;
+export default CustomerVerifyPhone;

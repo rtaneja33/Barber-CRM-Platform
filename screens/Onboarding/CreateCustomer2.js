@@ -20,6 +20,9 @@ import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, 
 import { fullNameValidator } from '../helpers/fullNameValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { confirmPasswordValidator } from '../helpers/confirmPasswordValidator'
+import ScalableText from 'react-native-text';
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+
 // import PhoneInput from "react-native-phone-number-input";
 
 class CreateCustomer2 extends React.Component {
@@ -27,33 +30,31 @@ class CreateCustomer2 extends React.Component {
         super(props);
         this.state = {
           loading: false,
-          fullname: "",
           phone: this.stripPhoneNumber(this.props.route.params.phoneNumber),
           fullName: {value: "", error:""},
-          password: {value: "", error:""},
-          confirmPassword: {value: "", error:""},
         };
       }
   stripPhoneNumber = (phoneNum) => {
     console.log(this.props.route.params.phoneNumber);
     return phoneNum.replace(/\D/g, "").trim();
   }
+  
   validateRegisterFields = () => {
     // try {
     
     const fullNameError = fullNameValidator(this.state.fullName.value);
-    const passwordError = passwordValidator(this.state.password.value);
-    const confirmPasswordError = confirmPasswordValidator(this.state.password.value, this.state.confirmPassword.value);
-    if(fullNameError || passwordError || confirmPasswordError){
+    
+    if(fullNameError){
       this.setState({
         fullName: { ...this.state.fullName, error: fullNameError },
-        password: { ...this.state.password, error: passwordError },
-        confirmPassword: { ...this.state.confirmPassword, error: confirmPasswordError }
       })
       return
     }
     console.log("OK - THE CUSTOMER FIELDS ARE VALID!");
-    this.onRegisterCustomer(this.state.fullName.value,this.state.password.value, this.state.phone )
+    const {navigation} = this.props;
+    navigation.navigate('CustomerPhone', {fullName: this.state.fullName.value});
+
+    // this.onRegisterCustomer(this.state.fullName.value,this.state.password.value, this.state.phone )
   }
   //   const timer = setTimeout(() => {
   //     this.setState({loading: false})
@@ -98,8 +99,14 @@ class CreateCustomer2 extends React.Component {
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Text bold size={36} style={styles.title}>
-            Create My Account
+        
+        <Text 
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          bold 
+          style={styles.title}
+        >
+            What's your name?
           </Text>
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>
@@ -115,35 +122,15 @@ class CreateCustomer2 extends React.Component {
           autoCompleteType="name"
           textContentType="name"
         />
-        <TextInput
-          label="Password"
-          returnKeyType="next"
-          value={this.state.password.value}
-          onChangeText={(text) => this.setState({password: { value: text, error: '' }})}
-          error={!!this.state.password.error}
-          errorText={this.state.password.error}
-          textContentType="password"
-          secureTextEntry
-        />
-        <TextInput
-          label="Confirm Password"
-          returnKeyType="done"
-          value={this.state.confirmPassword.value}
-          onChangeText={(text) => this.setState({confirmPassword: { value: text, error: '' }})}
-          error={!!this.state.confirmPassword.error}
-          errorText={this.state.confirmPassword.error}
-          textContentType="password"
-          secureTextEntry
-        />
-            <ButtonSpecial disabled = {!this.state.fullName.value || !this.state.password.value || !this.state.confirmPassword.value}
+            <ButtonSpecial disabled = {!this.state.fullName.value}
              mode="contained" 
              style={
-              (this.state.fullName.value && this.state.password.value && this.state.confirmPassword.value)
+              (this.state.fullName.value)
               ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
               : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
              }
              onPress={this.validateRegisterFields}> 
-             Create Account</ButtonSpecial>
+             Continue</ButtonSpecial>
         {/* <Block style={styles.centeredView}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -222,6 +209,7 @@ const styles = StyleSheet.create({
     paddingBottom: argonTheme.SIZES.BASE,
     // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
+    fontSize: 36,
   },
   
 });

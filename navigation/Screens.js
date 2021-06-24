@@ -42,6 +42,7 @@ import RecentCuts from "../screens/RecentCuts";
 import Explore from "../screens/Explore";
 import StartScreen from '../screens/StartScreen';
 import CreateAccount from '../screens/Onboarding/CreateAccount';
+import CustomerVerifyPhone from '../screens/Onboarding/CustomerVerifyPhone';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -454,6 +455,13 @@ export default function AppStack(props) { // if this causes an error, try expo s
             headerShown: false
           }}
         />
+            <Stack.Screen
+              name="CreateCustomer2"
+              component={CreateCustomer2}
+              options={{
+                headerShown: false
+              }}
+            />
              <Stack.Screen
               name="CustomerPhone"
               component={CustomerPhone}
@@ -462,23 +470,11 @@ export default function AppStack(props) { // if this causes an error, try expo s
               }}
             />
             <Stack.Screen
-              name="CreateCustomer2"
-              component={CreateCustomer2}
+              name="CustomerVerifyPhone"
+              component={CustomerVerifyPhone}
               options={{
                 headerShown: false
               }}
-              // options={{
-              //   header: ({ navigation, scene }) => (
-              //     <Header
-              //       title=""
-              //       back
-              //       black
-              //       transparent
-              //       navigation={navigation}
-              //       scene={scene}
-              //     />
-              //   ),
-              // }}
             />
         <Stack.Screen
           name="CreateBarbershop"
