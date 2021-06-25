@@ -45,18 +45,42 @@ class CustomerPhone extends React.Component {
         };
       }
 
-  validatePhoneField = () => {
+  validatePhoneField = async () => {
 
-    const {navigation} = this.props;
-    navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value});
-    console.log("calling code is", this.state.formattedNum);
-    return  
+    
     const phoneNumberError = phoneNumberValidator(this.state.phoneNumber.value)
     if (phoneNumberError){
       this.setState({
         phoneNumber: { ...this.state.fullName, error: phoneNumberError },
       })
       return
+    }
+
+    try {
+      console.log("hit send verification code with this phoneNum", this.state.formattedNum)
+      console.log("and this ref",this.state.recaptchaVerifier.current )
+      const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        this.state.formattedNum,
+        this.state.recaptchaVerifier.current
+      )
+      // .catch(error => {
+      //     // Handle Errors here.
+      //     console.log("ERROR ON VERIFY PHONE", error);
+      //     console.log("ERROR ON VERIFY PHONE MSG" ,error.message);
+      //   });;
+      console.log("verificationId is now", verificationId)
+      this.setState({verificationId: verificationId})
+      const {navigation} = this.props;
+      navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value, verificationId: this.state.verificationId, fullName: this.props.route.params.fullName});
+      console.log("calling code is", this.state.formattedNum);
+      return  
+    } catch (err) {
+      console.log("error occurred,",err)
+      console.log("err message is", err.message)
+      console.log("err description is", err.localizedDescription)
+
+      // alert("Error is ", err.message);
     }
   }
   
@@ -79,8 +103,13 @@ class CustomerPhone extends React.Component {
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Text bold size={33} style={styles.title}>
-            Welcome to Cliply!
+          <Text 
+            bold  
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            style={styles.title}
+          >
+            Enter Your Phone #
           </Text>
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>
@@ -97,7 +126,7 @@ class CustomerPhone extends React.Component {
             }}
             
           />
-          <Button
+          {/* <Button
         title="Send Verification Code"
         disabled={!this.state.phoneNumber.value}
         onPress={async () => {
@@ -128,9 +157,9 @@ class CustomerPhone extends React.Component {
             // alert("Error is ", err.message);
           }
         }}
-      />
+      /> */}
 
-        <TextInput
+        {/* <TextInput
             style={{ marginVertical: 10, fontSize: 17 }}
             editable={!!this.state.verificationId}
             placeholder="123456"
@@ -151,7 +180,7 @@ class CustomerPhone extends React.Component {
                 alert('Error confirming code', err)
             }
             }}
-        />
+        /> */}
 
         {this.state.attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
 
@@ -163,7 +192,7 @@ class CustomerPhone extends React.Component {
               : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
              }
              onPress={this.validatePhoneField}> 
-             Continue</ButtonSpecial>
+             Send Verification Code</ButtonSpecial>
 
              
       
@@ -186,6 +215,7 @@ const styles = StyleSheet.create({
     paddingBottom: argonTheme.SIZES.BASE,
     // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
+    fontSize: 36
   },
   
 });

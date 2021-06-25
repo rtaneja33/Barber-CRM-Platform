@@ -16,7 +16,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
 import { ThermometerSun } from "react-bootstrap-icons";
 import Customer from "../../models/Customer";
-import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, fullNameInput } from '../../components'
+import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput } from '../../components'
 import { fullNameValidator } from '../helpers/fullNameValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { confirmPasswordValidator } from '../helpers/confirmPasswordValidator'

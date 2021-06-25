@@ -17,7 +17,6 @@ import { validateContent } from "../../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
 import BarberShop from "../../models/BarberShop";
-import { ThermometerSun } from "react-bootstrap-icons";
 import Customer from "../../models/Customer";
 import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, PhoneNumberInput } from '../../components'
 import { phoneNumberValidator } from '../helpers/phoneNumberValidator'
@@ -37,8 +36,9 @@ class CustomerVerifyPhone extends React.Component {
           phoneNumber: {value: "", error:""},
           recaptchaVerifier: React.createRef(null),
           formattedNum: "",
-          verificationId: "",
+          verificationId: this.props.route.params.verificationId,
           verificationCode: "",
+          verificationCodeInput: {value: "", error:""},
           firebaseConfig: firebaseConfig,
         //   message: !firebase || Platform.OS === 'web' ? { text: 'To get started, provide a valid firebase config boi' } : undefined,
           attemptInvisibleVerification : true,
@@ -57,6 +57,43 @@ class CustomerVerifyPhone extends React.Component {
     }
     const {navigation} = this.props;
     navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value});
+  }
+
+  onVerify = () => {
+    return new Promise((resolve, reject) => {
+        const credential = firebase.auth.PhoneAuthProvider.credential(
+        this.state.verificationId,
+        this.state.verificationCodeInput.value
+        );
+        firebase.auth().signInWithCredential(credential).then((response) => {
+            const uid = response.user.uid;
+            return Customer.createNew(uid)
+            .then((customer) => {
+                customer.name = this.props.route.params.fullName
+                customer.phonenumber = this.props.route.params.phoneNumber
+                return customer.update().then((updated) => {
+                    console.log("response from customer update is", updated);
+                    resolve(updated)
+                }).catch((err) => {
+                    console.log("error updating customer:", err)
+                    alert("An error occurred.", err);
+                    reject(err)
+                });
+            }).catch((err)=>{
+                console.log("error CREATING customer:", err)
+                alert("An error occurred.", err);
+                reject(err)
+
+            })
+        }).catch((err) => {
+            console.log("error signing in with credential:", err)
+            this.setState({
+                verificationCodeInput: { ...this.state.verificationCodeInput, error: "Incorrect Code. Please try again." },
+            })
+            reject(err)
+        });
+        // alert('Phone authentication successful 👍')
+    })
   }
   
  
@@ -78,8 +115,13 @@ class CustomerVerifyPhone extends React.Component {
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
-        <Text bold size={33} style={styles.title}>
-            Welcome to Cliply!
+        <Text 
+            bold  
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            style={styles.title}
+          >
+            Create My Account
           </Text>
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>
@@ -87,39 +129,43 @@ class CustomerVerifyPhone extends React.Component {
         <TextInput
             style={{ marginVertical: 10, fontSize: 17 }}
             editable={!!this.state.verificationId}
-            placeholder="123456"
-            onChangeText={(text)=>{ this.setState({verificationCode: text}) }}
+            label="Verification Code"
+            returnKeyType="done"
+            value={this.state.verificationCodeInput.value}
+            onChangeText={(text) => this.setState({verificationCodeInput: { value: text, error: '' }})}
+            error={!!this.state.verificationCodeInput.error}
+            errorText={this.state.verificationCodeInput.error}
+            autoCompleteType="cc-number"
+            textContentType="oneTimeCode"
+            keyboardType="number-pad"
         />
         <Button
             title="Confirm Verification Code"
-            disabled={!this.state.verificationId}
+            disabled={!this.state.verificationCodeInput.value}
             onPress={async () => {
-            try {
-                const credential = firebase.auth.PhoneAuthProvider.credential(
-                this.state.verificationId,
-                this.state.verificationCode
-                );
-                await firebase.auth().signInWithCredential(credential);
-                alert('Phone authentication successful 👍')
-            } catch (err) {
-                alert('Error confirming code', err)
-            }
+                try {
+                    const credential = firebase.auth.PhoneAuthProvider.credential(
+                    this.state.verificationId,
+                    this.state.verificationCode
+                    );
+                    await firebase.auth().signInWithCredential(credential);
+                    alert('Phone authentication successful 👍')
+                } catch (err) {
+                    alert('Error confirming code', err)
+                }
             }}
         />
-
-        {this.state.attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
-
-            <ButtonSpecial disabled = {!this.state.phoneNumber.value }
+         <ButtonSpecial disabled = {this.state.verificationCodeInput.value.trim().length != 6 }
              mode="contained" 
              style={
-              (this.state.phoneNumber.value)
+              (this.state.verificationCodeInput.value.trim().length == 6)
               ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
               : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
              }
-             onPress={this.validatePhoneField}> 
-             Continue</ButtonSpecial>
-
-             
+             onPress={this.onVerify}
+        > 
+             Create Account
+        </ButtonSpecial>  
       
       </Background>
     );
@@ -140,6 +186,7 @@ const styles = StyleSheet.create({
     paddingBottom: argonTheme.SIZES.BASE,
     // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
+    fontSize: 36,
   },
   
 });
