@@ -190,10 +190,10 @@ class AddServices extends React.Component {
 
   addServiceName = (price, nameOfService, serviceCategory) => {
     if (
-      !price ||
+      // !price ||
       !nameOfService ||
       !serviceCategory ||
-      price.length < 1 ||
+      // price.length < 1 ||
       nameOfService.length < 1 ||
       serviceCategory.length < 1
     ) {

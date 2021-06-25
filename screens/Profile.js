@@ -283,6 +283,7 @@ class Profile extends React.Component {
     }
     var initials = []
     console.log("this.state.fullName is", this.state.fullName)
+    name = name.toUpperCase()
     initials.push(name[0])
     var tempName = name
     var name_pieces = tempName.split(" ")

@@ -24,7 +24,7 @@ import AddServices from "../screens/Onboarding/AddServices";
 import CustomCamera from "../components/CustomCamera";
 import Customer from "../models/Customer";
 import BarberShop from "../models/BarberShop";
-
+import CustomerPhone from "../screens/Onboarding/CustomerPhone";
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -42,6 +42,7 @@ import RecentCuts from "../screens/RecentCuts";
 import Explore from "../screens/Explore";
 import StartScreen from '../screens/StartScreen';
 import CreateAccount from '../screens/Onboarding/CreateAccount';
+import CustomerVerifyPhone from '../screens/Onboarding/CustomerVerifyPhone';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -299,6 +300,7 @@ export default function AppStack(props) { // if this causes an error, try expo s
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [isBarber, setIsBarber] = useState(false);
+  const [mounted, isMounted]= useState(true);
   // const getLoggedInBarbershop = async () => {
   //     // get User data
   //   await BarberShops.loadFromID(firebase.auth().currentUser.uid).then( barber => {
@@ -310,8 +312,9 @@ export default function AppStack(props) { // if this causes an error, try expo s
 
   function onAuthStateChanged(user) {
 
-      
+
       setUser(user);
+      console.log("user is", user);
       if(user == null)
         setInitializing(false);
       else {
@@ -351,7 +354,8 @@ export default function AppStack(props) { // if this causes an error, try expo s
   useEffect(() => {
     const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, []);
+  }, [user]);
+
   if(initializing){
     return null
   }
@@ -457,18 +461,20 @@ export default function AppStack(props) { // if this causes an error, try expo s
               options={{
                 headerShown: false
               }}
-              // options={{
-              //   header: ({ navigation, scene }) => (
-              //     <Header
-              //       title=""
-              //       back
-              //       black
-              //       transparent
-              //       navigation={navigation}
-              //       scene={scene}
-              //     />
-              //   ),
-              // }}
+            />
+             <Stack.Screen
+              name="CustomerPhone"
+              component={CustomerPhone}
+              options={{
+                headerShown: false
+              }}
+            />
+            <Stack.Screen
+              name="CustomerVerifyPhone"
+              component={CustomerVerifyPhone}
+              options={{
+                headerShown: false
+              }}
             />
         <Stack.Screen
           name="CreateBarbershop"

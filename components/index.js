@@ -23,6 +23,7 @@ import Paragraph from './Paragraph';
 import TextInput from './TextInput';
 import ButtonSpecial from './ButtonSpecial';
 import HeaderSpecial from './HeaderSpecial';
+import PhoneNumberInput from './PhoneNumberInput';
 
 export {
   Accordian,
@@ -46,6 +47,7 @@ export {
   OnboardingForm,
   OnboardingField,
   Paragraph,
+  PhoneNumberInput,
   Switch, 
   Select,
   SubmitFormButton,
