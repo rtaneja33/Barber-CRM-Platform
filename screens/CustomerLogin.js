@@ -9,27 +9,28 @@ import {
   Keyboard,
   TouchableWithoutFeedback
 } from "react-native";
-import { firebase, firebaseConfig } from "../../src/firebase/config";
-import { Block, Button as GaButton, theme, Text } from "galio-framework";
-import { argonTheme, tabs } from "../../constants";
-import OnboardingForm from "../../components/OnboardingForm";
-import { validateContent } from "../../constants/utils";
+import { firebase, firebaseConfig } from "../src/firebase/config";
+import { Block, Button as GaButton, Text } from "galio-framework";
+import { theme } from '../core/theme'
+import { argonTheme, tabs } from "../constants";
+import OnboardingForm from "../components/OnboardingForm";
+import { validateContent } from "../constants/utils";
 const { width, height } = Dimensions.get("screen");
 import Spinner from "react-native-loading-spinner-overlay";
-import BarberShop from "../../models/BarberShop";
+import BarberShop from "../models/BarberShop";
 import { ThermometerSun } from "react-bootstrap-icons";
-import Customer from "../../models/Customer";
-import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, PhoneNumberInput } from '../../components'
-import { phoneNumberValidator } from '../helpers/phoneNumberValidator'
-import { passwordValidator } from '../helpers/passwordValidator'
-import { confirmPasswordValidator } from '../helpers/confirmPasswordValidator'
+import Customer from "../models/Customer";
+import { BackButton, Logo, HeaderSpecial, Background, ButtonSpecial, TextInput, PhoneNumberInput } from '../components'
+import { phoneNumberValidator } from '../screens/helpers/phoneNumberValidator'
+import { passwordValidator } from '../screens/helpers/passwordValidator'
+import { confirmPasswordValidator } from '../screens/helpers/confirmPasswordValidator'
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
-import { Platform } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 
 // import PhoneInput from "react-native-phone-number-input";
 
-class CustomerPhone extends React.Component {
+class CustomerLogin extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -70,7 +71,7 @@ class CustomerPhone extends React.Component {
       console.log("verificationId is now", verificationId)
       this.setState({verificationId: verificationId})
       const {navigation} = this.props;
-      navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value, verificationId: this.state.verificationId, fullName: this.props.route.params.fullName});
+      //navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value, verificationId: this.state.verificationId, fullName: this.props.route.params.fullName});
       console.log("calling code is", this.state.formattedNum);
       return  
     } catch (err) {
@@ -93,7 +94,8 @@ class CustomerPhone extends React.Component {
         attemptInvisibleVerification={this.state.attemptInvisibleVerification}
       />
       <BackButton goBack={this.props.navigation.goBack} />
-      
+      <Logo />
+      <HeaderSpecial>Welcome back.</HeaderSpecial>
       {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
       
         <Spinner
@@ -182,15 +184,37 @@ class CustomerPhone extends React.Component {
 
         {this.state.attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
 
-            <ButtonSpecial disabled = {!this.state.phoneNumber.value }
-             mode="contained" 
-             style={
-              (this.state.phoneNumber.value)
-              ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
-              : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
-             }
-             onPress={this.validatePhoneField}> 
-             Send Verification Code</ButtonSpecial>
+        <ButtonSpecial disabled = {!this.state.phoneNumber.value }
+            mode="contained" 
+            style={
+            (this.state.phoneNumber.value.trim().length > 9 )
+            ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
+            : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
+            }
+            onPress={this.validatePhoneField}> 
+            Send Verification Code
+        </ButtonSpecial>
+
+        <ButtonSpecial 
+            mode="contained" 
+            disabled = {this.state.phoneNumber.value.trim().length < 10 }
+            style={
+                (this.state.phoneNumber.value.trim().length > 9 )
+                ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
+                : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
+            }
+            onPress={this.validatePhoneField}> 
+            Verify Phone
+        </ButtonSpecial>
+        <View style={styles.row}>
+            <Text>Don’t have an account? </Text>
+            <TouchableOpacity onPress={() => {
+                navigation.navigate('CreateCustomer2', {phoneNumber: '7037951312'})
+                }}>
+            <Text style={styles.link}>Sign up</Text>
+        </TouchableOpacity>
+        </View>
+
 
              
       
@@ -202,6 +226,14 @@ class CustomerPhone extends React.Component {
 const styles = StyleSheet.create({
   child: {
     width: "100%",
+  },
+  row: {
+    flexDirection: 'row',
+    marginTop: 4,
+  },
+  link: {
+    fontWeight: 'bold',
+    color: theme.colors.primary,
   },
   centeredView: {
     // // position: "relative",
@@ -215,7 +247,6 @@ const styles = StyleSheet.create({
     color: argonTheme.COLORS.HEADER,
     fontSize: 36
   },
-  
 });
 
-export default CustomerPhone;
+export default CustomerLogin;

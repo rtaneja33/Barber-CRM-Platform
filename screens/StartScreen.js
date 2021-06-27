@@ -23,7 +23,7 @@ export default function StartScreen({ navigation }) {
         mode="contained"
         style={{backgroundColor: argonTheme.COLORS.BARBERRED}}
         // style={{borderColor: argonTheme.COLORS.BARBERBLUE, textC }}
-        onPress={() => navigation.navigate('SignUp', {isBarber: false})}
+        onPress={() => navigation.navigate('CustomerLogin')}
       >
         Customer Login
       </ButtonSpecial>

@@ -17,6 +17,7 @@ import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import BarbershopPage from "../screens/BarbershopPage";
 import LoginScreen from "../screens/LoginScreen";
+import CustomerLogin from "../screens/CustomerLogin";
 import EditServices from "../screens/EditServices";
 import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
 import CreateCustomer2 from "../screens/Onboarding/CreateCustomer2";
@@ -451,6 +452,13 @@ export default function AppStack(props) { // if this causes an error, try expo s
         <Stack.Screen
           name="SignUp"
           component={LoginScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="CustomerLogin"
+          component={CustomerLogin}
           options={{
             headerShown: false
           }}
