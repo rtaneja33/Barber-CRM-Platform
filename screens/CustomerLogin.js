@@ -44,17 +44,48 @@ class CustomerLogin extends React.Component {
         //   message: !firebase || Platform.OS === 'web' ? { text: 'To get started, provide a valid firebase config boi' } : undefined,
           attemptInvisibleVerification : true,
         };
-      }
+    }
+
+    phoneNumberExists = (phoneNum) => {
+        return new Promise((resolve, reject) => {
+            let query = firebase
+                .firestore()
+                .collection("Customers")
+                .where("phonenumber", "==", phoneNum)
+            return query.get().then(querySnapshot => {
+                if(querySnapshot.docs.length < 1){
+                    resolve("An account with this number does not exist.")
+                }
+                resolve(null)
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+                resolve("An error occurred. Please try again later.")
+            })
+        }).catch((error)=>{console.log("promise error", error)})
+            
+    }
 
   validatePhoneField = async () => {
+    this.setState({loading: true})
+    console.log("this.state.phoneNumber is", this.state.phoneNumber)
     const phoneNumberError = phoneNumberValidator(this.state.phoneNumber.value)
     if (phoneNumberError){
       this.setState({
-        phoneNumber: { ...this.state.fullName, error: phoneNumberError },
+        phoneNumber: { ...this.state.phoneNumber, error: phoneNumberError },
+        loading: false
       })
+      this.setState({loading: false})
       return
     }
-
+    const accountNotExistsError = await this.phoneNumberExists(this.state.phoneNumber.value)
+    if(accountNotExistsError) {
+        this.setState({
+            phoneNumber: { ...this.state.phoneNumber, error: accountNotExistsError },
+            loading: false
+        })
+        return
+    }
+    return
     try {
       console.log("hit send verification code with this phoneNum", this.state.formattedNum)
       console.log("and this ref",this.state.recaptchaVerifier.current )
@@ -184,7 +215,7 @@ class CustomerLogin extends React.Component {
 
         {this.state.attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
 
-        <ButtonSpecial disabled = {!this.state.phoneNumber.value }
+        {/* <ButtonSpecial disabled = {!this.state.phoneNumber.value }
             mode="contained" 
             style={
             (this.state.phoneNumber.value.trim().length > 9 )
@@ -193,7 +224,7 @@ class CustomerLogin extends React.Component {
             }
             onPress={this.validatePhoneField}> 
             Send Verification Code
-        </ButtonSpecial>
+        </ButtonSpecial> */}
 
         <ButtonSpecial 
             mode="contained" 
