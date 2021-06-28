@@ -44,6 +44,7 @@ import Explore from "../screens/Explore";
 import StartScreen from '../screens/StartScreen';
 import CreateAccount from '../screens/Onboarding/CreateAccount';
 import CustomerVerifyPhone from '../screens/Onboarding/CustomerVerifyPhone';
+import CustomerLoginVerify from '../screens/CustomerLoginVerify';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -459,6 +460,13 @@ export default function AppStack(props) { // if this causes an error, try expo s
         <Stack.Screen
           name="CustomerLogin"
           component={CustomerLogin}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="CustomerLoginVerify"
+          component={CustomerLoginVerify}
           options={{
             headerShown: false
           }}

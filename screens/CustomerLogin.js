@@ -27,6 +27,7 @@ import { confirmPasswordValidator } from '../screens/helpers/confirmPasswordVali
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import { Platform, TouchableOpacity } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
+import ThemedListItem from "react-native-elements/dist/list/ListItem";
 
 // import PhoneInput from "react-native-phone-number-input";
 
@@ -65,6 +66,11 @@ class CustomerLogin extends React.Component {
             
     }
 
+  quickNav = () => {
+    const { navigation }= this.props;
+    navigation.navigate("CustomerLoginVerify", {phoneNumber: this.state.phoneNumber.value, verificationId: this.state.verificationId });
+  }  
+
   validatePhoneField = async () => {
     this.setState({loading: true})
     console.log("this.state.phoneNumber is", this.state.phoneNumber)
@@ -101,9 +107,8 @@ class CustomerLogin extends React.Component {
       //   });;
       console.log("verificationId is now", verificationId)
       this.setState({verificationId: verificationId})
-      const {navigation} = this.props;
-      //navigation.navigate('CustomerVerifyPhone', {phoneNumber: this.state.phoneNumber.value, verificationId: this.state.verificationId, fullName: this.props.route.params.fullName});
-      console.log("calling code is", this.state.formattedNum);
+      this.quickNav()
+      //console.log("calling code is", this.state.formattedNum);
       return  
     } catch (err) {
       console.log("error occurred,",err)
@@ -234,7 +239,9 @@ class CustomerLogin extends React.Component {
                 ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
                 : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
             }
-            onPress={this.validatePhoneField}> 
+            // onPress={this.validatePhoneField}
+            onPress={this.quickNav}
+        > 
             Verify Phone
         </ButtonSpecial>
         <View style={styles.row}>
