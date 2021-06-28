@@ -24,6 +24,8 @@ class FrontCamera extends PureComponent {
         flash: "off",
         pressedIn: false,
       };
+
+      Camera.requestPermissionsAsync()
   }
 
   takePicture = () => {

@@ -53,9 +53,8 @@ class AppointmentCards extends React.Component{
         console.log("CALLED loadAppointments in appt cards")
         var appointmentsToAdd = [];
         // console.log("appointment cards - has this many appointments", references.size);
-        references.forEach((document) => {
-          console.log("IN LOAD APPOINTMENTS, document is", document)
-          let data = document.data();
+        references.forEach((data) => {
+          console.log("IN LOAD APPOINTMENTS, document is", data)
           // console.log(data);
           Promise.all([
             this.saveFrontPhotoUrl(data),

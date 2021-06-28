@@ -65,7 +65,7 @@ export default class AppointmentPhoto {
     }
     
     static loadFromID(id) {
-        
+        console.log("LOADING PHOTO")
         var appointmentPhoto = new AppointmentPhoto();
         return new Promise(resolve => {
             firebase.firestore().collection('AppointmentPhotos').doc(id).get().then(documentSnapshot => {

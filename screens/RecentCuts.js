@@ -46,8 +46,8 @@ class RecentCuts extends React.Component {
       query.limit(3).get().then(querySnapshot => {
         const references = querySnapshot
         querySnapshot.forEach((document) => {
-          docs.push(document)
           let data = document.data();
+          docs.push(data)
           var options = { timeZone: 'UTC', timeZoneName: 'short' };
           let dateString = data.timestamp.toDate().toLocaleDateString("en-US", options) 
           let timeString = data.timestamp.toDate().toLocaleTimeString("en-US") 
@@ -62,8 +62,12 @@ class RecentCuts extends React.Component {
       })
     }
     getReferencesOnRefresh = async () => {
-      const shopID = firebase.auth().currentUser.uid
+      if (this.state.refreshing == true) {
+        return
+      }
       this.setState({refreshing: true})
+
+      const shopID = firebase.auth().currentUser.uid
       console.log("REFRESHING....")
       // console.log("get references shop id is", shopID);
       let query = await firebase
@@ -76,8 +80,10 @@ class RecentCuts extends React.Component {
         const references = querySnapshot
         var newRef = [...this.state.references]
         querySnapshot.forEach((document) => {
-          newRef.push(document)
+          console.log("Saaeed")
+          console.log(document.data())
           let data = document.data();
+          newRef.push(data)
           var options = { timeZone: 'UTC', timeZoneName: 'short' };
           let dateString = data.timestamp.toDate().toLocaleDateString("en-US", options) 
           let timeString = data.timestamp.toDate().toLocaleTimeString("en-US") 
@@ -86,6 +92,7 @@ class RecentCuts extends React.Component {
         this.setState({
           references: newRef,
           refreshing: false,
+          lastTimeStamp: querySnapshot && querySnapshot.docs && querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length-1].data().timestamp : null
         })
         console.log("this.state.references is now this long", this.state.references.length)
       })
