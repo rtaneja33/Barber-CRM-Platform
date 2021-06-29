@@ -87,19 +87,19 @@ class CustomerLoginVerify extends React.Component {
       
       {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
       <Logo />
-      <HeaderSpecial>Help us confirm it's really you!</HeaderSpecial>
         <Spinner
           // textContent={"Loading..."}
           textStyle={styles.spinnerTextStyles}
           visible={this.state.loading}
         />
+        <HeaderSpecial>Help us confirm it's really you!</HeaderSpecial>
         <Text 
             bold  
             numberOfLines={1}
             adjustsFontSizeToFit={true}
             style={styles.title}
           >
-            Enter Verification Code
+            Enter Your Code
           </Text>
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>
@@ -117,22 +117,6 @@ class CustomerLoginVerify extends React.Component {
             textContentType="oneTimeCode"
             keyboardType="number-pad"
         />
-        <Button
-            title="Confirm Verification Code"
-            disabled={!this.state.verificationCodeInput.value}
-            onPress={async () => {
-                try {
-                    const credential = firebase.auth.PhoneAuthProvider.credential(
-                    this.state.verificationId,
-                    this.state.verificationCode
-                    );
-                    await firebase.auth().signInWithCredential(credential);
-                    alert('Phone authentication successful 👍')
-                } catch (err) {
-                    alert('Error confirming code', err)
-                }
-            }}
-        />
          <ButtonSpecial disabled = {this.state.verificationCodeInput.value.trim().length != 6 }
              mode="contained" 
              style={
@@ -142,7 +126,7 @@ class CustomerLoginVerify extends React.Component {
              }
              onPress={this.onVerify}
         > 
-             Create Account
+             Sign In
         </ButtonSpecial>  
       
       </Background>
@@ -161,7 +145,6 @@ const styles = StyleSheet.create({
   
   },
   title: {
-    paddingBottom: argonTheme.SIZES.BASE,
     // paddingHorizontal: 15,
     color: argonTheme.COLORS.HEADER,
     fontSize: 36,

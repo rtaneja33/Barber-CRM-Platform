@@ -80,7 +80,6 @@ class CustomerLogin extends React.Component {
         phoneNumber: { ...this.state.phoneNumber, error: phoneNumberError },
         loading: false
       })
-      this.setState({loading: false})
       return
     }
     const accountNotExistsError = await this.phoneNumberExists(this.state.phoneNumber.value)
@@ -91,7 +90,7 @@ class CustomerLogin extends React.Component {
         })
         return
     }
-    return
+    this.setState({loading: false}) // I have no idea why I have to stop loading 
     try {
       console.log("hit send verification code with this phoneNum", this.state.formattedNum)
       console.log("and this ref",this.state.recaptchaVerifier.current )
@@ -131,8 +130,8 @@ class CustomerLogin extends React.Component {
       />
       <BackButton goBack={this.props.navigation.goBack} />
       <Logo />
-      <HeaderSpecial>Welcome back.</HeaderSpecial>
       {/* <HeaderSpecial>Welcome back.</HeaderSpecial> */}
+      <HeaderSpecial>Welcome back.</HeaderSpecial>
       
         <Spinner
           // textContent={"Loading..."}
@@ -145,7 +144,7 @@ class CustomerLogin extends React.Component {
             adjustsFontSizeToFit={true}
             style={styles.title}
           >
-            Enter Your Phone #
+            My number is
           </Text>
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>
@@ -240,7 +239,7 @@ class CustomerLogin extends React.Component {
                 : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
             }
             // onPress={this.validatePhoneField}
-            onPress={this.quickNav}
+            onPress={this.validatePhoneField}
         > 
             Verify Phone
         </ButtonSpecial>
