@@ -144,7 +144,7 @@ class CustomerLogin extends React.Component {
             adjustsFontSizeToFit={true}
             style={styles.title}
           >
-            My number is
+            What's your phone #?
           </Text>
           {/* <Block center>
           <HeaderSpecial >This information is stored securely.</HeaderSpecial>

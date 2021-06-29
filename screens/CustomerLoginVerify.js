@@ -107,6 +107,7 @@ class CustomerLoginVerify extends React.Component {
         <TextInput
             style={{ marginVertical: 10, fontSize: 17 }}
             editable={!!this.state.verificationId}
+            maxLength={6}
             label="Verification Code"
             returnKeyType="done"
             value={this.state.verificationCodeInput.value}
@@ -120,9 +121,9 @@ class CustomerLoginVerify extends React.Component {
          <ButtonSpecial disabled = {this.state.verificationCodeInput.value.trim().length != 6 }
              mode="contained" 
              style={
-              (this.state.verificationCodeInput.value.trim().length == 6)
-              ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
-              : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
+                (this.state.verificationCodeInput.value.trim().length == 6)
+                ? {backgroundColor: argonTheme.COLORS.BARBERBLUE, marginTop: 30}
+                : {backgroundColor: argonTheme.COLORS.MUTED, marginTop: 30}
              }
              onPress={this.onVerify}
         > 
