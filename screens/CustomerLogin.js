@@ -105,7 +105,7 @@ class CustomerLogin extends React.Component {
       //     console.log("ERROR ON VERIFY PHONE MSG" ,error.message);
       //   });;
       console.log("verificationId is now", verificationId)
-      this.setState({verificationId: verificationId})
+      this.setState({verificationId: verificationId, loading:false})
       this.quickNav()
       //console.log("calling code is", this.state.formattedNum);
       return  
