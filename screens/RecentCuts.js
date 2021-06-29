@@ -23,14 +23,15 @@ class RecentCuts extends React.Component {
             refreshing: false,
             loadingExtraData: false,
             page: 1,
-            lastTimeStamp: null
+            lastTimeStamp: null,
+            appointmentCardsRef: null
             // barberShop: null,
         };
        // this.getReferences();
     }
 
     componentDidMount() {
-        this.getInitialReferences()
+      this.getInitialReferences()
     }
     getInitialReferences = async () => {
       console.log("in get initial references")
@@ -59,12 +60,14 @@ class RecentCuts extends React.Component {
           refreshing: false,
           lastTimeStamp: querySnapshot && querySnapshot.docs && querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length-1].data().timestamp : null
         })
+        this.state.appointmentCardsRef.updateItems(this.state.references);
       })
     }
     getReferencesOnRefresh = async () => {
       if (this.state.refreshing == true) {
         return
       }
+
       this.setState({refreshing: true})
 
       const shopID = firebase.auth().currentUser.uid
@@ -76,7 +79,7 @@ class RecentCuts extends React.Component {
         .where("barberUID", "==", shopID )
         .orderBy("timestamp", "desc");
 
-      query.startAfter(this.state.lastTimeStamp).limit(6).get().then(querySnapshot => {
+      query.startAfter(this.state.lastTimeStamp).limit(3).get().then(querySnapshot => {
         const references = querySnapshot
         var newRef = [...this.state.references]
         querySnapshot.forEach((document) => {
@@ -94,6 +97,8 @@ class RecentCuts extends React.Component {
           refreshing: false,
           lastTimeStamp: querySnapshot && querySnapshot.docs && querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length-1].data().timestamp : null
         })
+        this.state.appointmentCardsRef.updateItems(this.state.references);
+
         console.log("this.state.references is now this long", this.state.references.length)
       })
     }
@@ -152,8 +157,8 @@ class RecentCuts extends React.Component {
                 this.state.references ?
                 (
                     this.state.references.length > 0 ? 
-                    <AppointmentCards 
-                        references={this.state.references}
+                    <AppointmentCards
+                        ref={child => {this.state.appointmentCardsRef = child}}
                         key={this.state.references.length}
                         barberFacing
                         /> : 

@@ -34,8 +34,7 @@ class AppointmentCards extends React.Component{
         this.state = {
             appointments: [],
             activeSlide: 0,
-            references: this.props.references,
-
+            references: []
         }
         console.log("this.props.references is", this.props.references)
         this.onEndReachedCalledDuringMomentum = false
@@ -43,9 +42,15 @@ class AppointmentCards extends React.Component{
 
     onMomentumScrollBegin = () => { this.onEndReachedCalledDuringMomentum = false; }
 
+    updateItems = (incomingAppointments) => {
+      this.setState({
+        appointments: incomingAppointments
+      })
+    }
+
     componentDidMount(){
         console.log("in apt cards, references passed in were this long", this.state.references.length, "and were", this.state.references)
-        this.loadAppointments(this.state.references).then((response)=>{console.log(response); });
+        //this.loadAppointments(this.state.references).then((response)=>{console.log(response); });
     }
 
     async loadAppointments(references) { //this.state.references
@@ -164,7 +169,7 @@ class AppointmentCards extends React.Component{
             source={{ uri: item }}
           />
         );
-    }
+        }
 
     renderItem = ({item}) => {
         console.log("rendering item........")
