@@ -17,6 +17,7 @@ import Register from "../screens/Register";
 import Elements from "../screens/Elements";
 import BarbershopPage from "../screens/BarbershopPage";
 import LoginScreen from "../screens/LoginScreen";
+import CustomerLogin from "../screens/CustomerLogin";
 import EditServices from "../screens/EditServices";
 import CreateBarbershop from "../screens/Onboarding/CreateBarbershop";
 import CreateCustomer2 from "../screens/Onboarding/CreateCustomer2";
@@ -43,6 +44,7 @@ import Explore from "../screens/Explore";
 import StartScreen from '../screens/StartScreen';
 import CreateAccount from '../screens/Onboarding/CreateAccount';
 import CustomerVerifyPhone from '../screens/Onboarding/CustomerVerifyPhone';
+import CustomerLoginVerify from '../screens/CustomerLoginVerify';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -451,6 +453,20 @@ export default function AppStack(props) { // if this causes an error, try expo s
         <Stack.Screen
           name="SignUp"
           component={LoginScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="CustomerLogin"
+          component={CustomerLogin}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name="CustomerLoginVerify"
+          component={CustomerLoginVerify}
           options={{
             headerShown: false
           }}
