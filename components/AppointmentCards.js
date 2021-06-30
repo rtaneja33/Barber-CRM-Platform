@@ -44,9 +44,10 @@ class AppointmentCards extends React.Component{
 
     updateItems = (incomingAppointments) => {
       this.setState({
-        appointments: incomingAppointments
-      })
+        appointments: incomingAppointments,
+      });
     }
+  
 
     componentDidMount(){
         console.log("in apt cards, references passed in were this long", this.state.references.length, "and were", this.state.references)
@@ -76,51 +77,6 @@ class AppointmentCards extends React.Component{
         });
       }
     
-
-
-    saveFrontPhotoUrl = async (data) => {
-        if (data != null && data["appointmentFrontPhotoUID"] != "") {
-          // console.log("calling saveSideXUrl with uid of ", data["appointmentFrontPhotoUID"]);
-          await AppointmentPhoto.loadFromID(data["appointmentFrontPhotoUID"]).then(
-            (photo) => {
-              //// console.log("photo returned in saveXXXPhotoURl", photo);
-
-              const url = photo.photoURL;
-              // console.log("front photo url is", url);
-              data["frontPhotoURL"] = url;
-            }
-          );
-        }
-      };
-    
-      saveSidePhotoUrl = async (data) => {
-        if (data != null && data["appointmentSidePhotoUID"] != "") {
-          // console.log("calling saveSideXUrl with uid of ", data["appointmentSidePhotoUID"]);
-          await AppointmentPhoto.loadFromID(data["appointmentSidePhotoUID"]).then(
-            (photo) => {
-           //   // console.log("photo returned in saveXXXPhotoURl", photo);
-
-              const url = photo.photoURL;
-              // console.log("side photo url is", url);
-              data["sidePhotoURL"] = url;
-            }
-          );
-        }
-      };
-    
-      saveRearPhotoUrl = async (data) => {
-        if (data != null && data["appointmentRearPhotoUID"] != "") {
-          // console.log("calling saveSideXUrl with uid of ", data["appointmentRearPhotoUID"]);
-          await AppointmentPhoto.loadFromID(data["appointmentRearPhotoUID"]).then(
-            (photo) => {
-          //    // console.log("photo returned in saveXXXPhotoURl", photo);
-              const url = photo.photoURL;
-              // console.log("rear photo url is", url);
-              data["rearPhotoURL"] = url;
-            }
-          );
-        }
-      };
       parsePreferences = (serviceReceived) => {
         //// console.log("service received", serviceReceived);
         if (serviceReceived.length < 1) {

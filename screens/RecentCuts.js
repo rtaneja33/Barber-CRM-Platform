@@ -83,8 +83,7 @@ class RecentCuts extends React.Component {
         const references = querySnapshot
         var newRef = [...this.state.references]
         querySnapshot.forEach((document) => {
-          console.log("Saaeed")
-          console.log(document.data())
+
           let data = document.data();
           newRef.push(data)
           var options = { timeZone: 'UTC', timeZoneName: 'short' };

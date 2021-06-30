@@ -35,11 +35,36 @@ class AppointmentCard extends React.Component{
             activeSlide: 0,
             item: this.props.appointment
         }
+        //this.loadImage()
+        console.log("INITIAL APPOINTMENT CARD")
+        this.loadFirstImage()  
     }
 
     async loadImage() {
       this.setState({item: await CacheManager.get(this.state.item).getPath()})
     }
+
+    async loadFirstImage() {
+      if (this.state.item != null && this.state.item["appointmentFrontPhotoUID"] != "") {
+        // console.log("calling saveSideXUrl with uid of ", data["appointmentFrontPhotoUID"]);
+        await AppointmentPhoto.loadFromID(this.state.item["appointmentFrontPhotoUID"]).then(
+          (photo) => {
+            //// console.log("photo returned in saveXXXPhotoURl", photo);
+
+            const url = photo.photoURL;
+            // console.log("front photo url is", url);
+            var data = this.state.item;
+            data["frontPhotoURL"] = url;
+            this.setState({
+              item: data
+            })
+            console.log("saaeed")
+            console.log(this.state.item)
+          }
+        );
+      }
+    }
+
     parsePreferences = (serviceReceived) => {
         if (serviceReceived.length < 1) {
           return null;
@@ -113,6 +138,8 @@ class AppointmentCard extends React.Component{
 
     render() {
           console.log("rendering apt card with notes", this.state.item.notes);
+          console.log("RENDERING ITEM")
+          console.log(this.state.item)
           const { navigation } = this.props;
           var pageLength = 0;
 
