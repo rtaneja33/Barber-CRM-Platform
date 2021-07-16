@@ -12,8 +12,8 @@ import { firebase } from "../src/firebase/config"
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
-const PlusButton = ({isWhite, style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => console.log("Add Customer?")}>
+const PlusButton = ({isWhite, style, navigation, showImport}) => (
+  <TouchableOpacity style={[styles.button, style]} onPress={showImport}>
     <Icon
       family="Feather"
       size={23}
@@ -85,7 +85,7 @@ class Header extends React.Component {
   }
 
   renderRight = () => {
-    const { white, title, navigation } = this.props;
+    const { white, title, navigation, showImport } = this.props;
 
     if (title === 'Title') {
       return [
@@ -96,7 +96,7 @@ class Header extends React.Component {
     switch (title) {
       case 'My Customers':
         return ([
-          <PlusButton key='plus-home' navigation={navigation} isWhite={white} />
+          <PlusButton key='plus-home' navigation={navigation} isWhite={white} showImport={showImport} />
         ]);
       case 'My Shop':
         return ([

@@ -162,6 +162,7 @@ function HomeStack(props) {
               title="My Customers"
               searchFunc={scene.descriptor.options.searchFunc}
               search
+              showImport={scene.descriptor.options.showImport}
               navigation={navigation}
               scene={scene}
             />

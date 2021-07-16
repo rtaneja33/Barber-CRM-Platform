@@ -21,6 +21,9 @@ export default function Home({ navigation, route }) {
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
   const [showImport, setShowImport] = React.useState(false);
+  const changeShowImport = () => {
+    setShowImport(true)
+  }
   const loadContacts = async()=>{
     const { status, canAskAgain } = await Permissions.getAsync(Permissions.CONTACTS);
     // if (status === 'granted') {
@@ -148,7 +151,8 @@ export default function Home({ navigation, route }) {
 
   useEffect(() => {
     navigation.setOptions({
-      searchFunc: searchContacts.bind(this)
+      searchFunc: searchContacts.bind(this),
+      showImport: changeShowImport.bind(this)
     });
   }, [isLoading])
 
