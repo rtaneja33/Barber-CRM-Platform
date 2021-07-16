@@ -15,12 +15,12 @@ const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 
 const PlusButton = ({isWhite, style, navigation}) => (
   <TouchableOpacity style={[styles.button, style]} onPress={() => console.log("Add Customer?")}>
     <Icon
-      family="AntDesign"
-      size={20}
-      name="pluscircleo"
-      color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+      family="Feather"
+      size={23}
+      name="user-plus"
+      color={argonTheme.COLORS.HEADER}
     />
-    <Block middle style={styles.notify} />
+    {/* <Block middle style={styles.notify} /> */}
   </TouchableOpacity>
 );
 
