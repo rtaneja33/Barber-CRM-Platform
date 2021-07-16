@@ -13,11 +13,14 @@ const COLOR_WHITE = theme.COLORS.WHITE;
 const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 import Icon from "../components/Icon";
 import { selectContactPhone } from 'react-native-select-contact';
+import Popover from 'react-native-popover-view';
+import MultiSelectExample from './MultiSelectExample';
 
 export default function Home({ navigation, route }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
+  const [showImport, setShowImport] = React.useState(false);
   const loadContacts = async()=>{
     const { status, canAskAgain } = await Permissions.getAsync(Permissions.CONTACTS);
     // if (status === 'granted') {
@@ -29,16 +32,15 @@ export default function Home({ navigation, route }) {
       case 'granted':
         console.log("granted!")
         // load from phone storage / backend
-        return selectContactPhone()
-        .then(selection => {
-            if (!selection) {
-                return null;
-            }
-            
-            let { contact, selectedPhone } = selection;
-            console.log(`Selected ${selectedPhone.type} phone number ${selectedPhone.number} from ${contact.name}`);
-            return
-        });  
+        const {data} = await Contacts.getContactsAsync({
+          fields:[Contacts.Fields.PhoneNumbers,
+          Contacts.Fields.Emails]
+        });
+        console.log("data is ", data)
+        updateCustomers(data);
+        setMemContacts(data);
+      // console.log(customers);
+        setIsLoading(false);
         break
       case 'denied':
         console.log("denied");
@@ -175,6 +177,22 @@ export default function Home({ navigation, route }) {
     }}>
           
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
+      <TouchableOpacity
+        style={{
+        position: "absolute",
+        right: 23,
+        top: 23,
+        zIndex: 0,
+        color: "#00000080",
+        }}
+        hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+        onPress={() => {
+        setShowImport(true)
+        // setSpinner(false)
+        }}
+    >
+        <Text style={{color: 'red'}}>Import</Text>
+    </TouchableOpacity>
         {isLoading? (
           <View style={{...StyleSheet.absoluteFill,
             alignItems: 'center', justifyContent: 'center'}}>
@@ -183,6 +201,19 @@ export default function Home({ navigation, route }) {
         ) : 
           null
         }
+        <Popover isVisible={showImport} onRequestClose={() => setShowImport(false)}>
+        <Text>This popover will stay centered on the screen, even when the device is rotated!</Text>
+        <MultiSelectExample></MultiSelectExample>
+        </Popover>
+        
+        {/* <Popover
+          from={(
+            <TouchableOpacity>
+              <Text>Press here to open popover!</Text>
+            </TouchableOpacity>
+          )}>
+          <Text>This is the contents of the popover</Text>
+        </Popover> */}
         <FlatList
           data={customers}
           renderItem={renderItem}
