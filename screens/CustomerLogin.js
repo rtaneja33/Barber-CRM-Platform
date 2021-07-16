@@ -246,6 +246,7 @@ class CustomerLogin extends React.Component {
         <View style={styles.row}>
             <Text>Don’t have an account? </Text>
             <TouchableOpacity onPress={() => {
+                const {navigation} = this.props;
                 navigation.navigate('CreateCustomer2', {phoneNumber: '7037951312'})
                 }}>
             <Text style={styles.link}>Sign up</Text>
