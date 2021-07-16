@@ -12,32 +12,86 @@ const BASE_SIZE = theme.SIZES.BASE;
 const COLOR_WHITE = theme.COLORS.WHITE;
 const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 import Icon from "../components/Icon";
+import { selectContactPhone } from 'react-native-select-contact';
 
 export default function Home({ navigation, route }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [customers, updateCustomers] = React.useState([]);
   const [inMemoryContacts, setMemContacts] = React.useState([]);
   const loadContacts = async()=>{
-    const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
-    if(status !== 'granted')
-    {
-      setIsLoading(false);
-      return
+    const { status, canAskAgain } = await Permissions.getAsync(Permissions.CONTACTS);
+    // if (status === 'granted') {
+    //   return
+    // }
+    console.log("checkling status...");
+    console.log("status is", status,"canaskagain is", canAskAgain)
+    switch (status){
+      case 'granted':
+        console.log("granted!")
+        // load from phone storage / backend
+        return selectContactPhone()
+        .then(selection => {
+            if (!selection) {
+                return null;
+            }
+            
+            let { contact, selectedPhone } = selection;
+            console.log(`Selected ${selectedPhone.type} phone number ${selectedPhone.number} from ${contact.name}`);
+            return
+        });  
+        break
+      case 'denied':
+        console.log("denied");
+        setIsLoading(false);
+        if(!canAskAgain)
+          alert("Please check settings and allow import contacts")
+          break
+      case 'undetermined':
+        console.log("denied");
+        // ask 
+        const response = await Permissions.askAsync(Permissions.CONTACTS);
+        if(response.status !== 'granted')
+        {
+          setIsLoading(false);
+          return
+        }
+        else{
+          console.log("denied after asking!")
+          // import contacts selectively, then save this to backend
+          // means it is first time
+        }
+        break
+      default:
+        setIsLoading(false);
+        break
+
     }
-    console.log("granted")
-    const {data} = await Contacts.getContactsAsync({
-      fields:[Contacts.Fields.PhoneNumbers,
-      Contacts.Fields.Emails]
-    });
-    updateCustomers(data);
-    setMemContacts(data);
-   // console.log(customers);
-    setIsLoading(false);
+
+
+  //   const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
+  //   if(status !== 'granted')
+  //   {
+  //     setIsLoading(false);
+  //     return
+  //   }
+  //   console.log("granted")
+  //   const {data} = await Contacts.getContactsAsync({
+  //     fields:[Contacts.Fields.PhoneNumbers,
+  //     Contacts.Fields.Emails]
+  //   });
+  //   updateCustomers(data);
+  //   setMemContacts(data);
+  //  // console.log(customers);
+  //   setIsLoading(false);
   } 
   
   useEffect(() => {
     setIsLoading(true);
     loadContacts();
+    const { status, permissions } = Permissions.askAsync(Permissions.CONTACTS).then((response)=>{
+      console.log("now permissions ARE", response.permissions, "status is", response.status);
+
+    });
     //console.log("called loadContacts in useEffect");
     //console.log("inMemContacts have length of", inMemoryContacts.length);
     // navigation.setOptions({
@@ -79,7 +133,7 @@ export default function Home({ navigation, route }) {
   );
 
   const searchContacts = (value) =>{
-    const filteredContacts = inMemoryContacts.filter(
+    const filteredContacts = customers.filter(
       contact => {
         let contactLowercase = (contact.firstName + ' ' + contact.lastName).toLowerCase()
         let searchTermLowercase = value.toLowerCase()
