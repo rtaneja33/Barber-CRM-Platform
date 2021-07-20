@@ -84,7 +84,8 @@ render() {
         }}
         hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
         onPress={() => {
-        setBarberModalVisible(!barberModalVisible)
+        // setBarberModalVisible(!barberModalVisible)
+        console.log("this.props is", this.props)
         // setSpinner(false)
         }}
     >
@@ -100,7 +101,9 @@ render() {
         }}
         hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
         onPress={() => {
-        setBarberModalVisible(!barberModalVisible)
+        console.log("hit close button...")
+        this.props.hideImport()
+        // setBarberModalVisible(!barberModalVisible)
         // setSpinner(false)
         }}
     >

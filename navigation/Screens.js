@@ -45,6 +45,7 @@ import StartScreen from '../screens/StartScreen';
 import CreateAccount from '../screens/Onboarding/CreateAccount';
 import CustomerVerifyPhone from '../screens/Onboarding/CustomerVerifyPhone';
 import CustomerLoginVerify from '../screens/CustomerLoginVerify';
+import MultiSelectExample from '../screens/MultiSelectExample';
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
@@ -144,17 +145,11 @@ function BarbershopPageStack(props) {
 //     </Stack.Navigator>
 //   )
 // }
-
-function HomeStack(props) {
-  // const { fullName } = props.route.params.params;
-  // console.log("full name is", fullName);
-  // console.log("in profile stack");
-
-  // navigation.setOptions({tabBarVisible: false});
+function CustomerStackScreen() {
   return (
-    <Stack.Navigator mode="card" headerMode="screen" >
+    <Stack.Navigator mode="modal">
       <Stack.Screen
-        name="My Customers"
+        name="MyCustomers"
         component={Home}
         options={{
           header: ({ navigation, scene, route }) => (
@@ -168,6 +163,26 @@ function HomeStack(props) {
             />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" },
+        }}
+      />
+      <Stack.Screen name="ImportContacts" component={MultiSelectExample} options={{headerShown: true}}/>
+    </Stack.Navigator>
+  )
+}
+
+function HomeStack(props) {
+  // const { fullName } = props.route.params.params;
+  // console.log("full name is", fullName);
+  // console.log("in profile stack");
+
+  // navigation.setOptions({tabBarVisible: false});
+  return (
+    <Stack.Navigator mode="card" headerMode="screen" >
+      <Stack.Screen
+        name = "My Customers"
+        component={CustomerStackScreen}
+        options={{
+          headerShown: false
         }}
       />
       <Stack.Screen

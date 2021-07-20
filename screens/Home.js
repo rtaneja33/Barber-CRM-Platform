@@ -22,8 +22,13 @@ export default function Home({ navigation, route }) {
   const [inMemoryContacts, setMemContacts] = React.useState([]);
   const [showImport, setShowImport] = React.useState(false);
   const changeShowImport = () => {
-    setShowImport(true)
+    navigation.navigate("ImportContacts")
   }
+
+  const hideImport = () => {
+    setShowImport(false)
+  }
+
   const loadContacts = async()=>{
     const { status, canAskAgain } = await Permissions.getAsync(Permissions.CONTACTS);
     // if (status === 'granted') {
@@ -33,13 +38,11 @@ export default function Home({ navigation, route }) {
     console.log("status is", status,"canaskagain is", canAskAgain)
     switch (status){
       case 'granted':
-        console.log("granted!")
         // load from phone storage / backend
         const {data} = await Contacts.getContactsAsync({
           fields:[Contacts.Fields.PhoneNumbers,
           Contacts.Fields.Emails]
         });
-        console.log("data is ", data)
         updateCustomers(data);
         setMemContacts(data);
       // console.log(customers);
@@ -149,10 +152,13 @@ export default function Home({ navigation, route }) {
     updateCustomers(filteredContacts)
   }
 
+  
+
   useEffect(() => {
     navigation.setOptions({
       searchFunc: searchContacts.bind(this),
       showImport: changeShowImport.bind(this)
+      
     });
   }, [isLoading])
 
@@ -205,10 +211,11 @@ export default function Home({ navigation, route }) {
         ) : 
           null
         }
-        <Popover isVisible={showImport} onRequestClose={() => setShowImport(false)}>
-        <Text>This popover will stay centered on the screen, even when the device is rotated!</Text>
-        <MultiSelectExample></MultiSelectExample>
-        </Popover>
+        {/* <Popover isVisible={showImport} onRequestClose={() => setShowImport(false)}> */}
+        {/* <Text>This popover will stay centered on the screen, even when the device is rotated!</Text> */}
+        {/* <MultiSelectExample hideImport={()=>{hideImport()}}></MultiSelectExample> */}
+        {/* </Popover> */}
+
         
         {/* <Popover
           from={(
