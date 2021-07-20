@@ -165,7 +165,20 @@ function CustomerStackScreen() {
           cardStyle: { backgroundColor: "#F8F9FE" },
         }}
       />
-      <Stack.Screen name="ImportContacts" component={MultiSelectExample} options={{headerShown: true}}/>
+      <Stack.Screen 
+        name="ImportContacts" 
+        component={MultiSelectExample}
+        options={{
+          header: ({ navigation, scene, route }) => (
+            <Header
+              title="Import Contacts"
+              back
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+        }}  
+      />
     </Stack.Navigator>
   )
 }

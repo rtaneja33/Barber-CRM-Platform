@@ -1,6 +1,8 @@
 import React from "react";
 import{StyleSheet,View,ActivityIndicator,FlatList,Text,TouchableOpacity,Image} from "react-native";
 import { Icon } from "react-native-elements";
+import * as Permissions from 'expo-permissions';
+import * as Contacts from 'expo-contacts';
 
 export default class MultiSelectExample extends React.Component { 
   constructor(props) {
@@ -13,17 +15,18 @@ export default class MultiSelectExample extends React.Component {
   componentDidMount() {this.fetchData();}
   
   fetchData = () => {this.setState({loading: true});
-  
-  fetch("https://jsonplaceholder.typicode.com/photos")
-    .then(response => response.json())
-    .then(responseJson => {
-      responseJson = responseJson.map(item => {
+  console.log("fetching data...")
+  Contacts.getContactsAsync({
+    fields:[Contacts.Fields.PhoneNumbers,
+    Contacts.Fields.Emails]
+  }).then(responseJson => {
+      responseJson = responseJson.data.map(item => {
         item.isSelect = false;
         item.selectedClass = styles.list;
         
         return item;
       });
-   
+      console.log("Data source is", responseJson)
       this.setState({
         loading: false,
         dataSource: responseJson,
@@ -56,11 +59,12 @@ renderItem = data =>
     style={[styles.list, data.item.selectedClass]}      
     onPress={() => this.selectItem(data)}
   >
+  <Text color = "white">{data.item.name}</Text>
   <Image
     source={{ uri: data.item.thumbnailUrl }}
     style={{ width: 40, height: 40, margin: 6 }}
   />
-  <Text style={styles.lightText}>  {data.item.title.charAt(0).toUpperCase() + data.item.title.slice(1)}  </Text>
+  <Text style={styles.lightText}>  {data.item.firstName.charAt(0).toUpperCase() + data.item.firstName.slice(1)}  </Text>
 </TouchableOpacity>
 
 render() {
@@ -74,7 +78,7 @@ render() {
  
  return (
    <View style={styles.container}>
-    <TouchableOpacity
+    {/* <TouchableOpacity
         style={{
         position: "absolute",
         right: 23,
@@ -116,8 +120,8 @@ render() {
             color: "white",
         }}
         />
-    </TouchableOpacity>
-   <Text style={styles.title}>Import Contacts</Text>
+    </TouchableOpacity> */}
+   {/* <Text style={styles.title}>Import Contacts</Text> */}
    <FlatList
      data={this.state.dataSource}
     ItemSeparatorComponent={this.FlatListItemSeparator}
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#192338",
-    paddingVertical: 50,
+    paddingVertical: 10,
     position: "relative"
    },
   title: {
