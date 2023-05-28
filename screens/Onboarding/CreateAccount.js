@@ -29,7 +29,8 @@ class CreateAccount extends React.Component {
       password: {value: "", error:""},
       confirmPassword: {value: "", error:""},
       barberShop: this.props.route.params.barberShop,
-      
+      email: "",
+      password: "",
     //   barberShop: null,
     };
   }
@@ -90,7 +91,7 @@ class CreateAccount extends React.Component {
               console.log("in onRegister, state barbershop is", this.state.barberShop)
               barberShop.services = this.state.barberShop.services ? this.toFirestore(this.state.barberShop.services) : []; //if this does not work, try https://stackoverflow.com/questions/46761718/update-nested-object-using-object-assign
               barberShop.shopName = this.state.barberShop.shopName;
-              barberShop.barberIDs = this.state.barberShop.barberIDs;
+              barberShop.customers = [];
               barberShop.address= this.state.barberShop.address;
 
               barberShop.barberIDs = this.state.barberShop.barberIDs || null;
@@ -151,7 +152,7 @@ class CreateAccount extends React.Component {
           visible={this.state.loading}
         />
         <Text bold size={32} style={styles.title}>
-            Create My Shop
+            Create My Account
           </Text>
           {/* <Block center>
           <HeaderSpecial >One Last Step!</HeaderSpecial>
@@ -181,7 +182,7 @@ class CreateAccount extends React.Component {
         />
         <TextInput
           label="Confirm Password"
-          returnKeyType="done"
+          returnKeyType="next"
           value={this.state.confirmPassword.value}
           onChangeText={(text) => this.setState({confirmPassword: { value: text, error: '' }})}
           error={!!this.state.confirmPassword.error}

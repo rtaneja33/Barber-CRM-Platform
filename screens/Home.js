@@ -15,6 +15,8 @@ import Icon from "../components/Icon";
 import { selectContactPhone } from 'react-native-select-contact';
 import Popover from 'react-native-popover-view';
 import MultiSelectExample from './MultiSelectExample';
+import BarberShops from "../models/BarberShop";
+import { firebase } from "../src/firebase/config"
 
 export default function Home({ navigation, route }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -30,67 +32,16 @@ export default function Home({ navigation, route }) {
   }
 
   const loadContacts = async()=>{
-    const { status, canAskAgain } = await Permissions.getAsync(Permissions.CONTACTS);
-    // if (status === 'granted') {
-    //   return
-    // }
-    console.log("checkling status...");
-    console.log("status is", status,"canaskagain is", canAskAgain)
-    switch (status){
-      case 'granted':
-        // load from phone storage / backend
-        const {data} = await Contacts.getContactsAsync({
-          fields:[Contacts.Fields.PhoneNumbers,
-          Contacts.Fields.Emails]
-        });
-        updateCustomers(data);
-        setMemContacts(data);
-      // console.log(customers);
-        setIsLoading(false);
-        break
-      case 'denied':
-        console.log("denied");
-        setIsLoading(false);
-        if(!canAskAgain)
-          alert("Please check settings and allow import contacts")
-          break
-      case 'undetermined':
-        console.log("denied");
-        // ask 
-        const response = await Permissions.askAsync(Permissions.CONTACTS);
-        if(response.status !== 'granted')
-        {
-          setIsLoading(false);
-          return
-        }
-        else{
-          console.log("denied after asking!")
-          // import contacts selectively, then save this to backend
-          // means it is first time
-        }
-        break
-      default:
-        setIsLoading(false);
-        break
 
-    }
+    setIsLoading(true);
 
+    const currentShop = await BarberShops.loadFromID(firebase.auth().currentUser.uid)
 
-  //   const { status, permissions } = await Permissions.askAsync(Permissions.CONTACTS);
-  //   if(status !== 'granted')
-  //   {
-  //     setIsLoading(false);
-  //     return
-  //   }
-  //   console.log("granted")
-  //   const {data} = await Contacts.getContactsAsync({
-  //     fields:[Contacts.Fields.PhoneNumbers,
-  //     Contacts.Fields.Emails]
-  //   });
-  //   updateCustomers(data);
-  //   setMemContacts(data);
-  //  // console.log(customers);
-  //   setIsLoading(false);
+    if(!currentShop.customers || currentShop.customers.length < 1)
+      alert("Import or create a customer!")
+      setIsLoading(false)
+
+    updateCustomers(currentShop.customers)
   } 
   
   useEffect(() => {
@@ -178,7 +129,6 @@ export default function Home({ navigation, route }) {
 
   return (
     <View
-    
     style={{
       flex: 1,
       paddingHorizontal: 20,
@@ -187,26 +137,10 @@ export default function Home({ navigation, route }) {
     }}>
           
       <View style={{flex:1, backgroundColor: '#f7f8f3'}}>
-      <TouchableOpacity
-        style={{
-        position: "absolute",
-        right: 23,
-        top: 23,
-        zIndex: 0,
-        color: "#00000080",
-        }}
-        hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
-        onPress={() => {
-        setShowImport(true)
-        // setSpinner(false)
-        }}
-    >
-        <Text style={{color: 'red'}}>Import</Text>
-    </TouchableOpacity>
         {isLoading? (
           <View style={{...StyleSheet.absoluteFill,
             alignItems: 'center', justifyContent: 'center'}}>
-              <ActivityIndicator size ="large" color="#bad555"/>
+              <ActivityIndicator size ="large" color={argonTheme.COLORS.BARBERBLUE}/>
           </View>
         ) : 
           null
@@ -236,7 +170,7 @@ export default function Home({ navigation, route }) {
               justifyContent: 'center',
               marginTop: 50
             }}>
-            <Text style={{ color:'#bad555' }}>No Customers Found</Text>
+            <Text style={{ color:argonTheme.COLORS.BARBERBLUE }}>No Customers Found</Text>
             </View>
           )}
         />

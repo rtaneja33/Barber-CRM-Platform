@@ -1,4 +1,6 @@
 import { firebase } from '../src/firebase/config'
+import {CustomerPreview} from './CustomerPreview'
+import { getUniqueArrayVals } from '../screens/helpers/getUniqueArrayVals'
 
 export default class BarberShop {
     
@@ -10,9 +12,20 @@ export default class BarberShop {
     barberIDs = []
     admin = ""
     services = []
+    customers = []
     long = 0.0
     lat = 0.0
     
+
+    
+      
+     
+    addCustomerPreviews(customerPreviews) {
+        var concatCustomers = this.customers.concat(customerPreviews)
+        this.customers = getUniqueArrayVals(concatCustomers, "phonenumber")
+        console.log("this.customers is now", this.customers)
+    }
+
     update() {
         var barberShopRef = firebase.firestore().collection('BarberShops').doc(this.uid);
         return new Promise(resolve => {
@@ -22,6 +35,7 @@ export default class BarberShop {
                 email: this.email,
                 shopName: this.shopName,
                 barberIDs: this.barberIDs,
+                customers: this.customers,
                 admin: this.admin,
                 services: this.services,
                 long: this.long,
@@ -84,6 +98,7 @@ export default class BarberShop {
                     email: barberShop.email,
                     shopName: barberShop.shopName,
                     barberIDs: barberShop.barberIDs,
+                    customers: barberShop.customers,
                     admin: barberShop.admin,
                     services: barberShop.services,
                     long: barberShop.long,
@@ -99,6 +114,7 @@ export default class BarberShop {
                     email: barberShop.email,
                     shopName: barberShop.shopName,
                     barberIDs: barberShop.barberIDs,
+                    customers: barberShop.customers,
                     admin: barberShop.admin,
                     services: barberShop.services,
                     long: barberShop.long,
@@ -243,6 +259,7 @@ export default class BarberShop {
                     barberShop.email = data["email"]
                     barberShop.shopName = data["shopName"]
                     barberShop.barberIDs = data["barberIDs"]
+                    barberShop.customers = data["customers"]
                     barberShop.admin = data["admin"]
                     barberShop.services = data["services"]
                     barberShop.long = Number(data["long"])

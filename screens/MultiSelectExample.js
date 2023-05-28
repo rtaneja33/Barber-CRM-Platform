@@ -3,6 +3,11 @@ import{StyleSheet,View,ActivityIndicator,FlatList,Text,TouchableOpacity,Image} f
 import { Icon } from "react-native-elements";
 import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
+import CustomerPreview from '../models/CustomerPreview'
+// import Customer from "../models/Customer";
+import BarberShops from '../models/BarberShop';
+import { firebase } from '../src/firebase/config';
+
 
 export default class MultiSelectExample extends React.Component { 
   constructor(props) {
@@ -10,29 +15,75 @@ export default class MultiSelectExample extends React.Component {
     this.state = {
       loading: false,
       dataSource: [],
+      selected: [],
      };
   }
   componentDidMount() {this.fetchData();}
   
-  fetchData = () => {this.setState({loading: true});
-  console.log("fetching data...")
-  Contacts.getContactsAsync({
-    fields:[Contacts.Fields.PhoneNumbers,
-    Contacts.Fields.Emails]
-  }).then(responseJson => {
-      responseJson = responseJson.data.map(item => {
-        item.isSelect = false;
-        item.selectedClass = styles.list;
+  fetchData = async () => {this.setState({loading: true});
+    console.log("fetching data...")
+    this.setState({loading:true})
+    const { status, canAskAgain } = await Permissions.getAsync(Permissions.CONTACTS);
+    switch (status){
+        case 'denied':
+            console.log("denied");
+            if(!canAskAgain){
+                alert("Please check settings and allow import contacts")
+                this.setState({loading:false})
+                return
+            }
         
-        return item;
-      });
-      console.log("Data source is", responseJson)
-      this.setState({
-        loading: false,
-        dataSource: responseJson,
-      });
-    }).catch(error => {this.setState({loading: false});
-   });
+        case 'undetermined':
+            const response = await Permissions.askAsync(Permissions.CONTACTS);
+            if(response.status !== 'granted')
+            {
+                this.setState({loading:false});
+                alert("Please check settings and allow import contacts")
+                return
+            }
+            // else permission was given this time, drop down to granted case below
+        case 'granted':
+            Contacts.getContactsAsync({
+                fields:[Contacts.Fields.PhoneNumbers,
+                Contacts.Fields.Emails],
+                }).then(responseJson => {
+                    responseJson = responseJson.data.map(item => {
+                    item.isSelect = false;
+                    item.selectedClass = styles.list;
+                    
+                    return item;
+                    });
+                    responseJson.sort((a, b) => a.firstName > b.firstName ? 1 : -1)  
+                    this.setState({
+                    loading: false,
+                    dataSource: responseJson,
+                    });
+                }).catch(error => {this.setState({loading: false});
+                });
+            break
+        default:
+            alert("error occurred with status?", status)
+            this.setState({loading:false});
+           
+    }
+    // console.log("checkling status...");
+    // console.log("status is", status,"canaskagain is", canAskAgain)
+    
+    //     // load from phone storage / backend
+
+    //     // load in contacts here
+
+    //     const {data} = await Contacts.getContactsAsync({
+    //       fields:[Contacts.Fields.PhoneNumbers,
+    //       Contacts.Fields.Emails]
+    //     });
+    //     updateCustomers(data);
+    //     setMemContacts(data);
+    //   // console.log(customers);
+
+    //     this.setState({loading:false});
+    //     break
+    
   };
 
 FlatListItemSeparator = () => <View style={styles.line} />;
@@ -46,13 +97,25 @@ selectItem = data => {
   );
 
   this.state.dataSource[index] = data.item;
-
+  var newCustomerPreview = new CustomerPreview();
+  newCustomerPreview.name = data.item.name;
+  newCustomerPreview.phonenumber = data.item.phoneNumbers && data.item.phoneNumbers[0] ? data.item.phoneNumbers[0].digits : "";
   this.setState({
     dataSource: this.state.dataSource,
+    selected: [...this.state.selected, newCustomerPreview ]
   });
 };
 
-goToStore = () =>this.props.navigation.navigate("Expenses", {selected: this.state.selected,});
+goToStore = () => {
+    this.setState({loading: true})
+    var barberRef =  BarberShops.loadFromID(firebase.auth().currentUser.uid);
+    barberRef.addCustomerPreviews(this.state.selected);
+    barberRef.update().then((response)=>{
+        this.setState({loading: false})
+        console.log("response is", response);
+
+    });
+}
 
 renderItem = data =>
   <TouchableOpacity
@@ -64,7 +127,7 @@ renderItem = data =>
     source={{ uri: data.item.thumbnailUrl }}
     style={{ width: 40, height: 40, margin: 6 }}
   />
-  <Text style={styles.lightText}>  {data.item.firstName.charAt(0).toUpperCase() + data.item.firstName.slice(1)}  </Text>
+  <Text style={styles.lightText}> Hello WORLD </Text>
 </TouchableOpacity>
 
 render() {
@@ -75,7 +138,7 @@ render() {
     </View>
   );
 }
- 
+
  return (
    <View style={styles.container}>
     {/* <TouchableOpacity
